@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: 'jdbc:mysql://localhost:3306/udemy2-db'
+    username: root
+    password:
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  jpa.hibernate:
+    ddl-auto: update
