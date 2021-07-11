@@ -1,6 +1,7 @@
 package com.projects.spring.udemy.course;
 
 import com.projects.spring.udemy.category.Category;
+import com.projects.spring.udemy.relationship.CourseRating;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -20,6 +21,9 @@ public class Course {
 
     @ManyToMany(mappedBy = "courses")
     private Set<Category> categories;
+
+    @OneToMany(mappedBy = "course")
+    private Set<CourseRating> ratings;
 
     public Course() {
     }
@@ -54,5 +58,13 @@ public class Course {
 
     public void setCategories(Set<Category> categories) {
         this.categories = categories;
+    }
+
+    Set<CourseRating> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(Set<CourseRating> ratings) {
+        this.ratings = ratings;
     }
 }
