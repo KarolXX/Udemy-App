@@ -1,5 +1,6 @@
 package com.projects.spring.udemy.course;
 
+import com.projects.spring.udemy.course.dto.CourseInMenu;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +20,9 @@ public class CourseController {
     }
 
     @GetMapping
-    ResponseEntity<List<Course>> getAllCourses() {
+    ResponseEntity<List<CourseInMenu>> getAllCourses() {
         logger.warn("Exposing all the courses!");
-        var result = repository.findAll();
+        var result = repository.getCourseMenu();
         return ResponseEntity.ok(result);
     }
 

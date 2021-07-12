@@ -6,6 +6,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Entity
@@ -18,6 +19,9 @@ public class Course {
     @NotBlank(message = "Add the course's title!")
     private String title;
     private String description;
+    @NotNull
+    private int price;
+    private int promotion;
 
     @ManyToMany(mappedBy = "courses")
     private Set<Category> categories;
@@ -66,5 +70,21 @@ public class Course {
 
     public void setRatings(Set<CourseRating> ratings) {
         this.ratings = ratings;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public int getPromotion() {
+        return promotion;
+    }
+
+    public void setPromotion(int promotion) {
+        this.promotion = promotion;
     }
 }

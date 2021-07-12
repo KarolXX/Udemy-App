@@ -34,7 +34,7 @@ public class CourseRating {
         this.id = id;
     }
 
-    public User getUser() {
+    User getUser() {
         return user;
     }
 
@@ -42,7 +42,7 @@ public class CourseRating {
         this.user = user;
     }
 
-    public Course getCourse() {
+    Course getCourse() {
         return course;
     }
 
