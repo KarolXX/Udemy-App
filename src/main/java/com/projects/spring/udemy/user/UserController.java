@@ -38,7 +38,7 @@ public class UserController {
                 .stream().filter(rate -> rate.getId().getCourseId() == 1 )
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("This user has no course with id 1"));
-        courseWithId1.setRating(10);
+        courseWithId1.setRating(5.0);
         return ResponseEntity.noContent().build();
     }
 }

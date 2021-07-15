@@ -21,7 +21,7 @@ public class CourseRating {
     @JoinColumn(name = "course_id")
     private Course course;
 
-    private int rating;
+    private Double rating = null;
 
     public CourseRating() {
     }
@@ -50,11 +50,16 @@ public class CourseRating {
         this.course = course;
     }
 
-    public int getRating() {
+    public Double getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(Double rating) {
         this.rating = rating;
     }
+
+//    @PostPersist
+//    void prePersist() {
+//
+//    }
 }

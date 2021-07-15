@@ -1,0 +1,1 @@
+ALTER TABLE courses ADD COLUMN average_rating DECIMAL(3, 2);

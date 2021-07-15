@@ -1,5 +1,6 @@
 package com.projects.spring.udemy.user;
 
+import com.projects.spring.udemy.comment.Comment;
 import com.projects.spring.udemy.course.Course;
 import com.projects.spring.udemy.relationship.CourseRating;
 import org.hibernate.annotations.GenericGenerator;
@@ -20,6 +21,9 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private Set<CourseRating> ratings;
+
+//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+//    private Set<Comment> comments;
 
     public int getUserId() {
         return userId;
@@ -44,4 +48,12 @@ public class User {
     public void setRatings(Set<CourseRating> ratings) {
         this.ratings = ratings;
     }
+
+//    public Set<Comment> getComments() {
+//        return comments;
+//    }
+//
+//    public void setComments(Set<Comment> comments) {
+//        this.comments = comments;
+//    }
 }

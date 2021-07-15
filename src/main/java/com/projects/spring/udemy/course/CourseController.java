@@ -26,6 +26,14 @@ public class CourseController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/{id}")
+    ResponseEntity<Course> getCourseById(@PathVariable Integer id) {
+        logger.warn("Exposing course");
+        var result = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No course with given id"));
+        return ResponseEntity.ok(result);
+    }
+
     @PostMapping
     ResponseEntity<Course> createCourse(@RequestBody Course source) {
         logger.info("New course has been created");
