@@ -23,7 +23,7 @@ public class Course {
     private String description;
     @NotNull
     private int price;
-    private Integer promotion = null;
+    private Integer promotion;
     @Formula("( SELECT COALESCE( AVG(cr.rating), 0 ) FROM course_ratings cr WHERE cr.course_id = course_id )")
     private double averageRating;
 
@@ -87,12 +87,8 @@ public class Course {
         this.price = price;
     }
 
-    public int getPromotion() {
+    public Integer getPromotion() {
         return promotion;
-    }
-
-    public void setPromotion(int promotion) {
-        this.promotion = promotion;
     }
 
     public void setPromotion(Integer promotion) {
