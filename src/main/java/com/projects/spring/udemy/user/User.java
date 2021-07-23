@@ -22,8 +22,8 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<CourseRating> ratings;
 
-//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-//    private Set<Comment> comments;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    private Set<Comment> comments;
 
     public int getUserId() {
         return userId;
@@ -49,11 +49,11 @@ public class User {
         this.ratings = ratings;
     }
 
-//    public Set<Comment> getComments() {
-//        return comments;
-//    }
-//
-//    public void setComments(Set<Comment> comments) {
-//        this.comments = comments;
-//    }
+    public Set<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
+    }
 }

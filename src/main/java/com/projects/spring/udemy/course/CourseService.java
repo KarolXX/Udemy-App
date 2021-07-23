@@ -1,5 +1,6 @@
 package com.projects.spring.udemy.course;
 
+import com.projects.spring.udemy.comment.Comment;
 import com.projects.spring.udemy.course.dto.CourseWithUserIDs;
 import com.projects.spring.udemy.relationship.CourseRating;
 import com.projects.spring.udemy.relationship.CourseRatingKey;
@@ -26,14 +27,37 @@ public class CourseService {
     }
 
     public CourseWithUserIDs getCourse(Integer id) {
-        Course course = repository.findById(id)
+        Course target = repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("No course with given id"));
         List<Integer> userIDs = new ArrayList<>(
-                course.getRatings()
+                target.getRatings()
                     .stream().map(rating -> rating.getId().getUserId())
                     .collect(Collectors.toList())
         );
-        return new CourseWithUserIDs(course, userIDs);
+        return new CourseWithUserIDs(target, userIDs);
+    }
+
+    public Comment createComment(Integer userId, Integer courseId, Comment comment) {
+        Course course = repository.findById(courseId)
+                .orElseThrow(() -> new IllegalArgumentException("You can not add comment to non-existing course"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User does not exist"));
+        // create new set of comments ( just adding a new comment to existing ones )
+        Set<Comment> updatedComments = new HashSet<>(course.getComments());
+        updatedComments.add(comment);
+        // keeping both sides of the association between course and comments in-sync
+        comment.setCourse(course);
+        course.setComments(updatedComments);
+        // keeping both sides of the association between user and comments in-sync
+        comment.setUser(user);
+        user.setComments(updatedComments);
+        // saving changes
+        var updatedCourse = repository.save(course);
+        return updatedCourse.getComments()
+                .stream()
+                .filter(com -> com.getText().equals(comment.getText()))
+                .findAny()
+                .orElseThrow(() -> new RuntimeException("Logic error"));
     }
 
 //    @Transactional

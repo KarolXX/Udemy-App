@@ -9,6 +9,8 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -30,11 +32,11 @@ public class Course {
     @ManyToMany(mappedBy = "courses", fetch = FetchType.EAGER)
     private Set<Category> categories;
 
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private Set<CourseRating> ratings;
 
-//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "course", fetch = FetchType.EAGER)
-//    private Set<Comment> comments;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "course", fetch = FetchType.EAGER)
+    private Set<Comment> comments;
 
     public Course() {
     }
@@ -103,11 +105,11 @@ public class Course {
         this.averageRating = averageRating;
     }
 
-//    public Set<Comment> getComments() {
-//        return comments;
-//    }
-//
-//    public void setComments(Set<Comment> comments) {
-//        this.comments = comments;
-//    }
+    public Set<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
+    }
 }
