@@ -12,13 +12,13 @@ import java.util.Optional;
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Integer> {
     @Override
-    @Query("SELECT course FROM Course course JOIN FETCH course.ratings WHERE course.courseId = :id")
+    @Query("SELECT course FROM Course course LEFT JOIN FETCH course.ratings WHERE course.courseId = :id")
     Optional<Course> findById(@Param("id") Integer id);
 
-    @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.title, AVG(cr.rating), COUNT(u.userId)) " +
+    @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.title, COALESCE ( AVG(cr.rating), 0 ), COUNT(u.userId)) " +
             "FROM Course c " +
-            "JOIN CourseRating cr ON c.courseId = cr.id.courseId " +
-            "JOIN User u ON u.userId = cr.id.userId " +
-            "GROUP BY c.courseId")
+            "LEFT  JOIN CourseRating cr ON c.courseId = cr.id.courseId " +
+            "LEFT JOIN User u ON u.userId = cr.id.userId " +
+            "GROUP BY c.title")
     List<CourseInMenu> getCourseMenu();
 }
