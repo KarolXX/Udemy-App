@@ -8,10 +8,12 @@ import java.util.List;
 public class CourseWithUserIDs {
     private Course course;
     private List<Integer> userIDs;
+    private int usersNumber;
 
     public CourseWithUserIDs(Course course, List<Integer> userIDs) {
         this.course = course;
         this.userIDs = userIDs;
+        this.usersNumber = userIDs.size();
     }
 
     public Course getCourse() {
@@ -28,5 +30,13 @@ public class CourseWithUserIDs {
 
     public void setUserIDs(List<Integer> userIDs) {
         this.userIDs = userIDs;
+    }
+
+    public int getUsersNumber() {
+        return usersNumber;
+    }
+
+    public void setUsersNumber(int usersNumber) {
+        this.usersNumber = usersNumber;
     }
 }
