@@ -1,7 +1,6 @@
 package com.projects.spring.udemy.category;
 
-import com.projects.spring.udemy.category.dto.CategoryAndCourses;
-import com.projects.spring.udemy.course.Course;
+import com.projects.spring.udemy.course.dto.CourseInMenu;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +29,7 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<CategoryAndCourses> getCategoryCourses(@PathVariable int id) {
+    ResponseEntity<List<CourseInMenu>> getCategoryCourses(@PathVariable Integer id) {
         logger.warn("Exposing category courses");
         var result = service.getCourses(id);
         return ResponseEntity.ok(result);

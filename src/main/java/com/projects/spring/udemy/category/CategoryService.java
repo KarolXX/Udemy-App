@@ -1,6 +1,6 @@
 package com.projects.spring.udemy.category;
 
-import com.projects.spring.udemy.category.dto.CategoryAndCourses;
+import com.projects.spring.udemy.course.dto.CourseInMenu;
 import com.projects.spring.udemy.course.Course;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +15,7 @@ public class CategoryService {
         this.repository = repository;
     }
 
-    public CategoryAndCourses getCourses(int id) {
-        var category = repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("No category with given id"));
-            var result = new CategoryAndCourses(category, new ArrayList<>(category.getCourses()));
-        return result;
+    public List<CourseInMenu> getCourses(Integer id) {
+         return repository.getCourseMenuByCategoryId(id);
     }
 }
