@@ -38,25 +38,6 @@ public class CourseService {
         return new CourseWithUserIDs(target, userIDs);
     }
 
-    public Set<Comment> createComment(Integer courseId, CommentWithUserID commentWithUserID) {
-        Course course = repository.findById(courseId)
-                .orElseThrow(() -> new IllegalArgumentException("You can not add comment to non-existing course"));
-        User user = userRepository.findById(commentWithUserID.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("User does not exist"));
-        // create new set of comments ( just adding a new comment to existing ones )
-        Set<Comment> updatedComments = new HashSet<>(course.getComments());
-        updatedComments.add(commentWithUserID.getComment());
-        // keeping both sides of the association between course and comments in-sync
-        commentWithUserID.getComment().setCourse(course);
-        course.setComments(updatedComments);
-        // keeping both sides of the association between user and comments in-sync
-        commentWithUserID.getComment().setUser(user);
-        user.setComments(updatedComments);
-        // saving changes
-        var updatedCourse = repository.save(course);
-        return updatedCourse.getComments();
-    }
-
     public CourseRating buyCourse(CourseRatingKey key) {
         CourseRating relationship = new CourseRating(key);
 

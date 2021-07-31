@@ -52,17 +52,6 @@ public class CourseController {
         return ResponseEntity.created(URI.create("/" + result.getId())).body(source);
     }
 
-    @PostMapping(path = "/{courseId}/comment")
-    ResponseEntity<Set<Comment>> createComment(
-            @PathVariable Integer courseId,
-            @RequestBody CommentWithUserID comment
-    ) {
-        logger.info("New comment has been added");
-        var result = service.createComment(courseId, comment);
-        //FIXME : Should I return header location when resource is only updated ?
-        return ResponseEntity.created(URI.create("/" + courseId)).body(result);
-    }
-
     @PostMapping("/course-buying")
     ResponseEntity<?> buyCourse(@RequestBody CourseRatingKey key) {
         logger.warn("Client bought course");
