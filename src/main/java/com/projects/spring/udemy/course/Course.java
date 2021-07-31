@@ -27,6 +27,7 @@ public class Course {
     private int price;
     private Integer promotion;
     @Formula("( SELECT COALESCE( AVG(cr.rating), 0 ) FROM course_ratings cr WHERE cr.course_id = course_id )")
+    @Transient
     private double averageRating;
 
     @ManyToMany(mappedBy = "courses", fetch = FetchType.EAGER)
