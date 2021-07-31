@@ -2,6 +2,7 @@ package com.projects.spring.udemy.course;
 
 import com.projects.spring.udemy.category.CategoryRepository;
 import com.projects.spring.udemy.comment.Comment;
+import com.projects.spring.udemy.course.dto.CommentWithUserID;
 import com.projects.spring.udemy.course.dto.CourseInMenu;
 import com.projects.spring.udemy.course.dto.CourseWithUserIDs;
 import com.projects.spring.udemy.relationship.CourseRating;
@@ -51,18 +52,16 @@ public class CourseController {
         return ResponseEntity.created(URI.create("/" + result.getId())).body(source);
     }
 
-    @PostMapping(path = "/{courseId}/comment", params = "user-id")
-    ResponseEntity<Comment> createComment(
-            @RequestParam("user-id") Integer userId,
+    @PostMapping(path = "/{courseId}/comment")
+    ResponseEntity<Set<Comment>> createComment(
             @PathVariable Integer courseId,
-            @RequestBody Comment comment
+            @RequestBody CommentWithUserID comment
     ) {
         logger.info("New comment has been added");
-        var result = service.createComment(userId, courseId, comment);
+        var result = service.createComment(courseId, comment);
         //FIXME : Should I return header location when resource is only updated ?
         return ResponseEntity.created(URI.create("/" + courseId)).body(result);
     }
-
 
 //    @PatchMapping
 //    ResponseEntity<?> buyCourse(@RequestBody CourseRatingKey key) {

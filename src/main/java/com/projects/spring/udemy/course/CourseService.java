@@ -1,6 +1,7 @@
 package com.projects.spring.udemy.course;
 
 import com.projects.spring.udemy.comment.Comment;
+import com.projects.spring.udemy.course.dto.CommentWithUserID;
 import com.projects.spring.udemy.course.dto.CourseWithUserIDs;
 import com.projects.spring.udemy.relationship.CourseRating;
 import com.projects.spring.udemy.relationship.CourseRatingKey;
@@ -27,8 +28,8 @@ public class CourseService {
     }
 
     public CourseWithUserIDs getCourse(Integer id) {
-        Course target = repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("No course with given id"));
+        Course target = repository.findById(id).get();
+                //.orElseThrow(() -> new IllegalArgumentException("No course with given id"));
         List<Integer> userIDs = new ArrayList<>(
                 target.getRatings()
                     .stream().map(rating -> rating.getId().getUserId())
@@ -37,27 +38,23 @@ public class CourseService {
         return new CourseWithUserIDs(target, userIDs);
     }
 
-    public Comment createComment(Integer userId, Integer courseId, Comment comment) {
+    public Set<Comment> createComment(Integer courseId, CommentWithUserID commentWithUserID) {
         Course course = repository.findById(courseId)
                 .orElseThrow(() -> new IllegalArgumentException("You can not add comment to non-existing course"));
-        User user = userRepository.findById(userId)
+        User user = userRepository.findById(commentWithUserID.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("User does not exist"));
         // create new set of comments ( just adding a new comment to existing ones )
         Set<Comment> updatedComments = new HashSet<>(course.getComments());
-        updatedComments.add(comment);
+        updatedComments.add(commentWithUserID.getComment());
         // keeping both sides of the association between course and comments in-sync
-        comment.setCourse(course);
+        commentWithUserID.getComment().setCourse(course);
         course.setComments(updatedComments);
         // keeping both sides of the association between user and comments in-sync
-        comment.setUser(user);
+        commentWithUserID.getComment().setUser(user);
         user.setComments(updatedComments);
         // saving changes
         var updatedCourse = repository.save(course);
-        return updatedCourse.getComments()
-                .stream()
-                .filter(com -> com.getText().equals(comment.getText()))
-                .findAny()
-                .orElseThrow(() -> new RuntimeException("Logic error"));
+        return updatedCourse.getComments();
     }
 
 //    @Transactional
@@ -67,7 +64,7 @@ public class CourseService {
 //    //  ( I mean all of them are association fields )
 //    public CourseRating buyCourse(CourseRatingKey key) {
 //        CourseRating relationship = new CourseRating(key);
-//        // FIXME: Why am I getting error ? ( uncomment and check )
+//        // FIXME: Why am I getting error ?
 ////         var target = ratingRepository.save(relationship);
 ////         return target;
 //
@@ -76,8 +73,6 @@ public class CourseService {
 //                .orElseThrow(() -> new IllegalArgumentException("No user with given id"));
 //        Course course = repository.findById(key.getCourseId())
 //                .orElseThrow(() -> new IllegalArgumentException("No course with given id"));
-//        course.setRatings(new HashSet<>(Set.of(relationship)));
-//        user.setRatings(new HashSet<>(Set.of(relationship)));
 //
 //        relationship.setCourse(course);
 //        relationship.setUser(user);
