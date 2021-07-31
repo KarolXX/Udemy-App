@@ -26,6 +26,10 @@ public class CourseRating {
     public CourseRating() {
     }
 
+    public CourseRating(CourseRatingKey key) {
+        this.id = key;
+    }
+
     public CourseRatingKey getId() {
         return id;
     }

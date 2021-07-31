@@ -63,11 +63,11 @@ public class CourseController {
         return ResponseEntity.created(URI.create("/" + courseId)).body(result);
     }
 
-//    @PatchMapping
-//    ResponseEntity<?> buyCourse(@RequestBody CourseRatingKey key) {
-//        logger.warn("Client bought course");
-//        var result = service.buyCourse(key);
-//        return ResponseEntity.ok(result);
-//    }
+    @PostMapping("/course-buying")
+    ResponseEntity<?> buyCourse(@RequestBody CourseRatingKey key) {
+        logger.warn("Client bought course");
+        var result = service.buyCourse(key);
+        return ResponseEntity.ok(result);
+    }
 
 }

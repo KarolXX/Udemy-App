@@ -57,26 +57,17 @@ public class CourseService {
         return updatedCourse.getComments();
     }
 
-//    @Transactional
-//    // FIXME
-//    //  Do I need @Transactional here?
-//    //  None of the modified fields are directly entered into the DB
-//    //  ( I mean all of them are association fields )
-//    public CourseRating buyCourse(CourseRatingKey key) {
-//        CourseRating relationship = new CourseRating(key);
-//        // FIXME: Why am I getting error ?
-////         var target = ratingRepository.save(relationship);
-////         return target;
-//
-//        // FIXME another solution
-//        User user = userRepository.findById(key.getUserId())
-//                .orElseThrow(() -> new IllegalArgumentException("No user with given id"));
-//        Course course = repository.findById(key.getCourseId())
-//                .orElseThrow(() -> new IllegalArgumentException("No course with given id"));
-//
-//        relationship.setCourse(course);
-//        relationship.setUser(user);
-//
-//        return ratingRepository.save(relationship);
-//    }
+    public CourseRating buyCourse(CourseRatingKey key) {
+        CourseRating relationship = new CourseRating(key);
+
+        User user = userRepository.findById(key.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("No user with given id"));
+        Course course = repository.findById(key.getCourseId())
+                .orElseThrow(() -> new IllegalArgumentException("No course with given id"));
+
+        relationship.setCourse(course);
+        relationship.setUser(user);
+
+        return ratingRepository.save(relationship);
+    }
 }
