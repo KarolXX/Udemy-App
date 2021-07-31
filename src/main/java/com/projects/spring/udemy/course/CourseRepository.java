@@ -15,10 +15,9 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
     @Query("SELECT course FROM Course course LEFT JOIN FETCH course.ratings WHERE course.courseId = :id")
     Optional<Course> findById(@Param("id") Integer id);
 
-    @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.title, COALESCE ( AVG(cr.rating), 0 ), COUNT(u.userId)) " +
+    @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.title, COALESCE ( AVG(cr.rating), 0 ), COUNT(cr.user.userId)) " +
             "FROM Course c " +
-            "LEFT  JOIN CourseRating cr ON c.courseId = cr.id.courseId " +
-            "LEFT JOIN User u ON u.userId = cr.id.userId " +
+            "LEFT JOIN CourseRating cr ON c.courseId = cr.id.courseId " +
             "GROUP BY c.title")
     List<CourseInMenu> getCourseMenu();
 }
