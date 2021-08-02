@@ -14,11 +14,9 @@ import java.util.List;
 public class CategoryController {
     private static final Logger logger = LoggerFactory.getLogger(CategoryController.class);
     private CategoryRepository repository;
-    private CategoryService service;
 
-    public CategoryController(CategoryRepository repository, CategoryService service) {
+    public CategoryController(CategoryRepository repository) {
         this.repository = repository;
-        this.service = service;
     }
 
     @GetMapping
@@ -31,7 +29,7 @@ public class CategoryController {
     @GetMapping("/{id}")
     ResponseEntity<List<CourseInMenu>> getCategoryCourses(@PathVariable Integer id) {
         logger.warn("Exposing category courses");
-        var result = service.getCourses(id);
+        var result = repository.getCourseMenuByCategoryId(id);
         return ResponseEntity.ok(result);
     }
 
