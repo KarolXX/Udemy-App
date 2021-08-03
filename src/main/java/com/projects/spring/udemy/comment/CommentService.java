@@ -3,9 +3,11 @@ package com.projects.spring.udemy.comment;
 import com.projects.spring.udemy.course.Course;
 import com.projects.spring.udemy.course.CourseRepository;
 import com.projects.spring.udemy.course.dto.CommentWithUserID;
+import com.projects.spring.udemy.relationship.CourseRatingKey;
 import com.projects.spring.udemy.user.User;
 import com.projects.spring.udemy.user.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -20,6 +22,29 @@ public class CommentService {
         this.repository = repository;
         this.courseRepository = courseRepository;
         this.userRepository = userRepository;
+    }
+
+    @Transactional
+    public void editComment(Integer commentId, Comment source) {
+        Comment target = repository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("No comment with given id"));
+        target.setText(source.getText());
+    }
+
+    public void deleteComment(Integer commentId) {
+        Comment target = repository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("No Comment with given id"));
+
+        Course targetCourse = target.getCourse();
+        targetCourse.setComments(null);
+
+        User targetUser = target.getUser();
+        targetUser.setComments(null);
+
+        target.setCourse(null);
+        target.setUser(null);
+
+        repository.deleteById(commentId);
     }
 
     public Comment createComment(Integer courseId, CommentWithUserID commentWithUserID) {
@@ -37,13 +62,7 @@ public class CommentService {
         commentWithUserID.getComment().setUser(user);
         user.setComments(updatedComments);
         // saving changes
-        var updatedCourse = courseRepository.save(course);
-
-        // get commentId of new created comment
-        Integer commentId = repository.findAll().size();
-        return updatedCourse.getComments()
-                .stream().filter(comment -> comment.getCommentId() == commentId)
-                .findAny()
-                .orElseThrow(() -> new RuntimeException("Logic error"));
+        return repository.save(commentWithUserID.getComment());
     }
+
 }
