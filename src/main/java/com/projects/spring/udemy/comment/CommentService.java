@@ -35,15 +35,22 @@ public class CommentService {
         Comment target = repository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("No Comment with given id"));
 
-        Course targetCourse = target.getCourse();
-        targetCourse.setComments(null);
+        Course course = target.getCourse();
+        User user = target.getUser();
 
-        User targetUser = target.getUser();
-        targetUser.setComments(null);
+        // I created two different sets to avoid:  org.hibernate.HibernateException: Found shared references to a collection
+        Set<Comment> updatedComments = new HashSet<>(course.getComments());
+        updatedComments.remove(target);
 
-        target.setCourse(null);
-        target.setUser(null);
+        Set<Comment> updatedComments2 = new HashSet<>(user.getComments());
+        updatedComments2.remove(target);
 
+        course.setComments(updatedComments);
+        user.setComments(updatedComments2);
+
+        // I don't need it bcs target will be just deleted
+//        target.setCourse(null);
+//        target.setUser(null);
         repository.deleteById(commentId);
     }
 
