@@ -38,19 +38,9 @@ public class CommentService {
         Course course = target.getCourse();
         User user = target.getUser();
 
-        // I created two different sets to avoid:  org.hibernate.HibernateException: Found shared references to a collection
-        Set<Comment> updatedComments = new HashSet<>(course.getComments());
-        updatedComments.remove(target);
+        course.removeComment(target);
+        user.removeComment(target);
 
-        Set<Comment> updatedComments2 = new HashSet<>(user.getComments());
-        updatedComments2.remove(target);
-
-        course.setComments(updatedComments);
-        user.setComments(updatedComments2);
-
-        // I don't need it bcs target will be just deleted
-//        target.setCourse(null);
-//        target.setUser(null);
         repository.deleteById(commentId);
     }
 
@@ -59,16 +49,10 @@ public class CommentService {
                 .orElseThrow(() -> new IllegalArgumentException("You can not add comment to non-existing course"));
         User user = userRepository.findById(commentWithUserID.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("User does not exist"));
-        // create new set of comments ( just adding a new comment to existing ones )
-        Set<Comment> updatedComments = new HashSet<>(course.getComments());
-        updatedComments.add(commentWithUserID.getComment());
-        // keeping both sides of the association between course and comments in-sync
-        commentWithUserID.getComment().setCourse(course);
-        course.setComments(updatedComments);
-        // keeping both sides of the association between user and comments in-sync
-        commentWithUserID.getComment().setUser(user);
-        user.setComments(updatedComments);
-        // saving changes
+
+        course.addComment(commentWithUserID.getComment());
+        user.addComment(commentWithUserID.getComment());
+
         return repository.save(commentWithUserID.getComment());
     }
 

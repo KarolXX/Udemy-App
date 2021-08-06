@@ -113,4 +113,14 @@ public class Course {
     public void setComments(Set<Comment> comments) {
         this.comments = comments;
     }
+
+    public void addComment(Comment comment) {
+        comments.add(comment);
+        comment.setCourse(this);
+    }
+
+    public void removeComment(Comment comment) {
+        comments.remove(comment);
+        comment.setCourse(null);
+    }
 }

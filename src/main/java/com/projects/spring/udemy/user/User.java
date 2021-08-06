@@ -56,4 +56,14 @@ public class User {
     public void setComments(Set<Comment> comments) {
         this.comments = comments;
     }
+
+    public void addComment(Comment comment) {
+        comments.add(comment);
+        comment.setUser(this);
+    }
+
+    public void removeComment(Comment comment) {
+        comments.remove(comment);
+        comment.setUser(null);
+    }
 }
