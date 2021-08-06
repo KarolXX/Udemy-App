@@ -28,8 +28,8 @@ public class CourseService {
     }
 
     public CourseWithUserIDs getCourse(Integer id) {
-        Course target = repository.findById(id).get();
-                //.orElseThrow(() -> new IllegalArgumentException("No course with given id"));
+        Course target = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No course with given id"));
         List<Integer> userIDs = new ArrayList<>(
                 target.getRatings()
                     .stream().map(rating -> rating.getId().getUserId())
