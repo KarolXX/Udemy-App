@@ -23,7 +23,6 @@ public class Course {
     @NotBlank(message = "Add the course's title!")
     private String title;
     private String description;
-    @NotNull
     private int price;
     private Integer promotion;
     @Formula("( SELECT COALESCE( AVG(cr.rating), 0 ) FROM course_ratings cr WHERE cr.course_id = course_id )")
