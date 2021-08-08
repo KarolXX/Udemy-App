@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/categories")
 public class CategoryController {
@@ -39,4 +40,10 @@ public class CategoryController {
         var result = repository.save(source);
         return ResponseEntity.created(URI.create("/" + result.getId())).body(result);
     }
+
+//    @DeleteMapping("/{categoryId}")
+//    ResponseEntity deleteCategory(@PathVariable Integer categoryId) {
+//        logger.warn("Category has been deleted");
+//
+//    }
 }

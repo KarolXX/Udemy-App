@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -28,6 +29,7 @@ public class UserController {
         return ResponseEntity.ok(result);
     }
 
+    // FIXME Get method should not have Request body
     @GetMapping("/{id}")
     ResponseEntity<?> getUser(@RequestBody LoginForm loginForm) {
         logger.info("Signing in");

@@ -12,6 +12,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import java.net.URI;
 import java.util.Set;
 
+@CrossOrigin
 @RestController
 public class CommentController {
     private static final Logger logger = LoggerFactory.getLogger(CommentController.class);

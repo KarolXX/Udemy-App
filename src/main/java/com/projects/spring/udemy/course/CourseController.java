@@ -1,24 +1,17 @@
 package com.projects.spring.udemy.course;
 
-import com.projects.spring.udemy.category.CategoryRepository;
-import com.projects.spring.udemy.comment.Comment;
-import com.projects.spring.udemy.course.dto.CommentWithUserID;
 import com.projects.spring.udemy.course.dto.CourseInMenu;
 import com.projects.spring.udemy.course.dto.CourseWithUserIDs;
-import com.projects.spring.udemy.relationship.CourseRating;
 import com.projects.spring.udemy.relationship.CourseRatingKey;
-import com.projects.spring.udemy.relationship.CourseRatingRepository;
-import com.projects.spring.udemy.user.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Set;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/courses")
 public class CourseController {
@@ -57,6 +50,13 @@ public class CourseController {
         logger.warn("Client bought course");
         var result = service.buyCourse(key);
         return ResponseEntity.ok(result);
+    }
+
+    @DeleteMapping("/{courseId}")
+    ResponseEntity<?> deleteCourse(@PathVariable Integer courseId) {
+        logger.warn("Course has been deleted");
+        repository.deleteById(courseId);
+        return ResponseEntity.noContent().build();
     }
 
 }
