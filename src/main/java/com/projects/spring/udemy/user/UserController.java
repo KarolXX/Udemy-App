@@ -17,9 +17,11 @@ import java.util.List;
 public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     private UserRepository repository;
+    private UserService service;
 
-    public UserController(UserRepository repository) {
+    public UserController(UserRepository repository, UserService service) {
         this.repository = repository;
+        this.service = service;
     }
 
     @GetMapping
@@ -30,7 +32,8 @@ public class UserController {
     }
 
     // FIXME Get method should not have Request body
-    @GetMapping("/{id}")
+    // I marked it as POST on quickly ;p
+    @PostMapping("/{id}")
     ResponseEntity<?> getUser(@RequestBody LoginForm loginForm) {
         logger.info("Signing in");
         var target = repository.findById(loginForm.getId())
@@ -42,7 +45,7 @@ public class UserController {
 
     @PostMapping
     ResponseEntity<User> createUser(@RequestBody User source) {
-        var result = repository.save(source);
+        var result = service.createUser(source);
         return ResponseEntity.created(URI.create("/" + result.getUserId())).body(result);
     }
 
