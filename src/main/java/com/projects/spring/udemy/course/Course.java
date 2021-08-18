@@ -65,7 +65,7 @@ public class Course {
         this.description = description;
     }
 
-    Set<Category> getCategories() {
+    public Set<Category> getCategories() {
         return categories;
     }
 

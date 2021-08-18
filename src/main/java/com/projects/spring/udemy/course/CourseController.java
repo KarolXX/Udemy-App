@@ -2,12 +2,24 @@ package com.projects.spring.udemy.course;
 
 import com.projects.spring.udemy.course.dto.CourseInMenu;
 import com.projects.spring.udemy.course.dto.CourseWithUserIDs;
+import com.projects.spring.udemy.course.dto.UploadDto;
 import com.projects.spring.udemy.relationship.CourseRatingKey;
+import org.apache.coyote.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
@@ -35,6 +47,16 @@ public class CourseController {
     ResponseEntity<CourseWithUserIDs> getCourseById(@PathVariable Integer id) {
         logger.warn("Exposing course");
         var result = service.getCourse(id);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping(path = "/{id}", params = "category")
+    ResponseEntity <List<CourseInMenu>> getCoursesByCategoryId(
+            @PathVariable Integer id,
+            @RequestParam("category") Integer categoryId
+    ) {
+        logger.warn("Exposing course");
+        var result = repository.getCourseMenuByCategoryId(categoryId);
         return ResponseEntity.ok(result);
     }
 

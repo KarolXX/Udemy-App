@@ -27,12 +27,12 @@ public class CategoryController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/{id}")
-    ResponseEntity<List<CourseInMenu>> getCategoryCourses(@PathVariable Integer id) {
-        logger.warn("Exposing category courses");
-        var result = repository.getCourseMenuByCategoryId(id);
-        return ResponseEntity.ok(result);
-    }
+//    @GetMapping("/{id}")
+//    ResponseEntity<List<CourseInMenu>> getCategoryCourses(@PathVariable Integer id) {
+//        logger.warn("Exposing category courses");
+//        var result = repository.getCourseMenuByCategoryId(id);
+//        return ResponseEntity.ok(result);
+//    }
 
     @PostMapping
     ResponseEntity createCategory(@RequestBody Category source) {

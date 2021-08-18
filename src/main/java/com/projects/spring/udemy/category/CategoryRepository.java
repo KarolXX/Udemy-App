@@ -15,13 +15,4 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
     @Override
     @Query("SELECT cat FROM Category cat JOIN FETCH cat.courses WHERE cat.categoryId = :id")
     Optional<Category> findById(@Param("id") Integer id);
-
-    @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.title, COALESCE ( AVG(r.rating), 0 ), COUNT(r.user.userId)) " +
-            "FROM Category cat " +
-            "JOIN cat.courses c " +
-            "LEFT JOIN c.ratings r " +
-            "WHERE cat.categoryId = :id " +
-            "GROUP BY c.title"
-    )
-    List<CourseInMenu> getCourseMenuByCategoryId(@Param("id") Integer id);
 }
