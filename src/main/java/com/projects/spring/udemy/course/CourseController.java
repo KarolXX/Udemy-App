@@ -1,5 +1,6 @@
 package com.projects.spring.udemy.course;
 
+import com.projects.spring.udemy.ConfigurationProperties;
 import com.projects.spring.udemy.course.dto.CourseInMenu;
 import com.projects.spring.udemy.course.dto.CourseWithUserIDs;
 import com.projects.spring.udemy.course.dto.UploadDto;
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
@@ -30,10 +32,12 @@ public class CourseController {
     private static final Logger logger = LoggerFactory.getLogger(CourseController.class);
     private CourseRepository repository;
     private CourseService service;
+    private ConfigurationProperties configuration;
 
-    public CourseController(CourseRepository repository, CourseService service) {
+    public CourseController(CourseRepository repository, CourseService service, ConfigurationProperties configuration) {
         this.repository = repository;
         this.service = service;
+        this.configuration = configuration;
     }
 
     @GetMapping
@@ -51,7 +55,7 @@ public class CourseController {
     }
 
     @GetMapping(path = "/{id}", params = "category")
-    ResponseEntity <List<CourseInMenu>> getCoursesByCategoryId(
+    ResponseEntity<List<CourseInMenu>> getCoursesByCategoryId(
             @PathVariable Integer id,
             @RequestParam("category") Integer categoryId
     ) {
@@ -81,4 +85,85 @@ public class CourseController {
         return ResponseEntity.noContent().build();
     }
 
+
+    @PostMapping(value = "/img", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ResponseEntity<?> uploadFIle(UploadDto uploadDto) {
+        String folderPath = configuration.getPath();
+        File folder = new File(folderPath);
+        File file = null;
+
+        if (!folder.exists()) {
+            folder.mkdir();
+        }
+
+        try {
+            file = new File(folderPath, "321.png");
+            //file.createNewFile();
+
+            uploadDto.getFile().transferTo(file);
+        } catch (IOException ex) {
+
+        }
+
+        if (file == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } else {
+            return ResponseEntity.ok(file.getAbsolutePath());
+        }
+    }
+
+    //    @GetMapping(value = "/img")
+//    public ResponseEntity<?> getFile() {
+//        //String folderPath = "C:\\Users\\karol\\Desktop\\JAVA\\udemy\\upload";
+//        String folderPath = configuration.getPath();
+//        File file = new File(folderPath,"321.png");
+//
+//        if(file.exists()) {
+//            try {
+//                InputStreamResource isr = new InputStreamResource(
+//                        new FileInputStream(file)
+//                );
+//
+//                HttpHeaders headers = new HttpHeaders();
+//                headers.add("Content-Disposition", "attachment; filename=\"123.png\"");
+//
+//                return ResponseEntity.ok()
+//                        .headers(headers)
+//                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
+//                        .body(isr);
+//            } catch(IOException ex) {
+//               // return ResponseEntity.notFound().build();
+//            }
+//        }
+//
+//        return ResponseEntity.badRequest().body("sss");
+//    }
+
+    @GetMapping(value = "img")
+    ResponseEntity<?> getCourseImage() {
+        logger.warn("Exposing course image");
+        File folder = new File(configuration.getPath());
+        File file = new File(folder, "img.png");
+
+        if(!file.exists()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        try {
+            InputStreamResource isr = new InputStreamResource(
+                    new FileInputStream(file)
+            );
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Disposition", "attachment; filename=\"xxx.png\"");
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(isr);
+        } catch (FileNotFoundException e) {
+
+        }
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
 }
