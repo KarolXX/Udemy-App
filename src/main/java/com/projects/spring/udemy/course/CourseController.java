@@ -85,59 +85,12 @@ public class CourseController {
         return ResponseEntity.noContent().build();
     }
 
-
-    @PostMapping(value = "/img", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ResponseEntity<?> uploadFIle(UploadDto uploadDto) {
-        String folderPath = configuration.getPath();
-        File folder = new File(folderPath);
-        File file = null;
-
-        if (!folder.exists()) {
-            folder.mkdir();
-        }
-
-        try {
-            file = new File(folderPath, "321.png");
-            //file.createNewFile();
-
-            uploadDto.getFile().transferTo(file);
-        } catch (IOException ex) {
-
-        }
-
-        if (file == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        } else {
-            return ResponseEntity.ok(file.getAbsolutePath());
-        }
+    @PostMapping(value = "/{id}/img", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ResponseEntity<?> uploadFIle(@PathVariable Integer id, UploadDto uploadDto) {
+        logger.info("Uploading course image");
+        String body = service.saveFile(id, uploadDto);
+        return ResponseEntity.ok(body);
     }
-
-    //    @GetMapping(value = "/img")
-//    public ResponseEntity<?> getFile() {
-//        //String folderPath = "C:\\Users\\karol\\Desktop\\JAVA\\udemy\\upload";
-//        String folderPath = configuration.getPath();
-//        File file = new File(folderPath,"321.png");
-//
-//        if(file.exists()) {
-//            try {
-//                InputStreamResource isr = new InputStreamResource(
-//                        new FileInputStream(file)
-//                );
-//
-//                HttpHeaders headers = new HttpHeaders();
-//                headers.add("Content-Disposition", "attachment; filename=\"123.png\"");
-//
-//                return ResponseEntity.ok()
-//                        .headers(headers)
-//                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
-//                        .body(isr);
-//            } catch(IOException ex) {
-//               // return ResponseEntity.notFound().build();
-//            }
-//        }
-//
-//        return ResponseEntity.badRequest().body("sss");
-//    }
 
     @GetMapping(value = "img")
     ResponseEntity<?> getCourseImage() {

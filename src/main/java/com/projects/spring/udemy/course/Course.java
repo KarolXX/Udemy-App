@@ -28,6 +28,7 @@ public class Course {
     @Formula("( SELECT COALESCE( AVG(cr.rating), 0 ) FROM course_ratings cr WHERE cr.course_id = course_id )")
     @Transient
     private double averageRating;
+    private String image;
 
     @ManyToMany(mappedBy = "courses", fetch = FetchType.EAGER)
     private Set<Category> categories;
@@ -111,6 +112,14 @@ public class Course {
 
     public void setComments(Set<Comment> comments) {
         this.comments = comments;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public void addComment(Comment comment) {
