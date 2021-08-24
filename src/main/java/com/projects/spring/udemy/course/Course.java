@@ -26,14 +26,15 @@ public class Course {
     private int price;
     private Integer promotion;
     @Formula("( SELECT COALESCE( AVG(cr.rating), 0 ) FROM course_ratings cr WHERE cr.course_id = course_id )")
-    @Transient
+   // @Formula("SELECT AVG(cr.rating) FROM course_ratings cr WHERE cr.course_id = course_id")
+    //@Transient
     private double averageRating;
     private String image;
 
     @ManyToMany(mappedBy = "courses", fetch = FetchType.EAGER)
     private Set<Category> categories;
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<CourseRating> ratings;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "course", fetch = FetchType.EAGER)
@@ -74,7 +75,7 @@ public class Course {
         this.categories = categories;
     }
 
-    Set<CourseRating> getRatings() {
+    public Set<CourseRating> getRatings() {
         return ratings;
     }
 
@@ -114,7 +115,7 @@ public class Course {
         this.comments = comments;
     }
 
-    public String getImage() {
+    String getImage() {
         return image;
     }
 

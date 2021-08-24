@@ -46,7 +46,7 @@ public class CourseRating {
         this.user = user;
     }
 
-    public Course getCourse() {
+    Course getCourse() {
         return course;
     }
 
