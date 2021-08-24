@@ -44,7 +44,7 @@ public class Comment {
         this.text = text;
     }
 
-    User getUser() {
+    public User getUser() {
         return user;
     }
 
