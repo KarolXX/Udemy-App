@@ -13,14 +13,16 @@ public class CourseInMenu {
     private long usersNumber;
     private int price;
     private Integer promotion;
+    private String image;
 
-    public CourseInMenu(int id, String title, double averageRating, long usersNumber, int price, Integer promotion) {
+    public CourseInMenu(int id, String title, double averageRating, long usersNumber, int price, Integer promotion, String image) {
         this.id = id;
         this.title = title;
         this.averageRating = averageRating;
         this.usersNumber = usersNumber;
         this.price = price;
         this.promotion = promotion;
+        this.image = image;
     }
 
     public int getId() {
@@ -69,5 +71,13 @@ public class CourseInMenu {
 
     public void setPromotion(Integer promotion) {
         this.promotion = promotion;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

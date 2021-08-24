@@ -4,6 +4,7 @@ import com.projects.spring.udemy.ConfigurationProperties;
 import com.projects.spring.udemy.course.dto.CourseInMenu;
 import com.projects.spring.udemy.course.dto.CourseWithUserIDs;
 import com.projects.spring.udemy.course.dto.UploadDto;
+import com.projects.spring.udemy.relationship.CourseRating;
 import com.projects.spring.udemy.relationship.CourseRatingKey;
 import org.apache.coyote.Response;
 import org.slf4j.Logger;
@@ -54,9 +55,8 @@ public class CourseController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping(path = "/{id}", params = "category")
+    @GetMapping(params = "category")
     ResponseEntity<List<CourseInMenu>> getCoursesByCategoryId(
-            @PathVariable Integer id,
             @RequestParam("category") Integer categoryId
     ) {
         logger.warn("Exposing course");
@@ -78,6 +78,15 @@ public class CourseController {
         return ResponseEntity.ok(result);
     }
 
+    @PutMapping("/course-rating")
+    ResponseEntity<?> rateCourse(@RequestBody CourseRating source) {
+        logger.info("Client rated course");
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.add("Access-Control-Allow-Origin", "*");
+        double result = service.rateCourse(source);
+        return ResponseEntity.ok(result);
+    }
+
     @DeleteMapping("/{courseId}")
     ResponseEntity<?> deleteCourse(@PathVariable Integer courseId) {
         logger.warn("Course has been deleted");
@@ -92,31 +101,16 @@ public class CourseController {
         return ResponseEntity.ok(body);
     }
 
-    @GetMapping(value = "img")
-    ResponseEntity<?> getCourseImage() {
+    @GetMapping(value = "/{id}/img")
+    ResponseEntity<?> getCourseImage(@PathVariable Integer id) {
         logger.warn("Exposing course image");
-        File folder = new File(configuration.getPath());
-        File file = new File(folder, "img.png");
+        return service.getFile(id);
+    }
 
-        if(!file.exists()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        try {
-            InputStreamResource isr = new InputStreamResource(
-                    new FileInputStream(file)
-            );
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Content-Disposition", "attachment; filename=\"xxx.png\"");
-
-            return ResponseEntity.ok()
-                    .headers(headers)
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .body(isr);
-        } catch (FileNotFoundException e) {
-
-        }
-
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    @DeleteMapping(value = "/{id}/img")
+    ResponseEntity<?> deleteCourseImage(@PathVariable Integer id) {
+        logger.warn("Course image has been deleted!");
+        service.deleteFile(id);
+        return ResponseEntity.noContent().build();
     }
 }
