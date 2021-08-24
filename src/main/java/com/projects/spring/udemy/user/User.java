@@ -41,7 +41,7 @@ public class User {
         this.name = name;
     }
 
-    public Set<CourseRating> getRatings() {
+    Set<CourseRating> getRatings() {
         return ratings;
     }
 
@@ -49,7 +49,7 @@ public class User {
         this.ratings = ratings;
     }
 
-    public Set<Comment> getComments() {
+   Set<Comment> getComments() {
         return comments;
     }
 
