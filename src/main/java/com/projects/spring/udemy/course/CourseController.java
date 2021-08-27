@@ -60,7 +60,7 @@ public class CourseController {
     @GetMapping("/{id}/participants/other-courses")
     ResponseEntity<List<CourseInMenu>> getOtherParticipantsCourses(@PathVariable("id") Integer targetCourseId) {
         logger.warn("Exposing users courses");
-        var result = service.getOtherUsersCourses(targetCourseId);
+        var result = service.getOtherParticipantsCourses(targetCourseId);
         return ResponseEntity.ok(result);
     }
 
