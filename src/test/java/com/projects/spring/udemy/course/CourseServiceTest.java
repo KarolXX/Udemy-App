@@ -29,7 +29,7 @@ class CourseServiceTest {
         CourseRepository mockCourseRepo = mock(CourseRepository.class);
         when(mockCourseRepo.findById(anyInt())).thenReturn(Optional.empty());
         // system under test
-        var toTest = new CourseService(mockCourseRepo, null, null);
+        var toTest = new CourseService(mockCourseRepo, null, null, null);
 
         // when
         var exception = catchThrowable(() -> toTest.getCourse(1));
@@ -53,7 +53,7 @@ class CourseServiceTest {
         CourseRepository mockCourseRepo = mock(CourseRepository.class);
         when(mockCourseRepo.findById(anyInt())).thenReturn(Optional.ofNullable(course));
         // system under test
-        var toTest = new CourseService(mockCourseRepo, null, null);
+        var toTest = new CourseService(mockCourseRepo, null, null, null);
 
         // when
         var result = toTest.getCourse(1);

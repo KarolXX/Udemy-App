@@ -29,4 +29,11 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
             "GROUP BY c.title"
     )
     List<CourseInMenu> getCourseMenuByCategoryId(@Param("id") Integer id);
+
+    @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.courseId, c.title, COALESCE ( AVG(cr.rating), 0 ), COUNT(cr.user.userId), c.price, c.promotion, c.image) " +
+            "FROM Course c " +
+            "LEFT JOIN CourseRating cr ON c.courseId = cr.id.courseId " +
+            "WHERE c.courseId IN (:ids)" +
+            "GROUP BY c.title")
+    List<CourseInMenu> getCourseMenuByIdIsIn(@Param("ids") List<Integer> courseIDs);
 }

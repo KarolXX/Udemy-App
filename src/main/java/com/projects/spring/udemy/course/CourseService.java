@@ -1,8 +1,10 @@
 package com.projects.spring.udemy.course;
 
 import com.projects.spring.udemy.ConfigurationProperties;
+import com.projects.spring.udemy.course.dto.CourseInMenu;
 import com.projects.spring.udemy.course.dto.CourseWithUserIDs;
 import com.projects.spring.udemy.course.dto.UploadDto;
+import com.projects.spring.udemy.course.dto.UserIDs;
 import com.projects.spring.udemy.relationship.CourseRating;
 import com.projects.spring.udemy.relationship.CourseRatingKey;
 import com.projects.spring.udemy.relationship.CourseRatingRepository;
@@ -69,6 +71,23 @@ public class CourseService {
                 .orElseThrow(() -> new IllegalArgumentException("This course or user is not available"));
         association.setRating(source.getRating());
         return association.getRating();
+    }
+
+    public List<CourseInMenu> getOtherParticipantsCourses(Integer targetCourseId) {
+        CourseWithUserIDs targetCourse = this.getCourse(targetCourseId);
+        List<CourseRating> source = ratingRepository.findCourseRatingsById_UserIdIsIn(targetCourse.getUserIDs());
+        List<Integer> courseIDs = new ArrayList<>();
+        source.stream().map(courseRating -> {
+            Integer courseId = courseRating.getId().getCourseId();
+            if(courseIDs.contains(courseId) || courseId.equals(targetCourseId))
+                return null;
+            else
+                return courseId;
+        }).forEach(courseId -> {
+            if(courseId!= null)
+                courseIDs.add(courseId);
+        });
+        return repository.getCourseMenuByIdIsIn(courseIDs);
     }
 
     @Transactional

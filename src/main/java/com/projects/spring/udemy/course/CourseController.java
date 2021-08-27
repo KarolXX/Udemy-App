@@ -4,8 +4,10 @@ import com.projects.spring.udemy.ConfigurationProperties;
 import com.projects.spring.udemy.course.dto.CourseInMenu;
 import com.projects.spring.udemy.course.dto.CourseWithUserIDs;
 import com.projects.spring.udemy.course.dto.UploadDto;
+import com.projects.spring.udemy.course.dto.UserIDs;
 import com.projects.spring.udemy.relationship.CourseRating;
 import com.projects.spring.udemy.relationship.CourseRatingKey;
+import com.projects.spring.udemy.relationship.CourseRatingRepository;
 import org.apache.coyote.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +54,13 @@ public class CourseController {
     ResponseEntity<CourseWithUserIDs> getCourseById(@PathVariable Integer id) {
         logger.warn("Exposing course");
         var result = service.getCourse(id);
+        return ResponseEntity.ok(result);
+    }
+//34 33 32 19 11 31 18 14 3 16
+    @GetMapping("/{id}/participants/other-courses")
+    ResponseEntity<List<CourseInMenu>> getOtherParticipantsCourses(@PathVariable("id") Integer targetCourseId) {
+        logger.warn("Exposing users courses");
+        var result = service.getOtherUsersCourses(targetCourseId);
         return ResponseEntity.ok(result);
     }
 
