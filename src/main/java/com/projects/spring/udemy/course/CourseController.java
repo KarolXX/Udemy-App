@@ -56,7 +56,7 @@ public class CourseController {
         var result = service.getCourse(id);
         return ResponseEntity.ok(result);
     }
-//34 33 32 19 11 31 18 14 3 16
+
     @GetMapping("/{id}/participants/other-courses")
     ResponseEntity<List<CourseInMenu>> getOtherParticipantsCourses(@PathVariable("id") Integer targetCourseId) {
         logger.warn("Exposing users courses");
@@ -96,10 +96,24 @@ public class CourseController {
         return ResponseEntity.ok(result);
     }
 
+    @PatchMapping("/{id}")
+    ResponseEntity<?> toggleFavourite(@PathVariable Integer id) {
+        logger.warn("Adding/removing course from favourites");
+        service.toggleFavourite(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @DeleteMapping("/{courseId}")
     ResponseEntity<?> deleteCourse(@PathVariable Integer courseId) {
         logger.warn("Course has been deleted");
         repository.deleteById(courseId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping(value = "/{id}/img")
+    ResponseEntity<?> deleteCourseImage(@PathVariable Integer id) {
+        logger.warn("Course image has been deleted!");
+        service.deleteFile(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -114,12 +128,5 @@ public class CourseController {
     ResponseEntity<?> getCourseImage(@PathVariable Integer id) {
         logger.warn("Exposing course image");
         return service.getFile(id);
-    }
-
-    @DeleteMapping(value = "/{id}/img")
-    ResponseEntity<?> deleteCourseImage(@PathVariable Integer id) {
-        logger.warn("Course image has been deleted!");
-        service.deleteFile(id);
-        return ResponseEntity.noContent().build();
     }
 }
