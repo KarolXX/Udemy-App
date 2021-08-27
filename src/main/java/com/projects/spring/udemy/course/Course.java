@@ -30,6 +30,7 @@ public class Course {
     //@Transient
     private double averageRating;
     private String image;
+    private boolean favourite = false;
 
     @ManyToMany(mappedBy = "courses", fetch = FetchType.EAGER)
     private Set<Category> categories;
@@ -121,6 +122,14 @@ public class Course {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public boolean isFavourite() {
+        return favourite;
+    }
+
+    public void setFavourite(boolean favourite) {
+        this.favourite = favourite;
     }
 
     public void addComment(Comment comment) {
