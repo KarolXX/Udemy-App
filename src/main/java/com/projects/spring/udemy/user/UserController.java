@@ -1,5 +1,6 @@
 package com.projects.spring.udemy.user;
 
+import com.projects.spring.udemy.course.dto.CourseInMenu;
 import com.projects.spring.udemy.user.dto.LoginForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,13 @@ public class UserController {
     ResponseEntity<List<User>> getUsers() {
         logger.warn("Exposing all the users");
         var result = repository.findAll();
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/{id}/favourite-courses")
+    ResponseEntity<List<CourseInMenu>> getUserFavouriteCourses(@PathVariable Integer id) {
+        logger.warn("Exposing all the user favourite courses");
+        var result = service.getUserFavouriteCourses(id);
         return ResponseEntity.ok(result);
     }
 
