@@ -3,6 +3,7 @@ package com.projects.spring.udemy.course;
 import com.projects.spring.udemy.category.Category;
 import com.projects.spring.udemy.comment.Comment;
 import com.projects.spring.udemy.relationship.CourseRating;
+import com.projects.spring.udemy.user.User;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -30,16 +31,18 @@ public class Course {
     //@Transient
     private double averageRating;
     private String image;
-    private boolean favourite = false;
-
-    @ManyToMany(mappedBy = "courses", fetch = FetchType.EAGER)
-    private Set<Category> categories;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<CourseRating> ratings;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "course", fetch = FetchType.EAGER)
     private Set<Comment> comments;
+
+    @ManyToMany(mappedBy = "courses", fetch = FetchType.EAGER)
+    private Set<Category> categories;
+
+    @ManyToMany(mappedBy = "favouriteCourses")
+    private Set<User> willingUsers;
 
     public Course() {
     }
@@ -116,20 +119,20 @@ public class Course {
         this.comments = comments;
     }
 
+    Set<User> getWillingUsers() {
+        return willingUsers;
+    }
+
+    public void setWillingUsers(Set<User> willingUsers) {
+        this.willingUsers = willingUsers;
+    }
+
     String getImage() {
         return image;
     }
 
     public void setImage(String image) {
         this.image = image;
-    }
-
-    public boolean isFavourite() {
-        return favourite;
-    }
-
-    public void setFavourite(boolean favourite) {
-        this.favourite = favourite;
     }
 
     public void addComment(Comment comment) {

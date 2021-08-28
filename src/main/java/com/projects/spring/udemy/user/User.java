@@ -25,6 +25,14 @@ public class User {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private Set<Comment> comments;
 
+    @ManyToMany
+    @JoinTable(
+            name = "course_likes",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id")
+    )
+    private Set<Course> favouriteCourses;
+
     public int getUserId() {
         return userId;
     }
@@ -49,12 +57,20 @@ public class User {
         this.ratings = ratings;
     }
 
-   Set<Comment> getComments() {
+    Set<Comment> getComments() {
         return comments;
     }
 
     public void setComments(Set<Comment> comments) {
         this.comments = comments;
+    }
+
+    Set<Course> getFavouriteCourses() {
+        return favouriteCourses;
+    }
+
+    public void setFavouriteCourses(Set<Course> favouriteCourses) {
+        this.favouriteCourses = favouriteCourses;
     }
 
     public void addComment(Comment comment) {
