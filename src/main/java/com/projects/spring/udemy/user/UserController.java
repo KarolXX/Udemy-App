@@ -49,6 +49,13 @@ public class UserController {
         return ResponseEntity.created(URI.create("/" + result.getUserId())).body(result);
     }
 
+    @PostMapping("/{userId}/courses/{courseId}/course-liking")
+    ResponseEntity<?> likeCourse(@PathVariable Integer userId, @PathVariable Integer courseId) {
+        logger.warn("User liked the course");
+        repository.likeCourse(userId, courseId);
+        return ResponseEntity.created(URI.create("/")).build();
+    }
+
     @Transactional
     @PatchMapping("/{id}")
     ResponseEntity<?> test(@PathVariable int id) {

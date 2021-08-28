@@ -96,13 +96,6 @@ public class CourseController {
         return ResponseEntity.ok(result);
     }
 
-//    @PatchMapping("/{id}")
-//    ResponseEntity<?> toggleFavourite(@PathVariable Integer id) {
-//        logger.warn("Adding/removing course from favourites");
-//        service.toggleFavourite(id);
-//        return ResponseEntity.noContent().build();
-//    }
-
     @DeleteMapping("/{courseId}")
     ResponseEntity<?> deleteCourse(@PathVariable Integer courseId) {
         logger.warn("Course has been deleted");
