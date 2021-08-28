@@ -51,9 +51,16 @@ public class UserController {
 
     @PostMapping("/{userId}/courses/{courseId}/course-liking")
     ResponseEntity<?> likeCourse(@PathVariable Integer userId, @PathVariable Integer courseId) {
-        logger.warn("User liked the course");
+        logger.info("User liked the course");
         repository.likeCourse(userId, courseId);
         return ResponseEntity.created(URI.create("/")).build();
+    }
+
+    @DeleteMapping("/{userId}/courses/{courseId}/course-disliking")
+    ResponseEntity<?> dislikeCourse(@PathVariable Integer userId, @PathVariable Integer courseId) {
+        logger.info("User disliked course");
+        repository.dislikeCourse(userId, courseId);
+        return ResponseEntity.noContent().build();
     }
 
     @Transactional

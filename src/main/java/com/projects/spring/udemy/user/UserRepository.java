@@ -12,4 +12,10 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             value = "INSERT INTO course_likes (course_id, user_id) VALUES (:courseId, :userId)"
     )
     void likeCourse(@Param("userId") Integer userId, @Param("courseId") Integer courseId);
+
+    @Query(
+            nativeQuery = true,
+            value = "DELETE FROM course_likes WHERE course_id = :courseId AND user_id = :userId"
+    )
+    void dislikeCourse(@Param("userId") Integer userId, @Param("courseId") Integer courseId);
 }
