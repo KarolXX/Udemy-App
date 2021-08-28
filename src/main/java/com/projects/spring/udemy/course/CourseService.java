@@ -73,13 +73,6 @@ public class CourseService {
         return association.getRating();
     }
 
-    @Transactional
-    public void toggleFavourite(Integer id) {
-        Course target = repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("No course with given id"));
-        target.setFavourite(!target.isFavourite());
-    }
-
     public List<CourseInMenu> getOtherParticipantsCourses(Integer targetCourseId) {
         CourseWithUserIDs targetCourse = this.getCourse(targetCourseId);
         List<CourseRating> source = ratingRepository.findCourseRatingsById_UserIdIsIn(targetCourse.getUserIDs());
