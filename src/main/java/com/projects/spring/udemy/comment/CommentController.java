@@ -5,11 +5,13 @@ import com.projects.spring.udemy.course.dto.CommentWithUserID;
 import com.projects.spring.udemy.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import java.net.URI;
+import java.util.Optional;
 import java.util.Set;
 
 @CrossOrigin
@@ -26,13 +28,16 @@ public class CommentController {
     }
 
     @PostMapping(path = basePath)
-    ResponseEntity<Comment> createComment(
+    ResponseEntity<?> createComment(
             @PathVariable Integer courseId,
             @RequestBody CommentWithUserID comment
     ) {
         logger.info("New comment has been added");
-        var result = service.createComment(courseId, comment);
-        return ResponseEntity.ok(result);
+        Optional<Comment> result = service.createComment(courseId, comment);
+        if(result.isPresent())
+            return ResponseEntity.ok(result);
+        else
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Buy course first and then you can comment it");
     }
 
     @PutMapping(path = basePath + "/{commentId}")

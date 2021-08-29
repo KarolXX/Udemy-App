@@ -15,6 +15,11 @@ public class CourseRatingKey implements Serializable {
     public CourseRatingKey() {
     }
 
+    public CourseRatingKey(Integer userId, Integer courseId) {
+        this.userId = userId;
+        this.courseId = courseId;
+    }
+
     public int getUserId() {
         return userId;
     }
