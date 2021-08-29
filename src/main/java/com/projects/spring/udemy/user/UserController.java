@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin
 @RestController
@@ -42,11 +43,12 @@ public class UserController {
     // FIXME Get method should not have Request body
     // I marked it as POST on quickly ;p
     @PostMapping("/{id}")
-    ResponseEntity<?> getUser(@RequestBody LoginForm loginForm) {
+    ResponseEntity<?> logIn(@RequestBody LoginForm loginForm) {
         logger.info("Signing in");
-        var target = repository.findById(loginForm.getId())
-                .orElseThrow(() -> new IllegalArgumentException("No user with given id"));
-        if(!target.getName().equals(loginForm.getName()))
+        Optional<User> target = repository.findById(loginForm.getId());
+        if(target.isEmpty())
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No user with given id");
+        if(!target.get().getName().equals(loginForm.getName()))
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No user with given nick");
         return ResponseEntity.ok(target);
     }
