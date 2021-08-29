@@ -2,9 +2,8 @@ package com.projects.spring.udemy.course;
 
 import com.projects.spring.udemy.ConfigurationProperties;
 import com.projects.spring.udemy.course.dto.CourseInMenu;
-import com.projects.spring.udemy.course.dto.CourseWithUserIDs;
+import com.projects.spring.udemy.course.dto.SingleCourseModel;
 import com.projects.spring.udemy.course.dto.UploadDto;
-import com.projects.spring.udemy.course.dto.UserIDs;
 import com.projects.spring.udemy.relationship.CourseRating;
 import com.projects.spring.udemy.relationship.CourseRatingKey;
 import com.projects.spring.udemy.relationship.CourseRatingRepository;
@@ -40,7 +39,7 @@ public class CourseService {
         this.configuration = configuration;
     }
 
-    public CourseWithUserIDs getCourse(Integer id) {
+    public SingleCourseModel getCourse(Integer id) {
         Course target = repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("No course with given id"));
         List<Integer> userIDs = new ArrayList<>(
@@ -48,7 +47,7 @@ public class CourseService {
                     .stream().map(rating -> rating.getId().getUserId())
                     .collect(Collectors.toList())
         );
-        return new CourseWithUserIDs(target, userIDs);
+        return new SingleCourseModel(target, userIDs);
     }
 
     public CourseRating buyCourse(CourseRatingKey key) {
@@ -74,7 +73,7 @@ public class CourseService {
     }
 
     public List<CourseInMenu> getOtherParticipantsCourses(Integer targetCourseId) {
-        CourseWithUserIDs targetCourse = this.getCourse(targetCourseId);
+        SingleCourseModel targetCourse = this.getCourse(targetCourseId);
         List<CourseRating> source = ratingRepository.findCourseRatingsById_UserIdIsIn(targetCourse.getUserIDs());
         List<Integer> courseIDs = new ArrayList<>();
         source.stream().map(courseRating -> {

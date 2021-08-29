@@ -5,12 +5,12 @@ import com.projects.spring.udemy.course.Course;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CourseWithUserIDs {
+public class SingleCourseModel {
     private Course course;
     private List<Integer> userIDs;
     private int usersNumber;
 
-    public CourseWithUserIDs(Course course, List<Integer> userIDs) {
+    public SingleCourseModel(Course course, List<Integer> userIDs) {
         this.course = course;
         this.userIDs = userIDs;
         this.usersNumber = userIDs.size();
