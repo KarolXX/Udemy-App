@@ -45,20 +45,29 @@ public class CourseService {
 
         Integer usersNumber = target.getRatings().size();
 
-        Optional<Double> userRate = target.getRatings()
+        boolean boughtCourse;
+        Optional<Double> userRate;
+        Optional<CourseRating> userRateExists = target.getRatings()
                 .stream()
                 .filter(rating -> rating.getId().getUserId() == userId)
-                .findFirst()
-                .stream()
-                .map(CourseRating::getRating)
                 .findFirst();
+        if(userRateExists.isEmpty()) {
+            boughtCourse = false;
+            userRate = null;
+        }
+        else {
+            boughtCourse = true;
+            userRate = userRateExists.stream()
+                    .map(CourseRating::getRating)
+                    .findFirst();
+        }
 
         Optional<User> willingUser  = target.getWillingUsers()
                 .stream().filter(user -> user.getUserId() == userId)
                 .findFirst();
         boolean isCourseLiked = willingUser.isPresent();
 
-        return new SingleCourseModel(target, userRate, isCourseLiked, usersNumber);
+        return new SingleCourseModel(target, boughtCourse, userRate, isCourseLiked, usersNumber);
     }
 
     public CourseRating buyCourse(CourseRatingKey key) {
