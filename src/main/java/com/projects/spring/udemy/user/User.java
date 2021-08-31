@@ -31,7 +31,7 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "course_id")
     )
-    private Set<Course> favouriteCourses;
+    private Set<Course> likedCourses;
 
     public int getUserId() {
         return userId;
@@ -65,12 +65,12 @@ public class User {
         this.comments = comments;
     }
 
-    Set<Course> getFavouriteCourses() {
-        return favouriteCourses;
+    Set<Course> getLikedCourses() {
+        return likedCourses;
     }
 
-    public void setFavouriteCourses(Set<Course> favouriteCourses) {
-        this.favouriteCourses = favouriteCourses;
+    public void setLikedCourses(Set<Course> likedCourses) {
+        this.likedCourses = likedCourses;
     }
 
     public void addComment(Comment comment) {

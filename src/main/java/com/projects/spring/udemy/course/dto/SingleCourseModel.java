@@ -7,18 +7,18 @@ import java.util.Optional;
 public class SingleCourseModel {
     private Course course;
     private Optional<Double> userRate;
-    private boolean courseFavourite;
+    private boolean likedCourse;
     private int usersNumber;
 
     public SingleCourseModel(
             Course course,
             Optional<Double> userRate,
-            boolean courseFavourite,
+            boolean likedCourse,
             Integer usersNumber
     ) {
         this.course = course;
         this.userRate = userRate;
-        this.courseFavourite = courseFavourite;
+        this.likedCourse = likedCourse;
         this.usersNumber = usersNumber;
     }
 
@@ -38,12 +38,12 @@ public class SingleCourseModel {
         this.userRate = userRate;
     }
 
-    public boolean isCourseFavourite() {
-        return courseFavourite;
+    public boolean isLikedCourse() {
+        return likedCourse;
     }
 
-    public void setCourseFavourite(boolean courseFavourite) {
-        this.courseFavourite = courseFavourite;
+    public void setLikedCourse(boolean likedCourse) {
+        this.likedCourse = likedCourse;
     }
 
     public int getUsersNumber() {

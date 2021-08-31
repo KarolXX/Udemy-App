@@ -56,9 +56,9 @@ public class CourseService {
         Optional<User> willingUser  = target.getWillingUsers()
                 .stream().filter(user -> user.getUserId() == userId)
                 .findFirst();
-        boolean isCourseFavourite = willingUser.isPresent();
+        boolean isCourseLiked = willingUser.isPresent();
 
-        return new SingleCourseModel(target, userRate, isCourseFavourite, usersNumber);
+        return new SingleCourseModel(target, userRate, isCourseLiked, usersNumber);
     }
 
     public CourseRating buyCourse(CourseRatingKey key) {

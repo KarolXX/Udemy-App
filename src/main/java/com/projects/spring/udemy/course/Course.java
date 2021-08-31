@@ -41,7 +41,7 @@ public class Course {
     @ManyToMany(mappedBy = "courses", fetch = FetchType.EAGER)
     private Set<Category> categories;
 
-    @ManyToMany(mappedBy = "favouriteCourses")
+    @ManyToMany(mappedBy = "likedCourses")
     private Set<User> willingUsers;
 
     public Course() {

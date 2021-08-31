@@ -29,6 +29,6 @@ public class UserService {
     public List<CourseInMenu> getUserFavouriteCourses(Integer id) {
         User user = repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("No user with given id"));
-        return new ArrayList(user.getFavouriteCourses());
+        return new ArrayList(user.getLikedCourses());
     }
 }
