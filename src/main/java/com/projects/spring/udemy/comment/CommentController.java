@@ -1,18 +1,14 @@
 package com.projects.spring.udemy.comment;
 
-import com.projects.spring.udemy.course.Course;
 import com.projects.spring.udemy.course.dto.CommentWithUserID;
-import com.projects.spring.udemy.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.net.URI;
 import java.util.Optional;
-import java.util.Set;
 
 @CrossOrigin
 @RestController
@@ -35,7 +31,7 @@ public class CommentController {
         logger.info("New comment has been added");
         Optional<Comment> result = service.createComment(courseId, comment);
         if(result.isPresent())
-            return ResponseEntity.ok(result);
+            return ResponseEntity.created(URI.create("/" + result.get().getCommentId())).body(result);
         else
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Buy course first and then you can comment it");
     }
