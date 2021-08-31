@@ -32,7 +32,7 @@ class CourseServiceTest {
         var toTest = new CourseService(mockCourseRepo, null, null, null);
 
         // when
-        var exception = catchThrowable(() -> toTest.getCourse(1));
+        var exception = catchThrowable(() -> toTest.getCourse(1, 1));
         // then
         assertThat(exception)
                 .isInstanceOf(IllegalArgumentException.class)
@@ -56,7 +56,7 @@ class CourseServiceTest {
         var toTest = new CourseService(mockCourseRepo, null, null, null);
 
         // when
-        var result = toTest.getCourse(1);
+        var result = toTest.getCourse(1, 1);
         // then
         assertThat(result.getCourse()).isEqualTo(course);
         assertThat(result.getUsersNumber()).isEqualTo(2);

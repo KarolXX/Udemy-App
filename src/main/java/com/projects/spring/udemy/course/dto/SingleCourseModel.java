@@ -2,18 +2,24 @@ package com.projects.spring.udemy.course.dto;
 
 import com.projects.spring.udemy.course.Course;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 
 public class SingleCourseModel {
     private Course course;
-    private List<Integer> userIDs;
+    private Optional<Double> userRate;
+    private boolean courseFavourite;
     private int usersNumber;
 
-    public SingleCourseModel(Course course, List<Integer> userIDs) {
+    public SingleCourseModel(
+            Course course,
+            Optional<Double> userRate,
+            boolean courseFavourite,
+            Integer usersNumber
+    ) {
         this.course = course;
-        this.userIDs = userIDs;
-        this.usersNumber = userIDs.size();
+        this.userRate = userRate;
+        this.courseFavourite = courseFavourite;
+        this.usersNumber = usersNumber;
     }
 
     public Course getCourse() {
@@ -24,12 +30,20 @@ public class SingleCourseModel {
         this.course = course;
     }
 
-    public List<Integer> getUserIDs() {
-        return userIDs;
+    public Optional<Double> getUserRate() {
+        return userRate;
     }
 
-    public void setUserIDs(List<Integer> userIDs) {
-        this.userIDs = userIDs;
+    public void setUserRate(Optional<Double> userRate) {
+        this.userRate = userRate;
+    }
+
+    public boolean isCourseFavourite() {
+        return courseFavourite;
+    }
+
+    public void setCourseFavourite(boolean courseFavourite) {
+        this.courseFavourite = courseFavourite;
     }
 
     public int getUsersNumber() {

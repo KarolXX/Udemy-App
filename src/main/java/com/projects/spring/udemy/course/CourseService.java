@@ -39,15 +39,26 @@ public class CourseService {
         this.configuration = configuration;
     }
 
-    public SingleCourseModel getCourse(Integer id) {
-        Course target = repository.findById(id)
+    public SingleCourseModel getCourse(Integer courseId, Integer userId) {
+        Course target = repository.findById(courseId)
                 .orElseThrow(() -> new IllegalArgumentException("No course with given id"));
-        List<Integer> userIDs = new ArrayList<>(
-                target.getRatings()
-                    .stream().map(rating -> rating.getId().getUserId())
-                    .collect(Collectors.toList())
-        );
-        return new SingleCourseModel(target, userIDs);
+
+        Integer usersNumber = target.getRatings().size();
+
+        Optional<Double> userRate = target.getRatings()
+                .stream()
+                .filter(rating -> rating.getId().getUserId() == userId)
+                .findFirst()
+                .stream()
+                .map(CourseRating::getRating)
+                .findFirst();
+
+        Optional<User> willingUser  = target.getWillingUsers()
+                .stream().filter(user -> user.getUserId() == userId)
+                .findFirst();
+        boolean isCourseFavourite = willingUser.isPresent();
+
+        return new SingleCourseModel(target, userRate, isCourseFavourite, usersNumber);
     }
 
     public CourseRating buyCourse(CourseRatingKey key) {
@@ -72,9 +83,14 @@ public class CourseService {
         return association.getRating();
     }
 
-    public List<CourseInMenu> getOtherParticipantsCourses(Integer targetCourseId) {
-        SingleCourseModel targetCourse = this.getCourse(targetCourseId);
-        List<CourseRating> source = ratingRepository.findCourseRatingsById_UserIdIsIn(targetCourse.getUserIDs());
+    public List<CourseInMenu> getOtherParticipantsCourses(Integer targetCourseId, Integer userId) {
+        Course targetCourse = repository.findById(targetCourseId)
+                .orElseThrow(() -> new IllegalArgumentException("No ciurse with given id"));
+        List<Integer> userIDs = targetCourse.getRatings()
+                .stream().map(rate -> rate.getId().getUserId())
+                .collect(Collectors.toList());
+        List<CourseRating> source = ratingRepository.findCourseRatingsById_UserIdIsIn(userIDs);
+
         List<Integer> courseIDs = new ArrayList<>();
         source.stream().map(courseRating -> {
             Integer courseId = courseRating.getId().getCourseId();
@@ -86,6 +102,7 @@ public class CourseService {
             if(courseId!= null)
                 courseIDs.add(courseId);
         });
+
         return repository.getCourseMenuByIdIsIn(courseIDs);
     }
 

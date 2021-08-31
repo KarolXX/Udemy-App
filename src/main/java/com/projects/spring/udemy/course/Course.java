@@ -79,7 +79,7 @@ public class Course {
         this.categories = categories;
     }
 
-    public Set<CourseRating> getRatings() {
+    Set<CourseRating> getRatings() {
         return ratings;
     }
 
