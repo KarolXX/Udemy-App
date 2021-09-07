@@ -127,7 +127,7 @@ public class Course {
         this.willingUsers = willingUsers;
     }
 
-    String getImage() {
+    public String getImage() {
         return image;
     }
 
