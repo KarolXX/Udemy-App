@@ -35,5 +35,5 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
             "LEFT JOIN CourseRating cr ON c.courseId = cr.id.courseId " +
             "WHERE c.courseId IN (:ids)" +
             "GROUP BY c.title")
-    List<CourseInMenu> getCourseMenuByIdIsIn(@Param("ids") List<Integer> courseIDs);
+    public List<CourseInMenu> getCourseMenuByIdIsIn(@Param("ids") List<Integer> courseIDs);
 }
