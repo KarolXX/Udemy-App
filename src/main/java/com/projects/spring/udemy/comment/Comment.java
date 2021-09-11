@@ -16,6 +16,7 @@ public class Comment {
     private int commentId;
     @NotBlank(message = "Your comment is empty!")
     private String text;
+    private String image;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -58,5 +59,13 @@ public class Comment {
 
     public void setCourse(Course course) {
         this.course = course;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }
