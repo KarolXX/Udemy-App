@@ -5,13 +5,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @org.springframework.boot.context.properties.ConfigurationProperties("properties")
 public class ConfigurationProperties {
-    private String path;
+    private String imagesPath;
 
-    public String getPath() {
-        return path;
+    public String getImagesPath() {
+        return imagesPath;
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public void setImagesPath(String imagesPath) {
+        this.imagesPath = imagesPath;
     }
 }
