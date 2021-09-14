@@ -21,15 +21,15 @@ public class UserService {
         this.courseRepository = courseRepository;
     }
 
-    User createUser(User source) {
+    Optional<User> createUser(User source) {
         Optional<User> existingUser = repository.findAll()
                 .stream()
                 .filter(user -> user.getName().equals(source.getName()))
                 .findAny();
         if(existingUser.isPresent())
-            throw new IllegalArgumentException("User with such nick already exists");
+            return Optional.empty();
         else
-            return repository.save(source);
+            return Optional.of(repository.save(source));
     }
 
     public List<CourseInMenu> getUserFavouriteCourses(Integer id) {

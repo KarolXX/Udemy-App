@@ -54,9 +54,12 @@ public class UserController {
     }
 
     @PostMapping
-    ResponseEntity<User> createUser(@RequestBody User source) {
+    ResponseEntity<?> createUser(@RequestBody User source) {
         var result = service.createUser(source);
-        return ResponseEntity.created(URI.create("/" + result.getUserId())).body(result);
+        if(result.isEmpty())
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User with given nick already exists");
+        else
+            return ResponseEntity.created(URI.create("/" + result.get().getUserId())).body(result);
     }
 
     @PostMapping("/{userId}/courses/{courseId}/course-liking")
