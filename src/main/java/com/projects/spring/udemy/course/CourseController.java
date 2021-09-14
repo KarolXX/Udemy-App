@@ -67,7 +67,7 @@ public class CourseController {
         return ResponseEntity.created(URI.create("/" + result.getId())).body(source);
     }
 
-    @PostMapping("/course-buying")
+    @PostMapping("/course-purchase")
     ResponseEntity<?> buyCourse(@RequestBody CourseRatingKey key) {
         logger.warn("Client bought course");
         var result = service.buyCourse(key);
