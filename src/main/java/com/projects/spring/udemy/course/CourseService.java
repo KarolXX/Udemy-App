@@ -119,7 +119,7 @@ public class CourseService {
     public String saveFile(Integer id, UploadDto uploadDto) {
         Course course = repository.getById(id);
 
-        String folderPath = configuration.getPath();
+        String folderPath = configuration.getImagesPath();
         File folder = new File(folderPath);
         File file = null;
 
@@ -185,8 +185,8 @@ public class CourseService {
         RandomString random = new RandomString(64);
         String filename = null;
 
-        while(filename == null || new File(configuration.getPath() + File.separator + filename).exists()) {
-            filename = configuration.getPath() + File.separator + random.nextString();
+        while(filename == null || new File(configuration.getImagesPath() + File.separator + filename).exists()) {
+            filename = configuration.getImagesPath() + File.separator + random.nextString();
         }
 
         filename = filename + ".png";
