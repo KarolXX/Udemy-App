@@ -7,10 +7,18 @@ import com.projects.spring.udemy.course.Course;
 import com.projects.spring.udemy.course.CourseRepository;
 import com.projects.spring.udemy.course.dto.UploadImage;
 import net.bytebuddy.utility.RandomString;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 @Service
@@ -64,6 +72,39 @@ public class AppImageService {
             if (comment != null)
                 comment.setImage(appImage);
         }
+    }
+
+    public ResponseEntity<?> getImage(Integer id, String entity) {
+        Comment comment = null;
+        AppImage target = null;
+        if (entity.equals("comment")) {
+            comment = commentRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("No such comment"));
+            target = repository.findById(comment.getImage().getImageId())
+                    .orElseThrow(() -> new IllegalArgumentException("No image"));
+        }
+
+        File file = new File(target.getImage());
+        if(!file.exists()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        try{
+            InputStreamResource isr = new InputStreamResource(
+                    new FileInputStream(file)
+            );
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Disposition", "attachment; filename=\"xxx.png\"");
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(isr);
+        } catch (FileNotFoundException e) {
+
+        }
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
     private String generateUniqueFilename() {
