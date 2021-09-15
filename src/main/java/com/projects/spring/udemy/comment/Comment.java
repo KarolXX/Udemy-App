@@ -1,6 +1,7 @@
 package com.projects.spring.udemy.comment;
 
 import com.projects.spring.udemy.course.Course;
+import com.projects.spring.udemy.file.AppImage;
 import com.projects.spring.udemy.user.User;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -16,7 +17,7 @@ public class Comment {
     private int commentId;
     @NotBlank(message = "Your comment is empty!")
     private String text;
-    private String image;
+    //private String image;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -25,6 +26,10 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "course_id")
     private Course course;
+
+    @OneToOne
+    @JoinColumn(name = "image_id")
+    private AppImage image;
 
     public Comment() {
     }
@@ -61,11 +66,11 @@ public class Comment {
         this.course = course;
     }
 
-    public String getImage() {
+    public AppImage getImage() {
         return image;
     }
 
-    public void setImage(String image) {
+   public void setImage(AppImage image) {
         this.image = image;
     }
 }

@@ -3,7 +3,7 @@ package com.projects.spring.udemy.course;
 import com.projects.spring.udemy.ConfigurationProperties;
 import com.projects.spring.udemy.course.dto.CourseInMenu;
 import com.projects.spring.udemy.course.dto.SingleCourseModel;
-import com.projects.spring.udemy.course.dto.UploadDto;
+import com.projects.spring.udemy.course.dto.UploadImage;
 import com.projects.spring.udemy.relationship.CourseRating;
 import com.projects.spring.udemy.relationship.CourseRatingKey;
 import org.slf4j.Logger;
@@ -98,9 +98,9 @@ public class CourseController {
     }
 
     @PostMapping(value = "/{id}/img", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ResponseEntity<?> uploadFIle(@PathVariable Integer id, UploadDto uploadDto) {
+    ResponseEntity<?> uploadFIle(@PathVariable Integer id, UploadImage uploadImage) {
         logger.info("Uploading course image");
-        String body = service.saveFile(id, uploadDto);
+        String body = service.saveFile(id, uploadImage);
         return ResponseEntity.ok(body);
     }
 

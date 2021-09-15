@@ -3,7 +3,7 @@ package com.projects.spring.udemy.course;
 import com.projects.spring.udemy.ConfigurationProperties;
 import com.projects.spring.udemy.course.dto.CourseInMenu;
 import com.projects.spring.udemy.course.dto.SingleCourseModel;
-import com.projects.spring.udemy.course.dto.UploadDto;
+import com.projects.spring.udemy.course.dto.UploadImage;
 import com.projects.spring.udemy.relationship.CourseRating;
 import com.projects.spring.udemy.relationship.CourseRatingKey;
 import com.projects.spring.udemy.relationship.CourseRatingRepository;
@@ -116,7 +116,7 @@ public class CourseService {
     }
 
     @Transactional
-    public String saveFile(Integer id, UploadDto uploadDto) {
+    public String saveFile(Integer id, UploadImage uploadImage) {
         Course course = repository.getById(id);
 
         String folderPath = configuration.getImagesPath();
@@ -129,7 +129,7 @@ public class CourseService {
 
         try {
             file = new File(generateUniqueFilename());
-            uploadDto.getFile().transferTo(file);
+            uploadImage.getFile().transferTo(file);
         } catch (IOException ex) {
 
         }

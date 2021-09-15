@@ -1,9 +1,12 @@
 package com.projects.spring.udemy.comment;
 
 import com.projects.spring.udemy.course.dto.CommentWithUserID;
+import com.projects.spring.udemy.course.dto.UploadImage;
+import com.projects.spring.udemy.file.AppImageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,11 +19,13 @@ public class CommentController {
     private static final Logger logger = LoggerFactory.getLogger(CommentController.class);
     private CommentService service;
     private CommentRepository repository;
+    private AppImageService appImageService;
     private final String basePath = "/courses/{courseId}/comments";
 
-    public CommentController(CommentService service, CommentRepository repository) {
+    public CommentController(CommentService service, CommentRepository repository, AppImageService appImageService) {
         this.service = service;
         this.repository = repository;
+        this.appImageService = appImageService;
     }
 
     @PostMapping(path = basePath)
@@ -34,6 +39,16 @@ public class CommentController {
             return ResponseEntity.created(URI.create("/" + result.get().getCommentId())).body(result);
         else
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Buy course first and then you can comment it");
+    }
+
+    @PostMapping(path = basePath + "/{commentId}/img", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ResponseEntity<?> uploadImage(
+            @PathVariable Integer commentId,
+            UploadImage uploadImage
+    ) {
+        logger.info("Image has been added to comment");
+        appImageService.saveImage(commentId, uploadImage, "comment");
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping(path = basePath + "/{commentId}")
