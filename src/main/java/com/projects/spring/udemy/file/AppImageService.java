@@ -41,7 +41,7 @@ public class AppImageService {
     }
 
     @Transactional
-    public void saveImage(Integer id, UploadImage image, String entity) {
+    public ResponseEntity<?> saveImage(Integer id, UploadImage image, String entity) {
         Comment comment = null;
        // Course course = null;
         if (entity.equals("comment"))
@@ -71,7 +71,13 @@ public class AppImageService {
             repository.save(appImage);
             if (comment != null)
                 comment.setImage(appImage);
+            else
+                return null;
+
+            return getImage(id, entity);
         }
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
     public ResponseEntity<?> getImage(Integer id, String entity) {

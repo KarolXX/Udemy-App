@@ -47,8 +47,7 @@ public class CommentController {
             UploadImage uploadImage
     ) {
         logger.info("Image has been added to comment");
-        appImageService.saveImage(commentId, uploadImage, "comment");
-        return ResponseEntity.noContent().build();
+        return appImageService.saveImage(commentId, uploadImage, "comment");
     }
 
     @GetMapping(path = basePath + "/{commentId}/img")
