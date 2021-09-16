@@ -59,6 +59,7 @@ public class CourseService {
             boughtCourse = true;
             userRate = userRateExists.stream()
                     .map(CourseRating::getRating)
+                    .filter(rate -> rate != null)
                     .findFirst();
         }
 
