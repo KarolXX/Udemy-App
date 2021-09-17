@@ -43,11 +43,11 @@ public class AppImageService {
     @Transactional
     public ResponseEntity<?> saveImage(Integer id, UploadImage image, String entity) {
         Comment comment = null;
-       // Course course = null;
+        Course course = null;
         if (entity.equals("comment"))
             comment = commentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No such comment"));
-//        else if (entity.equals("course"))
-//            course = courseRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No course with given id"));
+        else if (entity.equals("course"))
+            course = courseRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No course with given id"));
 
         String imagesPath = configuration.getImagesPath();
         File folder = new File(imagesPath);
@@ -71,8 +71,8 @@ public class AppImageService {
             repository.save(appImage);
             if (comment != null)
                 comment.setImage(appImage);
-            else
-                return null;
+            else if (course != null)
+                course.setImage(appImage);
 
             return getImage(id, entity);
         }
@@ -82,11 +82,18 @@ public class AppImageService {
 
     public ResponseEntity<?> getImage(Integer id, String entity) {
         Comment comment = null;
+        Course course = null;
         AppImage target = null;
         if (entity.equals("comment")) {
             comment = commentRepository.findById(id)
                     .orElseThrow(() -> new IllegalArgumentException("No such comment"));
             target = repository.findById(comment.getImage().getImageId())
+                    .orElseThrow(() -> new IllegalArgumentException("No image"));
+        }
+        else if (entity.equals("course")) {
+            course = courseRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("No such course"));
+            target = repository.findById(course.getImage().getImageId())
                     .orElseThrow(() -> new IllegalArgumentException("No image"));
         }
 

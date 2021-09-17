@@ -117,65 +117,6 @@ public class CourseService {
     }
 
     @Transactional
-    public String saveFile(Integer id, UploadImage uploadImage) {
-        Course course = repository.getById(id);
-
-        String folderPath = configuration.getImagesPath();
-        File folder = new File(folderPath);
-        File file = null;
-
-        if (!folder.exists()) {
-            folder.mkdir();
-        }
-
-        try {
-            file = new File(generateUniqueFilename());
-            uploadImage.getFile().transferTo(file);
-        } catch (IOException ex) {
-
-        }
-
-        if (file == null) {
-            return null;
-        } else {
-            course.setImage(file.getAbsolutePath());
-            return file.getPath();
-        }
-    }
-
-    ResponseEntity<?> getFile(Integer id) {
-        Course course = repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("No course with given id"));
-
-        if(course.getImage() == null) {
-            return ResponseEntity.badRequest().body("This course has no image");
-        }
-
-        File file = new File(course.getImage());
-
-        if(!file.exists()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        try {
-            InputStreamResource isr = new InputStreamResource(
-                    new FileInputStream(file)
-            );
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Content-Disposition", "attachment; filename=\"xxx.png\"");
-
-            return ResponseEntity.ok()
-                    .headers(headers)
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .body(isr);
-        } catch (FileNotFoundException e) {
-
-        }
-
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    }
-
-    @Transactional
     public void deleteFile(Integer id) {
         Course course = repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("No course with given id"));

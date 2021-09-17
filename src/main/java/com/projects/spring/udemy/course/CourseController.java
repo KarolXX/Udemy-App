@@ -4,6 +4,7 @@ import com.projects.spring.udemy.ConfigurationProperties;
 import com.projects.spring.udemy.course.dto.CourseInMenu;
 import com.projects.spring.udemy.course.dto.SingleCourseModel;
 import com.projects.spring.udemy.course.dto.UploadImage;
+import com.projects.spring.udemy.file.AppImageService;
 import com.projects.spring.udemy.relationship.CourseRating;
 import com.projects.spring.udemy.relationship.CourseRatingKey;
 import org.slf4j.Logger;
@@ -22,11 +23,18 @@ public class CourseController {
     private static final Logger logger = LoggerFactory.getLogger(CourseController.class);
     private CourseRepository repository;
     private CourseService service;
+    private AppImageService appImageService;
     private ConfigurationProperties configuration;
 
-    public CourseController(CourseRepository repository, CourseService service, ConfigurationProperties configuration) {
+    public CourseController(
+            CourseRepository repository,
+            CourseService service,
+            AppImageService appImageService,
+            ConfigurationProperties configuration
+    ) {
         this.repository = repository;
         this.service = service;
+        this.appImageService = appImageService;
         this.configuration = configuration;
     }
 
@@ -100,13 +108,14 @@ public class CourseController {
     @PostMapping(value = "/{id}/img", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<?> uploadFIle(@PathVariable Integer id, UploadImage uploadImage) {
         logger.info("Uploading course image");
-        String body = service.saveFile(id, uploadImage);
-        return ResponseEntity.ok(body);
+//        String body = service.saveFile(id, uploadImage);
+//        return ResponseEntity.ok(body);
+        return appImageService.saveImage(id, uploadImage, "course");
     }
 
     @GetMapping(value = "/{id}/img")
     ResponseEntity<?> getCourseImage(@PathVariable Integer id) {
         logger.warn("Exposing course image");
-        return service.getFile(id);
+        return appImageService.getImage(id, "course");
     }
 }
