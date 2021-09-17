@@ -22,11 +22,13 @@ public class Author {
     private String description;
     private Double averageRating;
 
-//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-//    @JoinTable(
-//
-//    )
-//    private Set<Course> courses;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinTable(
+        name = "author_course",
+        joinColumns = @JoinColumn(name = "author_id"),
+        inverseJoinColumns = @JoinColumn(name = "course_id")
+    )
+    private Set<Course> courses;
 
     @OneToOne
     @JoinColumn(name = "image_id")
@@ -73,6 +75,14 @@ public class Author {
 
     public void setAverageRating(Double averageRating) {
         this.averageRating = averageRating;
+    }
+
+    public Set<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(Set<Course> courses) {
+        this.courses = courses;
     }
 
     public AppImage getImage() {
