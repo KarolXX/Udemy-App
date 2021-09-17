@@ -2,6 +2,7 @@ package com.projects.spring.udemy.course;
 
 import com.projects.spring.udemy.category.Category;
 import com.projects.spring.udemy.comment.Comment;
+import com.projects.spring.udemy.file.AppImage;
 import com.projects.spring.udemy.relationship.CourseRating;
 import com.projects.spring.udemy.user.User;
 import org.hibernate.annotations.Formula;
@@ -30,7 +31,10 @@ public class Course {
    // @Formula("SELECT AVG(cr.rating) FROM course_ratings cr WHERE cr.course_id = course_id")
     //@Transient
     private double averageRating;
-    private String image;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "image_id")
+    private AppImage image;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<CourseRating> ratings;
@@ -127,11 +131,11 @@ public class Course {
         this.willingUsers = willingUsers;
     }
 
-    public String getImage() {
+    public AppImage getImage() {
         return image;
     }
 
-    public void setImage(String image) {
+    public void setImage(AppImage image) {
         this.image = image;
     }
 
