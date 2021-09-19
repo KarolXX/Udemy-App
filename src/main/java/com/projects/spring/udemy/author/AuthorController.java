@@ -37,4 +37,9 @@ public class AuthorController {
         return ResponseEntity.created(URI.create("/" + result.getAuthorId())).body(result);
     }
 
+    @PutMapping("/{id}")
+    ResponseEntity<?> uploadAuthorImage(@PathVariable Integer id, ImageModel imageModel) {
+        logger.info("Author's image has been set");
+        return imageService.saveImage(id, imageModel, "author");
+    }
 }
