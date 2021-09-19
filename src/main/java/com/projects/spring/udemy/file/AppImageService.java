@@ -1,9 +1,8 @@
 package com.projects.spring.udemy.file;
 
 import com.projects.spring.udemy.ConfigurationProperties;
-import com.projects.spring.udemy.comment.Comment;
+import com.projects.spring.udemy.author.AuthorRepository;
 import com.projects.spring.udemy.comment.CommentRepository;
-import com.projects.spring.udemy.course.Course;
 import com.projects.spring.udemy.course.CourseRepository;
 import com.projects.spring.udemy.course.dto.UploadImage;
 import net.bytebuddy.utility.RandomString;
@@ -15,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -26,28 +24,28 @@ public class AppImageService {
     private AppImageRepository repository;
     private CommentRepository commentRepository;
     private CourseRepository courseRepository;
+    private AuthorRepository authorRepository;
     private ConfigurationProperties configuration;
 
     public AppImageService(
             AppImageRepository repository,
             CommentRepository commentRepository,
             CourseRepository courseRepository,
+            AuthorRepository authorRepository,
             ConfigurationProperties configuration
     ) {
         this.repository = repository;
         this.commentRepository = commentRepository;
         this.courseRepository = courseRepository;
+        this.authorRepository = authorRepository;
         this.configuration = configuration;
     }
 
     @Transactional
     public ResponseEntity<?> saveImage(Integer id, UploadImage image, String entity) {
-        Comment comment = null;
-        Course course = null;
-        if (entity.equals("comment"))
-            comment = commentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No such comment"));
-        else if (entity.equals("course"))
-            course = courseRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No course with given id"));
+        ImageClass target = returnTarget(id, entity);
+        if(target == null)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
         String imagesPath = configuration.getImagesPath();
         File folder = new File(imagesPath);
@@ -68,11 +66,8 @@ public class AppImageService {
 
         } else {
             AppImage appImage = new AppImage(file.getAbsolutePath());
-            repository.save(appImage);
-            if (comment != null)
-                comment.setImage(appImage);
-            else if (course != null)
-                course.setImage(appImage);
+            AppImage savedAppImage = repository.save(appImage);
+            target.setImage(savedAppImage);
 
             return getImage(id, entity);
         }
@@ -81,23 +76,14 @@ public class AppImageService {
     }
 
     public ResponseEntity<?> getImage(Integer id, String entity) {
-        Comment comment = null;
-        Course course = null;
-        AppImage target = null;
-        if (entity.equals("comment")) {
-            comment = commentRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("No such comment"));
-            target = repository.findById(comment.getImage().getImageId())
-                    .orElseThrow(() -> new IllegalArgumentException("No image"));
-        }
-        else if (entity.equals("course")) {
-            course = courseRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("No such course"));
-            target = repository.findById(course.getImage().getImageId())
-                    .orElseThrow(() -> new IllegalArgumentException("No image"));
-        }
+        ImageClass target = returnTarget(id, entity);
+        if(target == null)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
-        File file = new File(target.getImage());
+        AppImage targetImage = repository.findById(target.getImage().getImageId())
+                .orElseThrow(() -> new IllegalArgumentException("No image"));
+
+        File file = new File(targetImage.getImage());
         if(!file.exists()) {
             return ResponseEntity.notFound().build();
         }
@@ -118,6 +104,22 @@ public class AppImageService {
         }
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+
+    private ImageClass returnTarget(Integer id, String entityName) {
+        switch (entityName) {
+            case "course":
+                return courseRepository.findById(id)
+                        .orElseThrow(() -> new IllegalArgumentException("No such course"));
+            case "comment":
+                return commentRepository.findById(id)
+                        .orElseThrow(() -> new IllegalArgumentException("No such comment"));
+            case "author":
+                return authorRepository.findById(id)
+                        .orElseThrow(() -> new IllegalArgumentException("No such author"));
+            default:
+                return null;
+        }
     }
 
     private String generateUniqueFilename() {
