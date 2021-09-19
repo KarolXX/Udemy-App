@@ -1,7 +1,7 @@
 package com.projects.spring.udemy.comment;
 
 import com.projects.spring.udemy.course.dto.CommentWithUserID;
-import com.projects.spring.udemy.course.dto.UploadImage;
+import com.projects.spring.udemy.course.dto.ImageModel;
 import com.projects.spring.udemy.file.AppImageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,10 +44,10 @@ public class CommentController {
     @PostMapping(path = basePath + "/{commentId}/img", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<?> uploadCourseImage(
             @PathVariable Integer commentId,
-            UploadImage uploadImage
+            ImageModel imageModel
     ) {
         logger.info("Image has been added to comment");
-        return appImageService.saveImage(commentId, uploadImage, "comment");
+        return appImageService.saveImage(commentId, imageModel, "comment");
     }
 
     @GetMapping(path = basePath + "/{commentId}/img")

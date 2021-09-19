@@ -4,7 +4,7 @@ import com.projects.spring.udemy.ConfigurationProperties;
 import com.projects.spring.udemy.author.AuthorRepository;
 import com.projects.spring.udemy.comment.CommentRepository;
 import com.projects.spring.udemy.course.CourseRepository;
-import com.projects.spring.udemy.course.dto.UploadImage;
+import com.projects.spring.udemy.course.dto.ImageModel;
 import net.bytebuddy.utility.RandomString;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -42,7 +42,7 @@ public class AppImageService {
     }
 
     @Transactional
-    public ResponseEntity<?> saveImage(Integer id, UploadImage image, String entity) {
+    public ResponseEntity<?> saveImage(Integer id, ImageModel image, String entity) {
         ImageClass target = returnTarget(id, entity);
         if(target == null)
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
