@@ -2,7 +2,7 @@ package com.projects.spring.udemy.course;
 
 import com.projects.spring.udemy.category.Category;
 import com.projects.spring.udemy.comment.Comment;
-import com.projects.spring.udemy.file.AppImage;
+import com.projects.spring.udemy.file.ImageClass;
 import com.projects.spring.udemy.relationship.CourseRating;
 import com.projects.spring.udemy.user.User;
 import org.hibernate.annotations.Formula;
@@ -10,14 +10,11 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "courses")
-public class Course {
+public class Course extends ImageClass {
     @Id
     @GeneratedValue(generator = "inc")
     @GenericGenerator(name = "inc", strategy = "increment")
@@ -31,10 +28,6 @@ public class Course {
    // @Formula("SELECT AVG(cr.rating) FROM course_ratings cr WHERE cr.course_id = course_id")
     //@Transient
     private double averageRating;
-
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "image_id")
-    private AppImage image;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<CourseRating> ratings;
@@ -129,14 +122,6 @@ public class Course {
 
     public void setWillingUsers(Set<User> willingUsers) {
         this.willingUsers = willingUsers;
-    }
-
-    public AppImage getImage() {
-        return image;
-    }
-
-    public void setImage(AppImage image) {
-        this.image = image;
     }
 
     public void addComment(Comment comment) {

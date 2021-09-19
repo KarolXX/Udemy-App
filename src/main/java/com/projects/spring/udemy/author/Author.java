@@ -1,7 +1,7 @@
 package com.projects.spring.udemy.author;
 
 import com.projects.spring.udemy.course.Course;
-import com.projects.spring.udemy.file.AppImage;
+import com.projects.spring.udemy.file.ImageClass;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "authors")
-public class Author {
+public class Author extends ImageClass {
     @Id
     @GeneratedValue(generator = "inc")
     @GenericGenerator(name = "inc", strategy = "increment")
@@ -20,19 +20,16 @@ public class Author {
     private String occupation;
     @NotBlank(message = "Author must have a description")
     private String description;
+    @Transient // to avoid "Unknown column 'average_rating' in 'field list'"
     private Double averageRating;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinTable(
-        name = "author_course",
-        joinColumns = @JoinColumn(name = "author_id"),
-        inverseJoinColumns = @JoinColumn(name = "course_id")
+            name = "author_course",
+            joinColumns = @JoinColumn(name = "author_id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id")
     )
     private Set<Course> courses;
-
-    @OneToOne
-    @JoinColumn(name = "image_id")
-    private AppImage image;
 
     public Author() {
     }
@@ -85,11 +82,4 @@ public class Author {
         this.courses = courses;
     }
 
-    public AppImage getImage() {
-        return image;
-    }
-
-    public void setImage(AppImage image) {
-        this.image = image;
-    }
 }
