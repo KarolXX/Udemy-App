@@ -2,11 +2,11 @@ package com.projects.spring.udemy.course.dto;
 
 import org.springframework.web.multipart.MultipartFile;
 
-public class UploadImage {
+public class ImageModel {
 
     private MultipartFile file;
 
-    public UploadImage() {
+    public ImageModel() {
 
     }
 
