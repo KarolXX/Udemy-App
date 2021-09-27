@@ -7,3 +7,9 @@ spring:
 
   jpa.hibernate:
     ddl-auto: none
+
+keycloak:
+  auth-server-url: 'http://localhost:8180/auth'
+  realm: 'Udemy Management'
+  resource: 'udemy-spring-client'
+  public-client: true
