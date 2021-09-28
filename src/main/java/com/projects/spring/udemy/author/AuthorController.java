@@ -6,9 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import java.net.URI;
 import java.util.List;
 
@@ -33,14 +35,12 @@ public class AuthorController {
         return ResponseEntity.ok(result);
     }
 
+    @RolesAllowed("ROLE_ADMIN")
     @GetMapping
-    ResponseEntity<List<Author>> getAllAuthors(Authentication auth) {
-//        if(auth.getAuthorities().stream().anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"))) {
+    ResponseEntity<List<Author>> getAllAuthors() {
             logger.warn("Exposing authors");
             var result = repository.findAll();
             return ResponseEntity.ok(result);
-//        }
-//        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @PostMapping
