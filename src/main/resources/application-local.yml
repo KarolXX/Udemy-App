@@ -10,6 +10,6 @@ spring:
 
 keycloak:
   auth-server-url: 'http://localhost:8180/auth'
-  realm: 'Udemy Management'
+  realm: 'UdemyManagement'
   resource: 'udemy-spring-client'
   public-client: true

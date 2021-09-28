@@ -4,10 +4,13 @@ import com.projects.spring.udemy.course.dto.ImageModel;
 import com.projects.spring.udemy.file.AppImageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 @CrossOrigin
 @RestController
@@ -28,6 +31,16 @@ public class AuthorController {
         var result = repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("No author with given id"));
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping
+    ResponseEntity<List<Author>> getAllAuthors(Authentication auth) {
+//        if(auth.getAuthorities().stream().anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"))) {
+            logger.warn("Exposing authors");
+            var result = repository.findAll();
+            return ResponseEntity.ok(result);
+//        }
+//        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @PostMapping
