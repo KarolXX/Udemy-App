@@ -45,8 +45,12 @@ public class SecurityConfiguration extends KeycloakWebSecurityConfigurerAdapter 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         super.configure(http);
-        http.authorizeRequests()
-                .anyRequest()
-                .permitAll();
+        //FIXME: csrf should be enabled but
+        // due to the fact that there is no authorization and authentication in my application
+        // I disabled it to be able to POST/PUT/PATCH/DELETE resources
+        http.cors().and().csrf().disable()
+                .authorizeRequests()
+                  .anyRequest()
+                  .permitAll();
     }
 }
