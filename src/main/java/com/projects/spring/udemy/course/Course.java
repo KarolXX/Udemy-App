@@ -2,7 +2,7 @@ package com.projects.spring.udemy.course;
 
 import com.projects.spring.udemy.category.Category;
 import com.projects.spring.udemy.comment.Comment;
-import com.projects.spring.udemy.file.ImageClass;
+import com.projects.spring.udemy.file.FileClass;
 import com.projects.spring.udemy.relationship.CourseRating;
 import com.projects.spring.udemy.user.User;
 import org.hibernate.annotations.Formula;
@@ -14,7 +14,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "courses")
-public class Course extends ImageClass {
+public class Course extends FileClass {
     @Id
     @GeneratedValue(generator = "inc")
     @GenericGenerator(name = "inc", strategy = "increment")

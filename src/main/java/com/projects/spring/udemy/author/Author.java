@@ -1,7 +1,7 @@
 package com.projects.spring.udemy.author;
 
 import com.projects.spring.udemy.course.Course;
-import com.projects.spring.udemy.file.ImageClass;
+import com.projects.spring.udemy.file.FileClass;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "authors")
-public class Author extends ImageClass {
+public class Author extends FileClass {
     @Id
     @GeneratedValue(generator = "inc")
     @GenericGenerator(name = "inc", strategy = "increment")

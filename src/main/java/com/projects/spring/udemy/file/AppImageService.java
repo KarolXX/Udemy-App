@@ -43,7 +43,7 @@ public class AppImageService {
 
     @Transactional
     public ResponseEntity<?> saveImage(Integer id, ImageModel image, String entity) {
-        ImageClass target = returnTarget(id, entity);
+        FileClass target = returnTarget(id, entity);
         if(target == null)
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
@@ -65,9 +65,9 @@ public class AppImageService {
         if (file == null) {
 
         } else {
-            AppImage appImage = new AppImage(file.getAbsolutePath());
-            AppImage savedAppImage = repository.save(appImage);
-            target.setImage(savedAppImage);
+            AppFile appFile = new AppFile(file.getAbsolutePath());
+            AppFile savedAppFile = repository.save(appFile);
+            target.setFile(savedAppFile);
 
             return getImage(id, entity);
         }
@@ -76,14 +76,14 @@ public class AppImageService {
     }
 
     public ResponseEntity<?> getImage(Integer id, String entity) {
-        ImageClass target = returnTarget(id, entity);
+        FileClass target = returnTarget(id, entity);
         if(target == null)
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
-        AppImage targetImage = repository.findById(target.getImage().getImageId())
+        AppFile targetImage = repository.findById(target.getFile().getFileId())
                 .orElseThrow(() -> new IllegalArgumentException("No image"));
 
-        File file = new File(targetImage.getImage());
+        File file = new File(targetImage.getFilePath());
         if(!file.exists()) {
             return ResponseEntity.notFound().build();
         }
@@ -106,7 +106,7 @@ public class AppImageService {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
-    private ImageClass returnTarget(Integer id, String entityName) {
+    private FileClass returnTarget(Integer id, String entityName) {
         switch (entityName) {
             case "course":
                 return courseRepository.findById(id)

@@ -1,21 +1,20 @@
 package com.projects.spring.udemy.file;
 
-import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToOne;
 
 @MappedSuperclass
-public class ImageClass {
+public class FileClass {
     @OneToOne
     @JoinColumn(name = "image_id")
-    private AppImage image;
+    private AppFile file;
 
-    public AppImage getImage() {
-        return image;
+    public AppFile getFile() {
+        return file;
     }
 
-    public void setImage(AppImage image) {
-        this.image = image;
+    public void setFile(AppFile file) {
+        this.file = file;
     }
 }

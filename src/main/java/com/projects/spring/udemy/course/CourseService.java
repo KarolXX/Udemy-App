@@ -70,6 +70,8 @@ public class CourseService {
         Course course = repository.findById(key.getCourseId())
                 .orElseThrow(() -> new IllegalArgumentException("No course with given id"));
 
+        //FIXME: add methods responsible for keeping in-sync both sides of association as it is in Course class: addComment(), removeComment()
+        //EDIT: IDK if this is necessary bcs teacher told when you associate A and B wih join table C then just set A and B in C (it is already done)
         association.setCourse(course);
         association.setUser(user);
 
@@ -111,7 +113,7 @@ public class CourseService {
     public void deleteFile(Integer id) {
         Course course = repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("No course with given id"));
-        course.setImage(null);
+        course.setFile(null);
     }
 
     private String generateUniqueFilename() {

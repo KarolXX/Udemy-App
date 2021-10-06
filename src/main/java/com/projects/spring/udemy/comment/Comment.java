@@ -1,7 +1,7 @@
 package com.projects.spring.udemy.comment;
 
 import com.projects.spring.udemy.course.Course;
-import com.projects.spring.udemy.file.ImageClass;
+import com.projects.spring.udemy.file.FileClass;
 import com.projects.spring.udemy.user.User;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -10,7 +10,7 @@ import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "comments")
-public class Comment extends ImageClass {
+public class Comment extends FileClass {
     @Id
     @GeneratedValue(generator = "inc")
     @GenericGenerator(name = "inc", strategy = "increment")
