@@ -9,6 +9,7 @@ import com.projects.spring.udemy.relationship.CourseRating;
 import com.projects.spring.udemy.relationship.CourseRatingKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -79,7 +80,7 @@ public class CourseController {
     ResponseEntity<?> buyCourse(@RequestBody CourseRatingKey key) {
         logger.warn("Client bought course");
         var result = service.buyCourse(key);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping("/course-rating")
