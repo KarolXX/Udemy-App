@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
 
 @Service
 public class AppImageService {
@@ -69,7 +70,7 @@ public class AppImageService {
             AppFile savedAppFile = repository.save(appFile);
             target.setFile(savedAppFile);
 
-            return getImage(id, entity);
+            return ResponseEntity.created(URI.create("/" + savedAppFile.getFileId())).build();
         }
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
