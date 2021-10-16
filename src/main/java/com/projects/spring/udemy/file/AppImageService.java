@@ -70,7 +70,7 @@ public class AppImageService {
             AppFile savedAppFile = repository.save(appFile);
             target.setFile(savedAppFile);
 
-            return ResponseEntity.created(URI.create("/" + savedAppFile.getFileId())).build();
+            return ResponseEntity.created(URI.create("/" + savedAppFile.getFileId())).build(); //
         }
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
