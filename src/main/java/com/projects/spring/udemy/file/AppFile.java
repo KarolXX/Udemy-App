@@ -15,6 +15,7 @@ public class AppFile {
     @GenericGenerator(name = "inc", strategy = "increment")
     private int fileId;
     private String filePath;
+    private String extension;
 
     public AppFile() {
     }
@@ -37,5 +38,13 @@ public class AppFile {
 
     public void setFilePath(String filePath) {
         this.filePath = filePath;
+    }
+
+    public String getExtension() {
+        return extension;
+    }
+
+    public void setExtension(String extension) {
+        this.extension = extension;
     }
 }

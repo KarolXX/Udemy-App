@@ -107,7 +107,7 @@ public class CourseController {
     }
 
     @PostMapping(value = "/{id}/img", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ResponseEntity<?> uploadFIle(@PathVariable Integer id, ImageModel imageModel) {
+    ResponseEntity<?> uploadFile(@PathVariable Integer id, ImageModel imageModel) {
         logger.info("Uploading course image");
 //        String body = service.saveFile(id, uploadImage);
 //        return ResponseEntity.ok(body);

@@ -6,6 +6,7 @@ import com.projects.spring.udemy.comment.CommentRepository;
 import com.projects.spring.udemy.course.CourseRepository;
 import com.projects.spring.udemy.course.dto.ImageModel;
 import net.bytebuddy.utility.RandomString;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Optional;
 
 @Service
 public class AppImageService {
@@ -66,7 +68,12 @@ public class AppImageService {
         if (file == null) {
 
         } else {
+            String extension = FilenameUtils.getExtension(
+                    image.getFile().getOriginalFilename()
+            );
+
             AppFile appFile = new AppFile(file.getAbsolutePath());
+            appFile.setExtension(extension);
             AppFile savedAppFile = repository.save(appFile);
             target.setImage(savedAppFile);
 
@@ -89,12 +96,16 @@ public class AppImageService {
             return ResponseEntity.notFound().build();
         }
 
+        Optional<String> extension = Optional.ofNullable(targetImage.getExtension());
+        if(!extension.isPresent())
+            extension = Optional.of(".png");
+
         try{
             InputStreamResource isr = new InputStreamResource(
                     new FileInputStream(file)
             );
             HttpHeaders headers = new HttpHeaders();
-            headers.add("Content-Disposition", "attachment; filename=\"xxx.png\"");
+            headers.add("Content-Disposition", "attachment; filename=\"xxx." + extension.get() + "\"");
 
             return ResponseEntity.ok()
                     .headers(headers)
