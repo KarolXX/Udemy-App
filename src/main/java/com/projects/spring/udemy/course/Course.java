@@ -2,6 +2,7 @@ package com.projects.spring.udemy.course;
 
 import com.projects.spring.udemy.category.Category;
 import com.projects.spring.udemy.comment.Comment;
+import com.projects.spring.udemy.file.AppFile;
 import com.projects.spring.udemy.file.ImageClass;
 import com.projects.spring.udemy.relationship.CourseRating;
 import com.projects.spring.udemy.user.User;
@@ -40,6 +41,14 @@ public class Course extends ImageClass {
 
     @ManyToMany(mappedBy = "likedCourses")
     private Set<User> willingUsers;
+
+    @OneToOne
+    @JoinTable(
+            name = "course_video",
+            joinColumns = @JoinColumn(name = "course_id"),
+            inverseJoinColumns = @JoinColumn(name = "file_id")
+    )
+    private AppFile video;
 
     public Course() {
     }
@@ -122,6 +131,14 @@ public class Course extends ImageClass {
 
     public void setWillingUsers(Set<User> willingUsers) {
         this.willingUsers = willingUsers;
+    }
+
+    public AppFile getVideo() {
+        return video;
+    }
+
+    public void setVideo(AppFile video) {
+        this.video = video;
     }
 
     public void addComment(Comment comment) {

@@ -15,27 +15,27 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
     @Query("SELECT course FROM Course course LEFT JOIN FETCH course.ratings WHERE course.courseId = :id")
     Optional<Course> findById(@Param("id") Integer id);
 
-    @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.courseId, c.title, COALESCE ( AVG(cr.rating), 0 ), COUNT(cr.user.userId), c.price, c.promotion, file.filePath) " +
+    @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.courseId, c.title, COALESCE ( AVG(cr.rating), 0 ), COUNT(cr.user.userId), c.price, c.promotion, image.filePath) " +
             "FROM Course c " +
             "LEFT JOIN CourseRating cr ON c.courseId = cr.id.courseId " +
-            "LEFT JOIN c.file file " +
+            "LEFT JOIN c.image image " +
             "GROUP BY c.title")
     List<CourseInMenu> getCourseMenu();
 
-    @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.courseId, c.title, COALESCE ( AVG(r.rating), 0 ), COUNT(r.user.userId), c.price, c.promotion, file.filePath) " +
+    @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.courseId, c.title, COALESCE ( AVG(r.rating), 0 ), COUNT(r.user.userId), c.price, c.promotion, image.filePath) " +
             "FROM Category cat " +
             "JOIN cat.courses c " +
             "LEFT JOIN c.ratings r " +
-            "LEFT JOIN c.file file " +
+            "LEFT JOIN c.image image " +
             "WHERE cat.categoryId = :id " +
             "GROUP BY c.title"
     )
     List<CourseInMenu> getCourseMenuByCategoryId(@Param("id") Integer id);
 
-    @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.courseId, c.title, COALESCE ( AVG(cr.rating), 0 ), COUNT(cr.user.userId), c.price, c.promotion, file.filePath) " +
+    @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.courseId, c.title, COALESCE ( AVG(cr.rating), 0 ), COUNT(cr.user.userId), c.price, c.promotion, image.filePath) " +
             "FROM Course c " +
             "LEFT JOIN CourseRating cr ON c.courseId = cr.id.courseId " +
-            "LEFT JOIN c.file file " +
+            "LEFT JOIN c.image image " +
             "WHERE c.courseId IN (:ids)" +
             "GROUP BY c.title")
     public List<CourseInMenu> getCourseMenuByIdIsIn(@Param("ids") List<Integer> courseIDs);
