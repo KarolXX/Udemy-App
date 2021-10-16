@@ -5,16 +5,16 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToOne;
 
 @MappedSuperclass
-public class FileClass {
+public class ImageClass {
     @OneToOne
     @JoinColumn(name = "image_id")
-    private AppFile file;
+    private AppFile image;
 
-    public AppFile getFile() {
-        return file;
+    public AppFile getImage() {
+        return image;
     }
 
-    public void setFile(AppFile file) {
-        this.file = file;
+    public void setImage(AppFile image) {
+        this.image = image;
     }
 }

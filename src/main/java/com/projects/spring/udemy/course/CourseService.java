@@ -113,7 +113,7 @@ public class CourseService {
     public void deleteFile(Integer id) {
         Course course = repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("No course with given id"));
-        course.setFile(null);
+        course.setImage(null);
     }
 
     private String generateUniqueFilename() {

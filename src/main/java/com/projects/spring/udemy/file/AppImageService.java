@@ -44,7 +44,7 @@ public class AppImageService {
 
     @Transactional
     public ResponseEntity<?> saveImage(Integer id, ImageModel image, String entity) {
-        FileClass target = returnTarget(id, entity);
+        ImageClass target = returnTarget(id, entity);
         if(target == null)
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
@@ -68,7 +68,7 @@ public class AppImageService {
         } else {
             AppFile appFile = new AppFile(file.getAbsolutePath());
             AppFile savedAppFile = repository.save(appFile);
-            target.setFile(savedAppFile);
+            target.setImage(savedAppFile);
 
             return ResponseEntity.created(URI.create("/" + savedAppFile.getFileId())).build(); //
         }
@@ -77,11 +77,11 @@ public class AppImageService {
     }
 
     public ResponseEntity<?> getImage(Integer id, String entity) {
-        FileClass target = returnTarget(id, entity);
+        ImageClass target = returnTarget(id, entity);
         if(target == null)
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
-        AppFile targetImage = repository.findById(target.getFile().getFileId())
+        AppFile targetImage = repository.findById(target.getImage().getFileId())
                 .orElseThrow(() -> new IllegalArgumentException("No image"));
 
         File file = new File(targetImage.getFilePath());
@@ -107,7 +107,7 @@ public class AppImageService {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
-    private FileClass returnTarget(Integer id, String entityName) {
+    private ImageClass returnTarget(Integer id, String entityName) {
         switch (entityName) {
             case "course":
                 return courseRepository.findById(id)
