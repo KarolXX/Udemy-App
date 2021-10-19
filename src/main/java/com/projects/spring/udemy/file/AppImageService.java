@@ -45,7 +45,7 @@ public class AppImageService {
     }
 
     @Transactional
-    public ResponseEntity<?> saveImage(Integer id, ImageModel image, String entity) {
+    public ResponseEntity<?> saveFile(Integer id, ImageModel image, String entity) {
         ImageClass target = returnTarget(id, entity);
         if(target == null)
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -142,6 +142,6 @@ public class AppImageService {
             filename = configuration.getImagesPath() + File.separator + random.nextString();
         }
 
-        return filename + ".png";
+        return filename;
     }
 }

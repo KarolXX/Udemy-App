@@ -47,7 +47,7 @@ public class CommentController {
             ImageModel imageModel
     ) {
         logger.info("Image has been added to comment");
-        return appImageService.saveImage(commentId, imageModel, "comment");
+        return appImageService.saveFile(commentId, imageModel, "comment");
     }
 
     @GetMapping(path = basePath + "/{commentId}/img")

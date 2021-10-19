@@ -107,11 +107,15 @@ public class CourseController {
     }
 
     @PostMapping(value = "/{id}/img", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ResponseEntity<?> uploadFile(@PathVariable Integer id, ImageModel imageModel) {
+    ResponseEntity<?> uploadImage(@PathVariable Integer id, ImageModel imageModel) {
         logger.info("Uploading course image");
-//        String body = service.saveFile(id, uploadImage);
-//        return ResponseEntity.ok(body);
-        return appImageService.saveImage(id, imageModel, "course");
+        return appImageService.saveFile(id, imageModel, "course");
+    }
+
+    @PostMapping(value = "/{id}/video", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ResponseEntity<?> uploadVideo(@PathVariable Integer id, ImageModel imageModel) {
+        logger.info("Uploading course video");
+        return appImageService.saveFile(id, imageModel, "course");
     }
 
     @GetMapping(value = "/{id}/img")

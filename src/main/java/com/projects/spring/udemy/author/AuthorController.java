@@ -4,10 +4,7 @@ import com.projects.spring.udemy.course.dto.ImageModel;
 import com.projects.spring.udemy.file.AppImageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
@@ -53,6 +50,6 @@ public class AuthorController {
     @PutMapping("/{id}")
     ResponseEntity<?> uploadAuthorImage(@PathVariable Integer id, ImageModel imageModel) {
         logger.info("Author's image has been set");
-        return imageService.saveImage(id, imageModel, "author");
+        return imageService.saveFile(id, imageModel, "author");
     }
 }
