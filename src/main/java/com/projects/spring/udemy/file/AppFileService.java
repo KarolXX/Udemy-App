@@ -3,8 +3,9 @@ package com.projects.spring.udemy.file;
 import com.projects.spring.udemy.ConfigurationProperties;
 import com.projects.spring.udemy.author.AuthorRepository;
 import com.projects.spring.udemy.comment.CommentRepository;
+import com.projects.spring.udemy.course.Course;
 import com.projects.spring.udemy.course.CourseRepository;
-import com.projects.spring.udemy.course.dto.ImageModel;
+import com.projects.spring.udemy.course.dto.FileModel;
 import net.bytebuddy.utility.RandomString;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.core.io.InputStreamResource;
@@ -23,15 +24,15 @@ import java.net.URI;
 import java.util.Optional;
 
 @Service
-public class AppImageService {
-    private AppImageRepository repository;
+public class AppFileService {
+    private AppFileRepository repository;
     private CommentRepository commentRepository;
     private CourseRepository courseRepository;
     private AuthorRepository authorRepository;
     private ConfigurationProperties configuration;
 
-    public AppImageService(
-            AppImageRepository repository,
+    public AppFileService(
+            AppFileRepository repository,
             CommentRepository commentRepository,
             CourseRepository courseRepository,
             AuthorRepository authorRepository,
@@ -45,7 +46,7 @@ public class AppImageService {
     }
 
     @Transactional
-    public ResponseEntity<?> saveFile(Integer id, ImageModel image, String entity) {
+    public ResponseEntity<?> saveFile(Integer id, FileModel image, String entity) {
         ImageClass target = returnTarget(id, entity);
         if(target == null)
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -71,11 +72,16 @@ public class AppImageService {
             String extension = FilenameUtils.getExtension(
                     image.getFile().getOriginalFilename()
             );
-
             AppFile appFile = new AppFile(file.getAbsolutePath());
             appFile.setExtension(extension);
             AppFile savedAppFile = repository.save(appFile);
-            target.setImage(savedAppFile);
+
+            if(entity.equals("course") && extension.equals("mkv")) {
+                ((Course) target).setVideo(savedAppFile);
+            }
+            else {
+                target.setImage(savedAppFile);
+            }
 
             return ResponseEntity.created(URI.create("/" + savedAppFile.getFileId())).build();
         }
@@ -83,20 +89,25 @@ public class AppImageService {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
-    public ResponseEntity<?> getImage(Integer id, String entity) {
+    public ResponseEntity<?> getFile(Integer id, String entity, boolean playVideo) {
         ImageClass target = returnTarget(id, entity);
         if(target == null)
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
-        AppFile targetImage = repository.findById(target.getImage().getFileId())
-                .orElseThrow(() -> new IllegalArgumentException("No image"));
+        AppFile targetFile;
+        if(playVideo) {
+            targetFile = repository.findById(((Course) target).getVideo().getFileId()).get();
+        } else {
+            targetFile = repository.findById(target.getImage().getFileId())
+                    .orElseThrow(() -> new IllegalArgumentException("No image"));
+        }
 
-        File file = new File(targetImage.getFilePath());
+        File file = new File(targetFile.getFilePath());
         if(!file.exists()) {
             return ResponseEntity.notFound().build();
         }
 
-        Optional<String> extension = Optional.ofNullable(targetImage.getExtension());
+        Optional<String> extension = Optional.ofNullable(targetFile.getExtension());
         if(!extension.isPresent())
             extension = Optional.of(".png");
 
@@ -105,7 +116,7 @@ public class AppImageService {
                     new FileInputStream(file)
             );
             HttpHeaders headers = new HttpHeaders();
-            headers.add("Content-Disposition", "attachment; filename=\"xxx." + extension.get() + "\"");
+            headers.add("Content-Disposition", "attachment; filename=\"appFile." + extension.get() + "\"");
 
             return ResponseEntity.ok()
                     .headers(headers)

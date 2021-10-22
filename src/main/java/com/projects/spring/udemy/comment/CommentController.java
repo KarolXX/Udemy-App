@@ -1,8 +1,8 @@
 package com.projects.spring.udemy.comment;
 
 import com.projects.spring.udemy.course.dto.CommentWithUserID;
-import com.projects.spring.udemy.course.dto.ImageModel;
-import com.projects.spring.udemy.file.AppImageService;
+import com.projects.spring.udemy.course.dto.FileModel;
+import com.projects.spring.udemy.file.AppFileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -19,13 +19,13 @@ public class CommentController {
     private static final Logger logger = LoggerFactory.getLogger(CommentController.class);
     private CommentService service;
     private CommentRepository repository;
-    private AppImageService appImageService;
+    private AppFileService appFileService;
     private final String basePath = "/courses/{courseId}/comments";
 
-    public CommentController(CommentService service, CommentRepository repository, AppImageService appImageService) {
+    public CommentController(CommentService service, CommentRepository repository, AppFileService appFileService) {
         this.service = service;
         this.repository = repository;
-        this.appImageService = appImageService;
+        this.appFileService = appFileService;
     }
 
     @PostMapping(path = basePath)
@@ -44,16 +44,16 @@ public class CommentController {
     @PostMapping(path = basePath + "/{commentId}/img", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<?> uploadCourseImage(
             @PathVariable Integer commentId,
-            ImageModel imageModel
+            FileModel fileModel
     ) {
         logger.info("Image has been added to comment");
-        return appImageService.saveFile(commentId, imageModel, "comment");
+        return appFileService.saveFile(commentId, fileModel, "comment");
     }
 
     @GetMapping(path = basePath + "/{commentId}/img")
     ResponseEntity<?> getCourseImage(@PathVariable Integer commentId) {
         logger.warn("Exposing comment image");
-        return appImageService.getImage(commentId, "comment");
+        return appFileService.getFile(commentId, "comment", false);
     }
 
     @PutMapping(path = basePath + "/{commentId}")

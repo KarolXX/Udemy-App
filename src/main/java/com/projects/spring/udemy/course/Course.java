@@ -42,7 +42,7 @@ public class Course extends ImageClass {
     @ManyToMany(mappedBy = "likedCourses")
     private Set<User> willingUsers;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinTable(
             name = "course_video",
             joinColumns = @JoinColumn(name = "course_id"),

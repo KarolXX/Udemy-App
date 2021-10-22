@@ -3,8 +3,8 @@ package com.projects.spring.udemy.course;
 import com.projects.spring.udemy.ConfigurationProperties;
 import com.projects.spring.udemy.course.dto.CourseInMenu;
 import com.projects.spring.udemy.course.dto.SingleCourseModel;
-import com.projects.spring.udemy.course.dto.ImageModel;
-import com.projects.spring.udemy.file.AppImageService;
+import com.projects.spring.udemy.course.dto.FileModel;
+import com.projects.spring.udemy.file.AppFileService;
 import com.projects.spring.udemy.relationship.CourseRating;
 import com.projects.spring.udemy.relationship.CourseRatingKey;
 import org.slf4j.Logger;
@@ -24,18 +24,18 @@ public class CourseController {
     private static final Logger logger = LoggerFactory.getLogger(CourseController.class);
     private CourseRepository repository;
     private CourseService service;
-    private AppImageService appImageService;
+    private AppFileService appFileService;
     private ConfigurationProperties configuration;
 
     public CourseController(
             CourseRepository repository,
             CourseService service,
-            AppImageService appImageService,
+            AppFileService appFileService,
             ConfigurationProperties configuration
     ) {
         this.repository = repository;
         this.service = service;
-        this.appImageService = appImageService;
+        this.appFileService = appFileService;
         this.configuration = configuration;
     }
 
@@ -106,21 +106,21 @@ public class CourseController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping(value = "/{id}/img", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ResponseEntity<?> uploadImage(@PathVariable Integer id, ImageModel imageModel) {
+    @PostMapping(value = "/{id}/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ResponseEntity<?> uploadFile(@PathVariable Integer id, FileModel fileModel) {
         logger.info("Uploading course image");
-        return appImageService.saveFile(id, imageModel, "course");
-    }
-
-    @PostMapping(value = "/{id}/video", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ResponseEntity<?> uploadVideo(@PathVariable Integer id, ImageModel imageModel) {
-        logger.info("Uploading course video");
-        return appImageService.saveFile(id, imageModel, "course");
+        return appFileService.saveFile(id, fileModel, "course");
     }
 
     @GetMapping(value = "/{id}/img")
     ResponseEntity<?> getCourseImage(@PathVariable Integer id) {
         logger.warn("Exposing course image");
-        return appImageService.getImage(id, "course");
+        return appFileService.getFile(id, "course", false);
+    }
+
+    @GetMapping(value = "/{id}/video")
+    ResponseEntity<?> getCourseVideo(@PathVariable Integer id) {
+        logger.warn("Exposing course video");
+        return appFileService.getFile(id, "course", true);
     }
 }
