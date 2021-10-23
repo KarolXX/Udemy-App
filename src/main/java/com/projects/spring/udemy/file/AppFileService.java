@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -76,12 +77,17 @@ public class AppFileService {
             appFile.setExtension(extension);
             AppFile savedAppFile = repository.save(appFile);
 
-            if(entity.equals("course") && extension.equals("mkv")) {
+            boolean isVideo = false;
+            if(entity.equals("course")) {
+                List<String> videoExtensions = configuration.getVideoExtensions();
+                isVideo = videoExtensions.stream()
+                        .anyMatch(videoExt -> videoExt.equals(extension));
+            }
+
+            if(isVideo)
                 ((Course) target).setVideo(savedAppFile);
-            }
-            else {
+            else
                 target.setImage(savedAppFile);
-            }
 
             return ResponseEntity.created(URI.create("/" + savedAppFile.getFileId())).build();
         }
