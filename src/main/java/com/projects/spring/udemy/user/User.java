@@ -18,6 +18,7 @@ public class User {
     private int userId;
     @NotBlank(message = "Add username!")
     private String name;
+    private int budget;
 
     @OneToMany(mappedBy = "user")
     private Set<CourseRating> ratings;
@@ -47,6 +48,14 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getBudget() {
+        return budget;
+    }
+
+    public void setBudget(int budget) {
+        this.budget = budget;
     }
 
     Set<CourseRating> getRatings() {

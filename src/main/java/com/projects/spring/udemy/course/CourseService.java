@@ -1,6 +1,8 @@
 package com.projects.spring.udemy.course;
 
 import com.projects.spring.udemy.ConfigurationProperties;
+import com.projects.spring.udemy.author.Author;
+import com.projects.spring.udemy.author.AuthorRepository;
 import com.projects.spring.udemy.course.dto.CourseInMenu;
 import com.projects.spring.udemy.course.dto.SingleCourseModel;
 import com.projects.spring.udemy.relationship.CourseRating;
@@ -9,6 +11,8 @@ import com.projects.spring.udemy.relationship.CourseRatingRepository;
 import com.projects.spring.udemy.user.User;
 import com.projects.spring.udemy.user.UserRepository;
 import net.bytebuddy.utility.RandomString;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,12 +25,14 @@ public class CourseService {
     private CourseRepository repository;
     private UserRepository userRepository;
     private CourseRatingRepository ratingRepository;
+    private AuthorRepository authorRepository;
     private ConfigurationProperties configuration;
 
-    public CourseService(CourseRepository repository, UserRepository userRepository, CourseRatingRepository ratingRepository, ConfigurationProperties configuration) {
+    public CourseService(CourseRepository repository, UserRepository userRepository, CourseRatingRepository ratingRepository, AuthorRepository authorRepository, ConfigurationProperties configuration) {
         this.repository = repository;
         this.userRepository = userRepository;
         this.ratingRepository = ratingRepository;
+        this.authorRepository = authorRepository;
         this.configuration = configuration;
     }
 
@@ -42,11 +48,10 @@ public class CourseService {
                 .stream()
                 .filter(rating -> rating.getId().getUserId() == userId)
                 .findFirst();
-        if(userRateExists.isEmpty()) {
+        if (userRateExists.isEmpty()) {
             boughtCourse = false;
             userRate = null;
-        }
-        else {
+        } else {
             boughtCourse = true;
             userRate = userRateExists.stream()
                     .map(CourseRating::getRating)
@@ -54,7 +59,7 @@ public class CourseService {
                     .findFirst();
         }
 
-        Optional<User> willingUser  = target.getWillingUsers()
+        Optional<User> willingUser = target.getWillingUsers()
                 .stream().filter(user -> user.getUserId() == userId)
                 .findFirst();
         boolean isCourseLiked = willingUser.isPresent();
@@ -62,7 +67,8 @@ public class CourseService {
         return new SingleCourseModel(target, boughtCourse, userRate, isCourseLiked, usersNumber);
     }
 
-    public CourseRating buyCourse(CourseRatingKey key) {
+    @Transactional
+    public ResponseEntity<?> buyCourse(CourseRatingKey key) {
         CourseRating association = new CourseRating(key);
 
         User user = userRepository.findById(key.getUserId())
@@ -70,12 +76,30 @@ public class CourseService {
         Course course = repository.findById(key.getCourseId())
                 .orElseThrow(() -> new IllegalArgumentException("No course with given id"));
 
+        //check if user has enough money
+        int sum = 0;
+        if (course.getPromotion() != null)
+            sum = course.getPromotion();
+        else
+            sum = course.getPrice();
+        if(user.getBudget() < sum)
+            return ResponseEntity.ok("Not enough funds on the account");
+
         //FIXME: add methods responsible for keeping in-sync both sides of association as it is in Course class: addComment(), removeComment()
         //EDIT: IDK if this is necessary bcs teacher told when you associate A and B wih join table C then just set A and B in C (it is already done)
         association.setCourse(course);
         association.setUser(user);
 
-        return ratingRepository.save(association);
+        if (course.getPrice() != 0) {
+            Optional<Author> author = authorRepository.findCourseAuthorByCourseId(course.getId());
+            if(author.isPresent()) {
+                author.get().setBudget(author.get().getBudget() + sum);
+                user.setBudget(user.getBudget() - sum);
+            }
+        }
+
+        ratingRepository.save(association);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @Transactional
@@ -97,12 +121,12 @@ public class CourseService {
         List<Integer> courseIDs = new ArrayList<>();
         source.stream().map(courseRating -> {
             Integer courseId = courseRating.getId().getCourseId();
-            if(courseIDs.contains(courseId) || courseId.equals(targetCourseId))
+            if (courseIDs.contains(courseId) || courseId.equals(targetCourseId))
                 return null;
             else
                 return courseId;
         }).forEach(courseId -> {
-            if(courseId!= null)
+            if (courseId != null)
                 courseIDs.add(courseId);
         });
 
@@ -120,7 +144,7 @@ public class CourseService {
         RandomString random = new RandomString(64);
         String filename = null;
 
-        while(filename == null || new File(configuration.getImagesPath() + File.separator + filename).exists()) {
+        while (filename == null || new File(configuration.getImagesPath() + File.separator + filename).exists()) {
             filename = configuration.getImagesPath() + File.separator + random.nextString();
         }
 

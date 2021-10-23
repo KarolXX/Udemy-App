@@ -22,6 +22,7 @@ public class Author extends ImageClass {
     private String description;
     @Transient // to avoid "Unknown column 'average_rating' in 'field list'"
     private Double averageRating;
+    private int budget;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinTable(
@@ -72,6 +73,14 @@ public class Author extends ImageClass {
 
     public void setAverageRating(Double averageRating) {
         this.averageRating = averageRating;
+    }
+
+    public int getBudget() {
+        return budget;
+    }
+
+    public void setBudget(int budget) {
+        this.budget = budget;
     }
 
     public Set<Course> getCourses() {
