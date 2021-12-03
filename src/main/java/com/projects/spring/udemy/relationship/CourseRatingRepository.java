@@ -8,4 +8,6 @@ import java.util.List;
 @Repository
 public interface CourseRatingRepository extends JpaRepository<CourseRating, CourseRatingKey> {
     List<CourseRating> findCourseRatingsById_UserIdIsIn(List<Integer> id);
+
+    Boolean existsById_CourseIdAndId_UserId(Integer courseId, Integer userId);
 }
