@@ -1,6 +1,8 @@
 package com.projects.spring.udemy.course;
 
 import com.projects.spring.udemy.course.dto.CourseInMenu;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,6 +23,14 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
             "LEFT JOIN c.image image " +
             "GROUP BY c.title")
     List<CourseInMenu> getCourseMenu();
+
+    @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.courseId, c.title, COALESCE ( AVG(cr.rating), 0 ), COUNT(cr.user.userId), c.price, c.promotion, image.filePath) " +
+            "FROM Course c " +
+            "LEFT JOIN CourseRating cr ON c.courseId = cr.id.courseId " +
+            "LEFT JOIN c.image image " +
+            "GROUP BY c.title"
+    )
+    Page<CourseInMenu> getCourseMenu(Pageable pageable);
 
     @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.courseId, c.title, COALESCE ( AVG(r.rating), 0 ), COUNT(r.user.userId), c.price, c.promotion, image.filePath) " +
             "FROM Category cat " +

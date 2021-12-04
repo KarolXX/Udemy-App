@@ -9,9 +9,11 @@ import com.projects.spring.udemy.relationship.CourseRating;
 import com.projects.spring.udemy.relationship.CourseRatingKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -39,10 +41,25 @@ public class CourseController {
         this.configuration = configuration;
     }
 
-    @GetMapping
-    ResponseEntity<List<CourseInMenu>> getAllCourses() {
+//    @Transactional
+//    @GetMapping(path = "/test")
+//    ResponseEntity<Course> setCourseAverageRating() {
+//        Course result = repository.findById(5).get();
+//        result.setAverageRating(1.0);
+//        return ResponseEntity.ok(result);
+//    }
+
+    @GetMapping(params = {"!sort", "!page", "!size"})
+    ResponseEntity<?> getAllCourses() {
         logger.warn("Exposing all the courses!");
         var result = repository.getCourseMenu();
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping
+    ResponseEntity<?> getAllCourses(Pageable pageable) {
+        logger.warn("Exposing all the courses!");
+        var result = repository.getCourseMenu(pageable);
         return ResponseEntity.ok(result);
     }
 
