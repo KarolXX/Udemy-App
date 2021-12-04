@@ -83,7 +83,7 @@ public class CourseService {
         else
             sum = course.getPrice();
         if(user.getBudget() < sum)
-            return ResponseEntity.ok("Not enough funds on the account");
+            return ResponseEntity.ok("Not enough founds on the account");
 
         //FIXME: add methods responsible for keeping in-sync both sides of association as it is in Course class: addComment(), removeComment()
         //EDIT: IDK if this is necessary bcs teacher told when you associate A and B wih join table C then just set A and B in C (it is already done)
@@ -112,7 +112,7 @@ public class CourseService {
 
     public List<CourseInMenu> getOtherParticipantsCourses(Integer targetCourseId, Integer userId) {
         Course targetCourse = repository.findById(targetCourseId)
-                .orElseThrow(() -> new IllegalArgumentException("No ciurse with given id"));
+                .orElseThrow(() -> new IllegalArgumentException("No course with given id"));
         List<Integer> userIDs = targetCourse.getRatings()
                 .stream().map(rate -> rate.getId().getUserId())
                 .collect(Collectors.toList());
