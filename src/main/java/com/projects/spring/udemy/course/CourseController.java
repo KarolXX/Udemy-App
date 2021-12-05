@@ -53,13 +53,14 @@ public class CourseController {
     ResponseEntity<?> getAllCourses() {
         logger.warn("Exposing all the courses!");
         var result = repository.getCourseMenu();
+//        var result = service.getMenu(pageable);
         return ResponseEntity.ok(result);
     }
 
     @GetMapping
     ResponseEntity<?> getAllCourses(Pageable pageable) {
         logger.warn("Exposing all the courses!");
-        var result = repository.getCourseMenu(pageable);
+        var result = service.getMenu(pageable);
         return ResponseEntity.ok(result);
     }
 

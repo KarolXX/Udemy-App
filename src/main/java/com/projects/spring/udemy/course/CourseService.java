@@ -3,6 +3,7 @@ package com.projects.spring.udemy.course;
 import com.projects.spring.udemy.ConfigurationProperties;
 import com.projects.spring.udemy.author.Author;
 import com.projects.spring.udemy.author.AuthorRepository;
+import com.projects.spring.udemy.course.comparator.CourseInMenuComparator;
 import com.projects.spring.udemy.course.dto.CourseInMenu;
 import com.projects.spring.udemy.course.dto.SingleCourseModel;
 import com.projects.spring.udemy.relationship.CourseRating;
@@ -11,6 +12,9 @@ import com.projects.spring.udemy.relationship.CourseRatingRepository;
 import com.projects.spring.udemy.user.User;
 import com.projects.spring.udemy.user.UserRepository;
 import net.bytebuddy.utility.RandomString;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -65,6 +69,13 @@ public class CourseService {
         boolean isCourseLiked = willingUser.isPresent();
 
         return new SingleCourseModel(target, boughtCourse, userRate, isCourseLiked, usersNumber);
+    }
+
+    public Page<CourseInMenu> getMenu(Pageable pageable) {
+        List<CourseInMenu> courses = repository.getCourseMenu(pageable)
+                .stream().sorted(new CourseInMenuComparator().reversed())
+                .collect(Collectors.toList());
+        return new PageImpl<>(courses);
     }
 
     @Transactional

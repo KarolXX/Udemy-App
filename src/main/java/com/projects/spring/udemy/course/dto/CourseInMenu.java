@@ -4,6 +4,7 @@ import com.projects.spring.udemy.category.Category;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public class CourseInMenu {
@@ -14,6 +15,9 @@ public class CourseInMenu {
     private int price;
     private Integer promotion;
     private String image;
+    // this field determines the order in which the course is displayed.
+    // The higher the value, the faster it is displayed to the user
+    private double order;
 
     public CourseInMenu(int id, String title, double averageRating, long usersNumber, int price, Integer promotion, String image) {
         this.id = id;
@@ -23,6 +27,11 @@ public class CourseInMenu {
         this.price = price;
         this.promotion = promotion;
         this.image = image;
+        this.order = averageRating * usersNumber / (Optional.ofNullable(promotion).isPresent() ?
+                promotion
+                :
+                (price == 0 ? 30 : price)
+        );
     }
 
     public int getId() {
@@ -79,5 +88,13 @@ public class CourseInMenu {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public double getOrder() {
+        return order;
+    }
+
+    public void setOrder(double order) {
+        this.order = order;
     }
 }
