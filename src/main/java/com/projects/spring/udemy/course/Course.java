@@ -25,10 +25,10 @@ public class Course extends ImageClass {
     private String description;
     private int price;
     private Integer promotion;
-    @Formula("( SELECT COALESCE( AVG(cr.rating), 0 ) FROM course_ratings cr WHERE cr.course_id = course_id )")
+//    @Formula("( SELECT COALESCE( AVG(cr.rating), 0 ) FROM course_ratings cr WHERE cr.course_id = course_id )")
    // @Formula("SELECT AVG(cr.rating) FROM course_ratings cr WHERE cr.course_id = course_id")
     //@Transient
-    private double averageRating;
+    private Double averageRating;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<CourseRating> ratings;

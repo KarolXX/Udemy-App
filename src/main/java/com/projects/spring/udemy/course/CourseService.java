@@ -118,6 +118,8 @@ public class CourseService {
         CourseRating association = ratingRepository.findById(source.getId())
                 .orElseThrow(() -> new IllegalArgumentException("This course or user is not available"));
         association.setRating(source.getRating());
+        int targetCourseId = source.getId().getCourseId();
+        repository.updateCourseAverageRating(targetCourseId);
         return association.getRating();
     }
 

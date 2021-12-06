@@ -4,6 +4,7 @@ import com.projects.spring.udemy.course.dto.CourseInMenu;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -24,7 +25,11 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
             "GROUP BY c.title")
     List<CourseInMenu> getCourseMenu();
 
-    @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.courseId, c.title, COALESCE ( AVG(cr.rating), 0 ), COUNT(cr.user.userId), c.price, c.promotion, image.filePath) " +
+    @Modifying
+    @Query("UPDATE Course c set c.averageRating = ( SELECT COALESCE( AVG(cr.rating), 0 ) FROM CourseRating cr WHERE cr.id.courseId = :courseId ) WHERE c.courseId = :courseId")
+    void updateCourseAverageRating(@Param("courseId") Integer courseId);
+
+    @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.courseId, c.title, c.averageRating, COUNT(cr.user.userId), c.price, c.promotion, image.filePath) " +
             "FROM Course c " +
             "LEFT JOIN CourseRating cr ON c.courseId = cr.id.courseId " +
             "LEFT JOIN c.image image " +
