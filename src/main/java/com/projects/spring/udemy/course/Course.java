@@ -29,6 +29,10 @@ public class Course extends ImageClass {
    // @Formula("SELECT AVG(cr.rating) FROM course_ratings cr WHERE cr.course_id = course_id")
     //@Transient
     private Double averageRating;
+    private Integer usersNumber;
+    // this field determines the order in which the course is displayed.
+    // The higher the value, the faster it is displayed to the user
+    private Double sequence;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<CourseRating> ratings;
@@ -109,14 +113,6 @@ public class Course extends ImageClass {
         this.promotion = promotion;
     }
 
-    public double getAverageRating() {
-        return averageRating;
-    }
-
-    public void setAverageRating(double averageRating) {
-        this.averageRating = averageRating;
-    }
-
     public Set<Comment> getComments() {
         return comments;
     }
@@ -139,6 +135,30 @@ public class Course extends ImageClass {
 
     public void setVideo(AppFile video) {
         this.video = video;
+    }
+
+    public Integer getUsersNumber() {
+        return usersNumber;
+    }
+
+    public void setUsersNumber(Integer usersNumber) {
+        this.usersNumber = usersNumber;
+    }
+
+    public Double getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(Double averageRating) {
+        this.averageRating = averageRating;
+    }
+
+    public Double getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(Double sequence) {
+        this.sequence = sequence;
     }
 
     public void addComment(Comment comment) {
