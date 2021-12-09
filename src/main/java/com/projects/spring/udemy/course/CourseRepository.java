@@ -18,7 +18,7 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
     @Query("SELECT course FROM Course course LEFT JOIN FETCH course.ratings WHERE course.courseId = :id")
     Optional<Course> findById(@Param("id") Integer id);
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("UPDATE Course c set c.averageRating = ( SELECT COALESCE( AVG(cr.rating), 0 ) FROM CourseRating cr WHERE cr.id.courseId = :courseId ) WHERE c.courseId = :courseId")
     void updateCourseAverageRating(@Param("courseId") Integer courseId);
 
