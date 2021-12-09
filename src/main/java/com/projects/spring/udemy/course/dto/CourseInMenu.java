@@ -10,16 +10,14 @@ import java.util.Set;
 public class CourseInMenu {
     private int id;
     private String title;
-    private double averageRating;
-    private long usersNumber;
+    private Double averageRating;
+    private Integer usersNumber;
     private int price;
     private Integer promotion;
     private String image;
-    // this field determines the order in which the course is displayed.
-    // The higher the value, the faster it is displayed to the user
-    private double order;
+    private Double sequence;
 
-    public CourseInMenu(int id, String title, double averageRating, long usersNumber, int price, Integer promotion, String image) {
+    public CourseInMenu(int id, String title, Double averageRating, Integer usersNumber, int price, Integer promotion, String image, Double sequence) {
         this.id = id;
         this.title = title;
         this.averageRating = averageRating;
@@ -27,11 +25,7 @@ public class CourseInMenu {
         this.price = price;
         this.promotion = promotion;
         this.image = image;
-        this.order = averageRating * usersNumber / (Optional.ofNullable(promotion).isPresent() ?
-                promotion
-                :
-                (price == 0 ? 30 : price)
-        );
+        this.sequence = sequence;
     }
 
     public int getId() {
@@ -58,14 +52,6 @@ public class CourseInMenu {
         this.averageRating = averageRating;
     }
 
-    public long getUsersNumber() {
-        return usersNumber;
-    }
-
-    public void setUsersNumber(long usersNumber) {
-        this.usersNumber = usersNumber;
-    }
-
     public int getPrice() {
         return price;
     }
@@ -90,11 +76,15 @@ public class CourseInMenu {
         this.image = image;
     }
 
-    public double getOrder() {
-        return order;
+    public void setAverageRating(Double averageRating) {
+        this.averageRating = averageRating;
     }
 
-    public void setOrder(double order) {
-        this.order = order;
+    public Double getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(Double sequence) {
+        this.sequence = sequence;
     }
 }

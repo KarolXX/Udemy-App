@@ -18,26 +18,27 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
     @Query("SELECT course FROM Course course LEFT JOIN FETCH course.ratings WHERE course.courseId = :id")
     Optional<Course> findById(@Param("id") Integer id);
 
-    @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.courseId, c.title, COALESCE ( AVG(cr.rating), 0 ), COUNT(cr.user.userId), c.price, c.promotion, image.filePath) " +
+    @Modifying
+    @Query("UPDATE Course c set c.averageRating = ( SELECT COALESCE( AVG(cr.rating), 0 ) FROM CourseRating cr WHERE cr.id.courseId = :courseId ) WHERE c.courseId = :courseId")
+    void updateCourseAverageRating(@Param("courseId") Integer courseId);
+
+    @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.courseId, c.title, c.averageRating, c.usersNumber, c.price, c.promotion, image.filePath, c.sequence) " +
             "FROM Course c " +
             "LEFT JOIN CourseRating cr ON c.courseId = cr.id.courseId " +
             "LEFT JOIN c.image image " +
             "GROUP BY c.title")
     List<CourseInMenu> getCourseMenu();
 
-    @Modifying
-    @Query("UPDATE Course c set c.averageRating = ( SELECT COALESCE( AVG(cr.rating), 0 ) FROM CourseRating cr WHERE cr.id.courseId = :courseId ) WHERE c.courseId = :courseId")
-    void updateCourseAverageRating(@Param("courseId") Integer courseId);
-
-    @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.courseId, c.title, c.averageRating, COUNT(cr.user.userId), c.price, c.promotion, image.filePath) " +
+    @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.courseId, c.title, c.averageRating, c.usersNumber, c.price, c.promotion, image.filePath, c.sequence) " +
             "FROM Course c " +
             "LEFT JOIN CourseRating cr ON c.courseId = cr.id.courseId " +
             "LEFT JOIN c.image image " +
-            "GROUP BY c.title"
+            "GROUP BY c.title " +
+            "ORDER BY c.sequence DESC"
     )
-    Page<CourseInMenu> getCourseMenu(Pageable pageable);
+    Page<Course> getCourseMenu(Pageable pageable);
 
-    @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.courseId, c.title, COALESCE ( AVG(r.rating), 0 ), COUNT(r.user.userId), c.price, c.promotion, image.filePath) " +
+    @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.courseId, c.title, c.averageRating, c.usersNumber, c.price, c.promotion, image.filePath, c.sequence) " +
             "FROM Category cat " +
             "JOIN cat.courses c " +
             "LEFT JOIN c.ratings r " +
@@ -47,7 +48,7 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
     )
     List<CourseInMenu> getCourseMenuByCategoryId(@Param("id") Integer id);
 
-    @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.courseId, c.title, COALESCE ( AVG(cr.rating), 0 ), COUNT(cr.user.userId), c.price, c.promotion, image.filePath) " +
+    @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.courseId, c.title, c.averageRating, c.usersNumber, c.price, c.promotion, image.filePath, c.sequence) " +
             "FROM Course c " +
             "LEFT JOIN CourseRating cr ON c.courseId = cr.id.courseId " +
             "LEFT JOIN c.image image " +

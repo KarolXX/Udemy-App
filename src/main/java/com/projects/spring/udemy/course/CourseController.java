@@ -60,7 +60,7 @@ public class CourseController {
     @GetMapping
     ResponseEntity<?> getAllCourses(Pageable pageable) {
         logger.warn("Exposing all the courses!");
-        var result = service.getMenu(pageable);
+        var result = repository.getCourseMenu(pageable);
         return ResponseEntity.ok(result);
     }
 
@@ -109,6 +109,13 @@ public class CourseController {
         return ResponseEntity.ok(result);
     }
 
+    @PutMapping(value = "/price/{courseId}", params = "type")
+    ResponseEntity<?> setPrice(@RequestBody Integer price, @PathVariable Integer courseId, @RequestParam("type") String type) {
+        logger.info("Course price/promotion changed");
+        service.setPrice(price, courseId, type);
+        return ResponseEntity.noContent().build();
+    }
+
     @DeleteMapping("/{courseId}")
     ResponseEntity<?> deleteCourse(@PathVariable Integer courseId) {
         logger.warn("Course has been deleted");
@@ -123,6 +130,8 @@ public class CourseController {
         return ResponseEntity.noContent().build();
     }
 
+
+    // files
     @PostMapping(value = "/{id}/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<?> uploadFile(@PathVariable Integer id, FileModel fileModel) {
         logger.info("Uploading course image/video");
