@@ -5,6 +5,7 @@ import com.projects.spring.udemy.author.Author;
 import com.projects.spring.udemy.author.AuthorRepository;
 import com.projects.spring.udemy.course.dto.CourseInMenu;
 import com.projects.spring.udemy.course.dto.SingleCourseModel;
+import com.projects.spring.udemy.course.dto.UpdatedCourse;
 import com.projects.spring.udemy.course.event.CourseOrderChangedEvent;
 import com.projects.spring.udemy.relationship.CourseRating;
 import com.projects.spring.udemy.relationship.CourseRatingKey;
@@ -12,6 +13,9 @@ import com.projects.spring.udemy.relationship.CourseRatingRepository;
 import com.projects.spring.udemy.user.User;
 import com.projects.spring.udemy.user.UserRepository;
 import net.bytebuddy.utility.RandomString;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.Provider;
+import org.modelmapper.TypeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
@@ -35,6 +39,7 @@ public class CourseService {
     private AuthorRepository authorRepository;
     private ConfigurationProperties configuration;
 
+    private ModelMapper modelMapper;
     private ApplicationEventPublisher eventPublisher;
 
     private static final Logger logger = LoggerFactory.getLogger(CourseService.class);
@@ -45,6 +50,7 @@ public class CourseService {
             CourseRatingRepository ratingRepository,
             AuthorRepository authorRepository,
             ConfigurationProperties configuration,
+            ModelMapper modelMapper,
             ApplicationEventPublisher eventPublisher
     ) {
         this.repository = repository;
@@ -52,6 +58,7 @@ public class CourseService {
         this.ratingRepository = ratingRepository;
         this.authorRepository = authorRepository;
         this.configuration = configuration;
+        this.modelMapper = modelMapper;
         this.eventPublisher = eventPublisher;
     }
 
@@ -155,17 +162,23 @@ public class CourseService {
         return newSource.getRating();
     }
 
-    @Transactional
-    public void setPrice(Integer value, Integer courseId, String type) {
-        Course target = repository.findById(courseId)
-                .orElseThrow(() -> new IllegalArgumentException("No such course"));
-        if(type.equals("promotion"))
-            target.setPromotion(value);
-        else
-            target.setPrice(value);
+    //@Transactional
+    Course updateCourse(UpdatedCourse updatedCourse, Integer courseId) {
+        TypeMap<UpdatedCourse, Course> propertyMapper = modelMapper.getTypeMap(UpdatedCourse.class, Course.class);
+        if(propertyMapper == null)
+                propertyMapper = modelMapper.createTypeMap(UpdatedCourse.class, Course.class);
 
-        eventPublisher.publishEvent(
-                new CourseOrderChangedEvent(courseId)
+        // provide course that should be modified to modelMapper
+        Provider<Course> targetProvider = p -> repository.findById(courseId)
+                .orElseThrow(() -> new IllegalArgumentException("No course with given id"));
+        propertyMapper.setProvider(targetProvider);
+
+        // skip mapping if property value is null
+        modelMapper.getConfiguration().setSkipNullEnabled(true);
+
+        // reflect changes in db and return updated entity
+        return repository.save(
+                modelMapper.map(updatedCourse, Course.class)
         );
     }
 
@@ -231,6 +244,5 @@ public class CourseService {
 
         return filename;
     }
-
 
 }

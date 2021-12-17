@@ -4,6 +4,7 @@ import com.projects.spring.udemy.ConfigurationProperties;
 import com.projects.spring.udemy.course.dto.CourseInMenu;
 import com.projects.spring.udemy.course.dto.SingleCourseModel;
 import com.projects.spring.udemy.course.dto.FileModel;
+import com.projects.spring.udemy.course.dto.UpdatedCourse;
 import com.projects.spring.udemy.file.AppFileService;
 import com.projects.spring.udemy.relationship.CourseRating;
 import com.projects.spring.udemy.relationship.CourseRatingKey;
@@ -109,11 +110,11 @@ public class CourseController {
         return ResponseEntity.ok(result);
     }
 
-    @PutMapping(value = "/price/{courseId}", params = "type")
-    ResponseEntity<?> setPrice(@RequestBody Integer price, @PathVariable Integer courseId, @RequestParam("type") String type) {
-        logger.info("Course price/promotion changed");
-        service.setPrice(price, courseId, type);
-        return ResponseEntity.noContent().build();
+    @PatchMapping(value = "/updating/{courseId}")
+    ResponseEntity<?> setPrice(@RequestBody UpdatedCourse updatedCourse, @PathVariable Integer courseId) {
+        logger.info("Course updated");
+        var result = service.updateCourse(updatedCourse, courseId);
+        return ResponseEntity.ok(result);
     }
 
     @DeleteMapping("/{courseId}")
