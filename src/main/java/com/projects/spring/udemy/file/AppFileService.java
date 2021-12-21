@@ -48,6 +48,7 @@ public class AppFileService {
 
     @Transactional
     public ResponseEntity<?> saveFile(Integer id, FileModel image, String entity) {
+//        String mimeType = image.getFile().getContentType();
         ImageClass target = returnTarget(id, entity);
         if(target == null)
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -102,7 +103,8 @@ public class AppFileService {
 
         AppFile targetFile;
         if(playVideo) {
-            targetFile = repository.findById(((Course) target).getVideo().getFileId()).get();
+            targetFile = repository.findById(((Course) target).getVideo().getFileId())
+                    .orElseThrow(() -> new IllegalArgumentException("No video"));
         } else {
             targetFile = repository.findById(target.getImage().getFileId())
                     .orElseThrow(() -> new IllegalArgumentException("No image"));

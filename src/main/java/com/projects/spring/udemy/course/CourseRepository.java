@@ -54,5 +54,5 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
             "LEFT JOIN c.image image " +
             "WHERE c.courseId IN (:ids)" +
             "GROUP BY c.title")
-    public List<CourseInMenu> getCourseMenuByIdIsIn(@Param("ids") List<Integer> courseIDs);
+    List<CourseInMenu> getCourseMenuByIdIsIn(@Param("ids") List<Integer> courseIDs);
 }
