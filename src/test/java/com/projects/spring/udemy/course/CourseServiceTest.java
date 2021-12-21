@@ -1,7 +1,5 @@
 package com.projects.spring.udemy.course;
 
-import com.projects.spring.udemy.comment.Comment;
-import com.projects.spring.udemy.comment.CommentRepository;
 import com.projects.spring.udemy.relationship.CourseRating;
 import com.projects.spring.udemy.relationship.CourseRatingKey;
 import org.junit.jupiter.api.DisplayName;
@@ -9,13 +7,11 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 import java.util.Optional;
-import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
