@@ -41,7 +41,7 @@ public class UserController {
     }
 
     // FIXME Get method should not have Request body
-    // I marked it as POST on quickly ;p
+    // I marked it as POST on quickly
     @PostMapping("/{id}")
     ResponseEntity<?> logIn(@RequestBody LoginForm loginForm) {
         logger.info("Signing in");
