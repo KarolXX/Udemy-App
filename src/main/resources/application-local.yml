@@ -12,4 +12,5 @@ keycloak:
   auth-server-url: 'http://localhost:8180/auth'
   realm: 'UdemyManagement'
   resource: 'udemy-spring-client'
-  public-client: true
+  credentials:
+    secret: 'c80fea20-23e9-4c74-96c4-6a9bc17f990e'
