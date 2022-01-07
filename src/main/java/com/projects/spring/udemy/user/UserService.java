@@ -21,7 +21,7 @@ public class UserService {
         this.courseRepository = courseRepository;
     }
 
-    Optional<User> createUser(User source) {
+    public Optional<User> createUser(User source) {
         Optional<User> existingUser = repository.findAll()
                 .stream()
                 .filter(user -> user.getName().equals(source.getName()))

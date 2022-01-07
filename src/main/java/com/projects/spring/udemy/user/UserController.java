@@ -1,17 +1,14 @@
 package com.projects.spring.udemy.user;
 
 import com.projects.spring.udemy.course.dto.CourseInMenu;
-import com.projects.spring.udemy.user.dto.LoginForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 @CrossOrigin
 @RestController
@@ -38,28 +35,6 @@ public class UserController {
         logger.warn("Exposing all the user favourite courses");
         var result = service.getUserFavouriteCourses(id);
         return ResponseEntity.ok(result);
-    }
-
-    // FIXME Get method should not have Request body
-    // I marked it as POST on quickly
-    @PostMapping("/{id}")
-    ResponseEntity<?> logIn(@RequestBody LoginForm loginForm) {
-        logger.info("Signing in");
-        Optional<User> target = repository.findById(loginForm.getId());
-        if(target.isEmpty())
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No user with given id");
-        if(!target.get().getName().equals(loginForm.getName()))
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No user with given nick");
-        return ResponseEntity.ok(target);
-    }
-
-    @PostMapping
-    ResponseEntity<?> createUser(@RequestBody User source) {
-        var result = service.createUser(source);
-        if(result.isEmpty())
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User with given nick already exists");
-        else
-            return ResponseEntity.created(URI.create("/" + result.get().getUserId())).body(result);
     }
 
     @PostMapping("/{userId}/courses/{courseId}/course-liking")
