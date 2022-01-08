@@ -47,7 +47,7 @@ class SecurityConfiguration extends KeycloakWebSecurityConfigurerAdapter {
         // due to the fact that there is no authorization and authentication in my application
         // I disabled it to be able to POST/PUT/PATCH/DELETE resources
         super.configure(http);
-        http.cors().and().csrf().disable()
+        http.csrf().disable()
                 .authorizeRequests()
 //                .antMatchers("/users/*")
 //                .hasRole("USER")

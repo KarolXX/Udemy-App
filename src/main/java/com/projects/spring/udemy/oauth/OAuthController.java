@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/oauth")
 public class OAuthController {
     private static final Logger logger = LoggerFactory.getLogger(OAuthController.class);
