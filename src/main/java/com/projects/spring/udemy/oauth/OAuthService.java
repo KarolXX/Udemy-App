@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.projects.spring.udemy.oauth.dto.LoginResponse;
 import com.projects.spring.udemy.oauth.dto.RegisterForm;
 import com.projects.spring.udemy.oauth.dto.LoginForm;
+import com.projects.spring.udemy.user.User;
+import com.projects.spring.udemy.user.UserRepository;
 import org.keycloak.adapters.authentication.ClientCredentialsProvider;
 import org.keycloak.adapters.authentication.ClientCredentialsProviderUtils;
 import org.keycloak.admin.client.Keycloak;
@@ -26,11 +28,13 @@ import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class OAuthService {
     @Autowired
     private Keycloak keycloakClient;
+    private final UserRepository userRepository;
     @Value("${keycloak.auth-server-url}")
     private String keycloakUrl;
     @Value("${keycloak.realm}")
@@ -42,11 +46,19 @@ public class OAuthService {
 
     private static final Logger logger = LoggerFactory.getLogger(OAuthService.class);
 
+    public OAuthService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     List<UserRepresentation> getAllUsers() {
         return keycloakClient.realm(realmName).users().list();
     }
 
     LoginResponse login(LoginForm loginForm) {
+        Optional<User> user = userRepository.findByName(loginForm.getName());
+        if(!user.isPresent())
+            return null;
+
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED); // default media type for HTML forms
@@ -67,7 +79,7 @@ public class OAuthService {
             ObjectMapper mapper = new ObjectMapper();
             mapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
             TokenData tokenData = mapper.readValue(body, TokenData.class);
-            return new LoginResponse(tokenData.getAccessToken());
+            return new LoginResponse(tokenData, user.get());
         } catch (Exception e) {
             logger.error(e.toString());
             return null;
@@ -75,6 +87,7 @@ public class OAuthService {
     }
 
     Boolean register(RegisterForm source) {
+        // FIXME user name can not be duplicated
         CredentialRepresentation cR = preparePasswordRepresentation(source.getPassword());
         UserRepresentation uR = prepareUserRepresentation(source.getName(), cR);
         var result = keycloakClient.realm(realmName).users().create(uR);
