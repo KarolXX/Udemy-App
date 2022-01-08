@@ -42,6 +42,10 @@ public class OAuthService {
 
     private static final Logger logger = LoggerFactory.getLogger(OAuthService.class);
 
+    List<UserRepresentation> getAllUsers() {
+        return keycloakClient.realm(realmName).users().list();
+    }
+
     LoginResponse login(LoginForm loginForm) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -68,5 +72,36 @@ public class OAuthService {
             logger.error(e.toString());
             return null;
         }
+    }
+
+    Boolean register(RegisterForm source) {
+        CredentialRepresentation cR = preparePasswordRepresentation(source.getPassword());
+        UserRepresentation uR = prepareUserRepresentation(source.getName(), cR);
+        var result = keycloakClient.realm(realmName).users().create(uR);
+        logger.info(result.readEntity(String.class));
+        return result.getStatus() == 201;
+    }
+
+    private CredentialRepresentation preparePasswordRepresentation(String password) {
+        CredentialRepresentation cR = new CredentialRepresentation();
+        cR.setTemporary(false);
+        cR.setType(CredentialRepresentation.PASSWORD);
+        cR.setValue(password);
+
+        return cR;
+    }
+
+    private UserRepresentation prepareUserRepresentation(String email, CredentialRepresentation cR) {
+        UserRepresentation user = new UserRepresentation();
+        user.setUsername(email);
+        user.setEnabled(true);
+        user.setCredentials(List.of(cR));
+
+        Map<String, List<String>> attributes = new HashMap<>();
+        // in future maybe usable?
+
+        user.setAttributes(attributes);
+
+        return user;
     }
 }

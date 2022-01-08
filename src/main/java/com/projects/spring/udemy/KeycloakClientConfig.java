@@ -25,7 +25,10 @@ public class KeycloakClientConfig {
 
     @Bean
     public Keycloak keycloak() {
-        return KeycloakBuilder.builder().grantType(OAuth2Constants.CLIENT_CREDENTIALS).serverUrl(authUrl).realm(realm)
+        return KeycloakBuilder.builder()
+                .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
+                .serverUrl(authUrl)
+                .realm(realm)
                 .clientId(clientId)
                 .clientSecret(secret)
                 .resteasyClient(new ResteasyClientBuilder().connectionPoolSize(20).build()).build();
