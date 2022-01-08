@@ -70,16 +70,16 @@ public class CourseService {
 
         boolean boughtCourse;
         Optional<Double> userRate;
-        Optional<CourseRating> userRateExists = target.getRatings()
+        Optional<CourseRating> association = target.getRatings()
                 .stream()
                 .filter(rating -> rating.getId().getUserId() == userId)
                 .findFirst();
-        if (userRateExists.isEmpty()) {
+        if (association.isEmpty()) {
             boughtCourse = false;
             userRate = null;
         } else {
             boughtCourse = true;
-            userRate = userRateExists.stream()
+            userRate = association.stream()
                     .map(CourseRating::getRating)
                     .filter(rate -> rate != null)
                     .findFirst();
@@ -202,7 +202,7 @@ public class CourseService {
         );
     }
 
-    List<CourseInMenu> getOtherParticipantsCourses(Integer targetCourseId, Integer userId) {
+    List<CourseInMenu> getOtherParticipantsCourses(Integer targetCourseId) {
         Course targetCourse = repository.findById(targetCourseId)
                 .orElseThrow(() -> new IllegalArgumentException("No course with given id"));
         List<Integer> userIDs = targetCourse.getRatings()
