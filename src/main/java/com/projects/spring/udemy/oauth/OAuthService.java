@@ -3,12 +3,9 @@ package com.projects.spring.udemy.oauth;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.projects.spring.udemy.oauth.dto.LoginResponse;
-import com.projects.spring.udemy.oauth.dto.RegisterForm;
-import com.projects.spring.udemy.oauth.dto.LoginForm;
+import com.projects.spring.udemy.oauth.dto.UserForm;
 import com.projects.spring.udemy.user.User;
 import com.projects.spring.udemy.user.UserRepository;
-import org.keycloak.adapters.authentication.ClientCredentialsProvider;
-import org.keycloak.adapters.authentication.ClientCredentialsProviderUtils;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -32,6 +29,7 @@ import java.util.Optional;
 
 @Service
 public class OAuthService {
+    // FIXME: inject by construtor
     @Autowired
     private Keycloak keycloakClient;
     private final UserRepository userRepository;
@@ -54,8 +52,8 @@ public class OAuthService {
         return keycloakClient.realm(realmName).users().list();
     }
 
-    LoginResponse login(LoginForm loginForm) {
-        Optional<User> user = userRepository.findByName(loginForm.getName());
+    LoginResponse login(UserForm userForm) {
+        Optional<User> user = userRepository.findByName(userForm.getName());
         if(!user.isPresent())
             return null;
 
@@ -66,8 +64,8 @@ public class OAuthService {
         String urlName = keycloakUrl + "/realms/" + realmName + "/protocol/openid-connect/token";
         MultiValueMap<String, String> request = new LinkedMultiValueMap<>();
         request.add("grant_type", "password");
-        request.add("username", loginForm.getName());
-        request.add("password", loginForm.getPassword());
+        request.add("username", userForm.getName());
+        request.add("password", userForm.getPassword());
         request.add("client_id", resource);
         request.add("client_secret", secret);
 
@@ -86,13 +84,21 @@ public class OAuthService {
         }
     }
 
-    Boolean register(RegisterForm source) {
-        // FIXME user name can not be duplicated
+    Optional<LoginResponse> register(UserForm source) {
+        // username should be unique
+        Boolean usernameExists = userRepository.existsByName(source.getName());
+        if(usernameExists)
+            return Optional.empty();
+
+        // save user to DB in order to make relations between users table and others
+        // FIXME: add secure password entry to DB
+        userRepository.save(new User(source.getName()));
+
         CredentialRepresentation cR = preparePasswordRepresentation(source.getPassword());
         UserRepresentation uR = prepareUserRepresentation(source.getName(), cR);
-        var result = keycloakClient.realm(realmName).users().create(uR);
-        logger.info(result.readEntity(String.class));
-        return result.getStatus() == 201;
+        // save user to keycloak
+        keycloakClient.realm(realmName).users().create(uR);
+        return Optional.empty();
     }
 
     private CredentialRepresentation preparePasswordRepresentation(String password) {

@@ -1,9 +1,8 @@
 package com.projects.spring.udemy.oauth;
 
 import com.projects.spring.udemy.oauth.dto.LoginResponse;
-import com.projects.spring.udemy.oauth.dto.RegisterForm;
+import com.projects.spring.udemy.oauth.dto.UserForm;
 import com.projects.spring.udemy.user.UserRepository;
-import com.projects.spring.udemy.oauth.dto.LoginForm;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin
@@ -26,16 +26,16 @@ public class OAuthController {
     }
 
     @PostMapping("/login")
-    ResponseEntity<?> logIn(@RequestBody LoginForm loginForm) {
+    ResponseEntity<?> logIn(@RequestBody UserForm userForm) {
         logger.info("Signing in");
-        LoginResponse response = service.login(loginForm);
+        LoginResponse response = service.login(userForm);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping
-    ResponseEntity<?> createUser(@RequestBody RegisterForm source) {
+    ResponseEntity<?> createUser(@RequestBody UserForm source) {
         logger.info("Registering");
-        Boolean result = service.register(source);
+        Optional<LoginResponse> result = service.register(source);
         return ResponseEntity.ok(result);
     }
 

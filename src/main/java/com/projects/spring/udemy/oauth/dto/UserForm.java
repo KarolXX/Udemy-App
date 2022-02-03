@@ -1,13 +1,13 @@
 package com.projects.spring.udemy.oauth.dto;
 
-public class RegisterForm {
+public class UserForm {
     private String name;
     private String password;
 
-    public RegisterForm() {
+    public UserForm() {
     }
 
-    public RegisterForm(String name, String password) {
+    public UserForm(String name, String password) {
         this.name = name;
         this.password = password;
     }

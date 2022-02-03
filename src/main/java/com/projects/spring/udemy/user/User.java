@@ -34,6 +34,13 @@ public class User {
     )
     private Set<Course> likedCourses;
 
+    public User() {
+    }
+
+    public User(@NotBlank(message = "Add username!") String name) {
+        this.name = name;
+    }
+
     public int getUserId() {
         return userId;
     }
