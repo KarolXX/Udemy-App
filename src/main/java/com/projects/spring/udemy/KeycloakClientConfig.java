@@ -31,6 +31,6 @@ public class KeycloakClientConfig {
                 .realm(realm)
                 .clientId(clientId)
                 .clientSecret(secret)
-                .resteasyClient(new ResteasyClientBuilder().connectionPoolSize(20).build()).build();
+                .resteasyClient(new ResteasyClientBuilder().connectionPoolSize(10).build()).build();
     }
 }

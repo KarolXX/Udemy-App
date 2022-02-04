@@ -8,6 +8,7 @@ import com.projects.spring.udemy.user.User;
 import com.projects.spring.udemy.user.UserRepository;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,10 +23,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class OAuthService {
@@ -96,9 +94,25 @@ public class OAuthService {
 
         CredentialRepresentation cR = preparePasswordRepresentation(source.getPassword());
         UserRepresentation uR = prepareUserRepresentation(source.getName(), cR);
+
         // save user to keycloak
         keycloakClient.realm(realmName).users().create(uR);
+
+        // add 'user' role in keycloak to new user
+        assignRole(prepareRoleRepresentation("user"), uR);
+
         return Optional.empty();
+    }
+
+    private RoleRepresentation prepareRoleRepresentation(String name) {
+        return keycloakClient.realm(realmName).roles().get(name).toRepresentation();
+    }
+
+    private void assignRole(RoleRepresentation roleRepresentation, UserRepresentation userRepresentation) {
+        String userId = userRepresentation.getId();
+        // FIXME: I get exception: java.lang.NullPointerException: RESTEASY004645: templateValues entry was null
+        //  It works literally once every two times
+        keycloakClient.realm(realmName).users().get(userId).roles().realmLevel().add(Arrays.asList(roleRepresentation));
     }
 
     private CredentialRepresentation preparePasswordRepresentation(String password) {
@@ -110,9 +124,9 @@ public class OAuthService {
         return cR;
     }
 
-    private UserRepresentation prepareUserRepresentation(String email, CredentialRepresentation cR) {
+    private UserRepresentation prepareUserRepresentation(String name, CredentialRepresentation cR) {
         UserRepresentation user = new UserRepresentation();
-        user.setUsername(email);
+        user.setUsername(name);
         user.setEnabled(true);
         user.setCredentials(List.of(cR));
 
