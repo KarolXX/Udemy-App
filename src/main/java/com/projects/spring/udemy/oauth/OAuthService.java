@@ -23,6 +23,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import javax.ws.rs.core.Response;
 import java.util.*;
 
 @Service
@@ -82,26 +83,28 @@ public class OAuthService {
         }
     }
 
-    Optional<LoginResponse> register(UserForm source) {
+    // FIXME: change this method so that after registration the token data is returned
+    Optional<Response> register(UserForm source) {
         // username should be unique
         Boolean usernameExists = userRepository.existsByName(source.getName());
         if(usernameExists)
             return Optional.empty();
 
         // save user to DB in order to make relations between users table and others
-        // FIXME: add secure password entry to DB
+        // TODO: add secure password entry to DB
         userRepository.save(new User(source.getName()));
 
         CredentialRepresentation cR = preparePasswordRepresentation(source.getPassword());
         UserRepresentation uR = prepareUserRepresentation(source.getName(), cR);
 
         // save user to keycloak
-        keycloakClient.realm(realmName).users().create(uR);
+        Response response = keycloakClient.realm(realmName).users().create(uR);
+        logger.info(response.toString()); // try to log what keycloak.admin.client returns but no effect
 
         // add 'user' role in keycloak to new user
         assignRole(prepareRoleRepresentation("user"), uR);
 
-        return Optional.empty();
+        return Optional.of(response); // FIXME: Why I can put response in Optional.of() since as it turns out later response is null (java.util.NoSuchElementException: No value present)
     }
 
     private RoleRepresentation prepareRoleRepresentation(String name) {

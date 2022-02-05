@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,8 +36,9 @@ public class OAuthController {
     @PostMapping
     ResponseEntity<?> createUser(@RequestBody UserForm source) {
         logger.info("Registering");
-        Optional<LoginResponse> result = service.register(source);
-        return ResponseEntity.ok(result);
+        Optional<Response> result = service.register(source);
+        logger.warn(result.toString());
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/users")
