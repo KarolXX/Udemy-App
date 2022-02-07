@@ -23,6 +23,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.core.Response;
 import java.util.*;
 
@@ -54,7 +56,7 @@ public class OAuthService {
     LoginResponse login(UserForm userForm) {
         Optional<User> user = userRepository.findByName(userForm.getName());
         if(!user.isPresent())
-            return null;
+            throw new BadRequestException("Invalid nick or password :(");
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -78,17 +80,16 @@ public class OAuthService {
             TokenData tokenData = mapper.readValue(body, TokenData.class);
             return new LoginResponse(tokenData, user.get());
         } catch (Exception e) {
-            logger.error(e.toString());
-            return null;
+            throw new InternalServerErrorException("Internal server error when logging in");
         }
     }
 
     // FIXME: change this method so that after registration the token data is returned
-    Optional<Response> register(UserForm source) {
+     LoginResponse register(UserForm source) {
         // username should be unique
         Boolean usernameExists = userRepository.existsByName(source.getName());
         if(usernameExists)
-            return Optional.empty();
+            throw new NickAlreadyExistsException("User with such a nick already exists");
 
         // save user to DB in order to make relations between users table and others
         // TODO: add secure password entry to DB
@@ -99,12 +100,12 @@ public class OAuthService {
 
         // save user to keycloak
         Response response = keycloakClient.realm(realmName).users().create(uR);
-        logger.info(response.toString()); // try to log what keycloak.admin.client returns but no effect
 
+        //FIXME ( see commit 2c5c212ca8a7e6f0e954312cb2ec00922ac36af8 )
         // add 'user' role in keycloak to new user
-        assignRole(prepareRoleRepresentation("user"), uR);
+//        assignRole(prepareRoleRepresentation("user"), uR);
 
-        return Optional.of(response); // FIXME: Why I can put response in Optional.of() since as it turns out later response is null (java.util.NoSuchElementException: No value present)
+        return login(source);
     }
 
     private RoleRepresentation prepareRoleRepresentation(String name) {
@@ -113,8 +114,6 @@ public class OAuthService {
 
     private void assignRole(RoleRepresentation roleRepresentation, UserRepresentation userRepresentation) {
         String userId = userRepresentation.getId();
-        // FIXME: I get exception: java.lang.NullPointerException: RESTEASY004645: templateValues entry was null
-        //  It works literally once every two times
         keycloakClient.realm(realmName).users().get(userId).roles().realmLevel().add(Arrays.asList(roleRepresentation));
     }
 

@@ -6,9 +6,12 @@ import com.projects.spring.udemy.user.UserRepository;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Optional;
@@ -29,20 +32,34 @@ public class OAuthController {
     @PostMapping("/login")
     ResponseEntity<?> logIn(@RequestBody UserForm userForm) {
         logger.info("Signing in");
-        LoginResponse response = service.login(userForm);
-        return ResponseEntity.ok(response);
+        LoginResponse result = service.login(userForm);
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping
     ResponseEntity<?> createUser(@RequestBody UserForm source) {
         logger.info("Registering");
-        Optional<Response> result = service.register(source);
-        logger.warn(result.toString());
-        return ResponseEntity.ok().build();
+        LoginResponse result = service.register(source);
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/users")
     ResponseEntity<List<UserRepresentation>> getAllUsers() {
         return ResponseEntity.ok(service.getAllUsers());
+    }
+
+    @ExceptionHandler(NickAlreadyExistsException.class)
+    ResponseEntity<?> illegalNickHandler(NickAlreadyExistsException e) {
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(e.getMessage());
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    ResponseEntity<?> illegalLoginDataHandler(BadRequestException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+    @ExceptionHandler(InternalServerErrorException.class)
+    ResponseEntity<?> serverErrorHandler(InternalServerErrorException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server error...");
     }
 }
