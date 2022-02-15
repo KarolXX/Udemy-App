@@ -1,7 +1,12 @@
 package com.projects.spring.udemy.oauth.dto;
 
+import javax.validation.constraints.NotBlank;
+
 public class UserForm {
+    @NotBlank(message = "Please enter your name")
     private String name;
+    // FIXME: uncomment this line when password will be stored in DB
+//    @NotBlank(message = "Please enter your name")
     private String password;
 
     public UserForm() {
@@ -24,7 +29,7 @@ public class UserForm {
         return password;
     }
 
-    public void setPassword(String password) {
+    private void setPassword(String password) {
         this.password = password;
     }
 }
