@@ -2,6 +2,7 @@ package com.projects.spring.udemy.user;
 
 import com.projects.spring.udemy.comment.Comment;
 import com.projects.spring.udemy.course.Course;
+import com.projects.spring.udemy.file.ImageClass;
 import com.projects.spring.udemy.relationship.CourseRating;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -11,7 +12,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User extends ImageClass {
     @Id
     @GeneratedValue(generator = "inc")
     @GenericGenerator(name = "inc", strategy = "increment")
