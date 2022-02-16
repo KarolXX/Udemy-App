@@ -2,6 +2,10 @@ package com.projects.spring.udemy.oauth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.projects.spring.udemy.author.Author;
+import com.projects.spring.udemy.author.AuthorRepository;
+import com.projects.spring.udemy.file.ImageClass;
+import com.projects.spring.udemy.oauth.dto.AuthorForm;
 import com.projects.spring.udemy.oauth.dto.LoginResponse;
 import com.projects.spring.udemy.oauth.dto.UserForm;
 import com.projects.spring.udemy.user.User;
@@ -34,6 +38,7 @@ public class OAuthService {
     @Autowired
     private Keycloak keycloakClient;
     private final UserRepository userRepository;
+    private final AuthorRepository authorRepository;
     @Value("${keycloak.auth-server-url}")
     private String keycloakUrl;
     @Value("${keycloak.realm}")
@@ -45,17 +50,20 @@ public class OAuthService {
 
     private static final Logger logger = LoggerFactory.getLogger(OAuthService.class);
 
-    public OAuthService(UserRepository userRepository) {
+    public OAuthService(UserRepository userRepository, AuthorRepository authorRepository) {
         this.userRepository = userRepository;
+        this.authorRepository = authorRepository;
     }
 
     List<UserRepresentation> getAllUsers() {
         return keycloakClient.realm(realmName).users().list();
     }
 
-    LoginResponse login(UserForm userForm) {
-        Optional<User> user = userRepository.findByName(userForm.getName());
-        if(!user.isPresent())
+    LoginResponse login(UserForm source) {
+        String name = source.getName();
+        Optional<?> person = source instanceof AuthorForm ?
+                authorRepository.findByName(name) : userRepository.findByName(name);
+        if(!person.isPresent())
             throw new BadRequestException("Invalid nick or password :(");
 
         RestTemplate restTemplate = new RestTemplate();
@@ -65,8 +73,8 @@ public class OAuthService {
         String urlName = keycloakUrl + "/realms/" + realmName + "/protocol/openid-connect/token";
         MultiValueMap<String, String> request = new LinkedMultiValueMap<>();
         request.add("grant_type", "password");
-        request.add("username", userForm.getName());
-        request.add("password", userForm.getPassword());
+        request.add("username", source.getName());
+        request.add("password", source.getPassword());
         request.add("client_id", resource);
         request.add("client_secret", secret);
 
@@ -78,34 +86,42 @@ public class OAuthService {
             ObjectMapper mapper = new ObjectMapper();
             mapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
             TokenData tokenData = mapper.readValue(body, TokenData.class);
-            return new LoginResponse(tokenData, user.get());
+            return new LoginResponse(tokenData, (ImageClass) person.get());
         } catch (Exception e) {
             throw new InternalServerErrorException("Internal server error when logging in");
         }
     }
 
-    // FIXME: change this method so that after registration the token data is returned
-     LoginResponse register(UserForm source) {
-        // username should be unique
-        Boolean usernameExists = userRepository.existsByName(source.getName());
-        if(usernameExists)
-            throw new NickAlreadyExistsException("User with such a nick already exists");
-
-        // save user to DB in order to make relations between users table and others
-        // TODO: add secure password entry to DB
-        userRepository.save(new User(source.getName()));
+    LoginResponse register(UserForm source) {
+        // user's/author's name should be unique
+        String name = source.getName();
+        boolean isAuthor = source instanceof AuthorForm;
+        boolean nameExists = isAuthor ?
+                authorRepository.existsByName(name) : userRepository.existsByName(name);
+        if(nameExists)
+            throw new NickAlreadyExistsException("User/Author with such a nick already exists");
 
         CredentialRepresentation cR = preparePasswordRepresentation(source.getPassword());
         UserRepresentation uR = prepareUserRepresentation(source.getName(), cR);
 
+        //FIXME ( see commit 2c5c212ca8a7e6f0e954312cb2ec00922ac36af8 )
+        // add role in keycloak to new user/author
+//        String roleName = isAuthor ? "author" : "user";
+//        assignRole(prepareRoleRepresentation(roleName), uR);
         // save user to keycloak
         Response response = keycloakClient.realm(realmName).users().create(uR);
 
-        //FIXME ( see commit 2c5c212ca8a7e6f0e954312cb2ec00922ac36af8 )
-        // add 'user' role in keycloak to new user
-//        assignRole(prepareRoleRepresentation("user"), uR);
-
-        return login(source);
+        // save user/author to DB in order to make relations between users table and others
+        // TODO: add secure password entry to DB
+        if(isAuthor) {
+            AuthorForm authorSource = (AuthorForm) source;
+            authorRepository.save(new Author(name, authorSource.getDescription(), authorSource.getOccupation()));
+            return login(authorSource);
+        }
+        else {
+            userRepository.save(new User(name));
+            return login(source);
+        }
     }
 
     private RoleRepresentation prepareRoleRepresentation(String name) {
@@ -122,7 +138,6 @@ public class OAuthService {
         cR.setTemporary(false);
         cR.setType(CredentialRepresentation.PASSWORD);
         cR.setValue(password);
-
         return cR;
     }
 

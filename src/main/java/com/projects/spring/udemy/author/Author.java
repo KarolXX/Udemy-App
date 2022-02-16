@@ -42,6 +42,12 @@ public class Author extends ImageClass {
     public Author() {
     }
 
+    public Author(@NotBlank(message = "Author needs name") String name, String occupation, @NotBlank(message = "Author must have a description") String description) {
+        this.name = name;
+        this.occupation = occupation;
+        this.description = description;
+    }
+
     public int getAuthorId() {
         return authorId;
     }

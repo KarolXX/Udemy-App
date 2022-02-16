@@ -9,6 +9,9 @@ import java.util.Optional;
 
 @Repository
 public interface AuthorRepository extends JpaRepository<Author, Integer> {
+    Boolean existsByName(String name);
+    Optional<Author> findByName(String name);
+
     @Query(
             nativeQuery = true,
             value = "SELECT a.* FROM author_course ac " +

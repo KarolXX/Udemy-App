@@ -1,15 +1,15 @@
 package com.projects.spring.udemy.oauth.dto;
 
+import com.projects.spring.udemy.file.ImageClass;
 import com.projects.spring.udemy.oauth.TokenData;
-import com.projects.spring.udemy.user.User;
 
 public class LoginResponse {
     private TokenData tokenData;
-    private User user;
+    private ImageClass person;
 
-    public LoginResponse(TokenData tokenData, User user) {
+    public LoginResponse(TokenData tokenData, ImageClass person) {
         this.tokenData = tokenData;
-        this.user = user;
+        this.person = person;
     }
 
     public TokenData getTokenData() {
@@ -20,11 +20,11 @@ public class LoginResponse {
         this.tokenData = tokenData;
     }
 
-    public User getUser() {
-        return user;
+    public ImageClass getPerson() {
+        return person;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(ImageClass person) {
+        this.person = person;
     }
 }

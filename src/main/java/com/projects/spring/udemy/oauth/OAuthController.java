@@ -1,5 +1,6 @@
 package com.projects.spring.udemy.oauth;
 
+import com.projects.spring.udemy.oauth.dto.AuthorForm;
 import com.projects.spring.udemy.oauth.dto.LoginResponse;
 import com.projects.spring.udemy.oauth.dto.UserForm;
 import com.projects.spring.udemy.user.UserRepository;
@@ -36,9 +37,16 @@ public class OAuthController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping
+    @PostMapping("/users")
     ResponseEntity<?> createUser(@RequestBody UserForm source) {
-        logger.info("Registering");
+        logger.info("User registration");
+        LoginResponse result = service.register(source);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/authors")
+    ResponseEntity<?> createAuthor(@RequestBody AuthorForm source) {
+        logger.info("Author registration");
         LoginResponse result = service.register(source);
         return ResponseEntity.ok(result);
     }
