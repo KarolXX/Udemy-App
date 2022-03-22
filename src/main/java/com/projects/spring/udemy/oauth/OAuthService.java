@@ -63,8 +63,12 @@ public class OAuthService {
 
     LoginResponse login(UserForm source) {
         String name = source.getName();
+        String urlName = keycloakUrl + "/realms/" + realmName + "/protocol/openid-connect/token";
+
+        // check if source is user or author and then find it
         Optional<?> person = source instanceof AuthorForm ?
                 authorRepository.findByName(name) : userRepository.findByName(name);
+        // if input is invalid
         if(!person.isPresent())
             throw new BadRequestException("Invalid nick or password :(");
 
@@ -72,7 +76,6 @@ public class OAuthService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED); // default media type for HTML forms
 
-        String urlName = keycloakUrl + "/realms/" + realmName + "/protocol/openid-connect/token";
         MultiValueMap<String, String> request = new LinkedMultiValueMap<>();
         request.add("grant_type", "password");
         request.add("username", source.getName());
@@ -82,6 +85,7 @@ public class OAuthService {
 
         HttpEntity httpEntity = new HttpEntity(request, headers);
 
+        // send request to keycloak by restTemplate
         try{
             ResponseEntity<String> response = restTemplate.postForEntity(urlName, httpEntity, String.class);
             String body = response.getBody();
@@ -103,6 +107,7 @@ public class OAuthService {
         if(nameExists)
             throw new NickAlreadyExistsException("User/Author with such a nick already exists");
 
+        // prepare user to be saved in keycloak
         CredentialRepresentation cR = preparePasswordRepresentation(source.getPassword());
         UserRepresentation uR = prepareUserRepresentation(source.getName(), cR);
 
