@@ -10,6 +10,7 @@ import com.projects.spring.udemy.oauth.dto.LoginResponse;
 import com.projects.spring.udemy.oauth.dto.UserForm;
 import com.projects.spring.udemy.user.User;
 import com.projects.spring.udemy.user.UserRepository;
+import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
@@ -27,6 +28,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.core.Response;
@@ -92,7 +94,7 @@ public class OAuthService {
         }
     }
 
-    LoginResponse register(UserForm source) {
+    LoginResponse register(UserForm source, HttpServletRequest request) {
         // user's/author's name should be unique
         String name = source.getName();
         boolean isAuthor = source instanceof AuthorForm;
@@ -107,30 +109,31 @@ public class OAuthService {
         //FIXME ( see commit 2c5c212ca8a7e6f0e954312cb2ec00922ac36af8 )
         // add role in keycloak to new user/author
 //        String roleName = isAuthor ? "author" : "user";
-//        assignRole(prepareRoleRepresentation(roleName), uR);
+//        String userId = null;
+//        assignRole(prepareRoleRepresentation(roleName), userId);
         // save user to keycloak
         Response response = keycloakClient.realm(realmName).users().create(uR);
+
 
         // save user/author to DB in order to make relations between users table and others
         // TODO: add secure password entry to DB
         if(isAuthor) {
+            // before saving cast source to AuthorForm to get access to e.g. getDescription()
             AuthorForm authorSource = (AuthorForm) source;
             authorRepository.save(new Author(name, authorSource.getDescription(), authorSource.getOccupation()));
-            return login(authorSource);
         }
-        else {
+        else
             userRepository.save(new User(name));
-            return login(source);
-        }
+
+        return login(source);
     }
 
     private RoleRepresentation prepareRoleRepresentation(String name) {
         return keycloakClient.realm(realmName).roles().get(name).toRepresentation();
     }
 
-    private void assignRole(RoleRepresentation roleRepresentation, UserRepresentation userRepresentation) {
-        String userId = userRepresentation.getId();
-        keycloakClient.realm(realmName).users().get(userId).roles().realmLevel().add(Arrays.asList(roleRepresentation));
+    private void assignRole(RoleRepresentation roleRepresentation, String id) {
+        keycloakClient.realm(realmName).users().get(id).roles().realmLevel().add(Arrays.asList(roleRepresentation));
     }
 
     private CredentialRepresentation preparePasswordRepresentation(String password) {
