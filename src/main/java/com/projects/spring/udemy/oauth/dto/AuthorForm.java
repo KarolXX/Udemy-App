@@ -7,7 +7,8 @@ public class AuthorForm extends UserForm{
     @NotBlank(message = "Author must have a description")
     private String description;
 
-    public AuthorForm(String occupation, @NotBlank(message = "Author must have a description") String description) {
+    public AuthorForm(String name, String password, String occupation, @NotBlank(message = "Author must have a description") String description) {
+        super(name, password);
         this.occupation = occupation;
         this.description = description;
     }
