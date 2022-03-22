@@ -48,6 +48,7 @@ public class CommentService {
         Course course = target.getCourse();
         User user = target.getUser();
 
+        // keep in-sync bidirectional associations
         course.removeComment(target);
         user.removeComment(target);
 
@@ -66,6 +67,7 @@ public class CommentService {
         if(association.isEmpty())
             return Optional.empty();
 
+        // keep in-sync bidirectional associations
         course.addComment(commentWithUserID.getComment());
         user.addComment(commentWithUserID.getComment());
 

@@ -4,6 +4,7 @@ import com.projects.spring.udemy.course.Course;
 
 import java.util.Optional;
 
+// used when client will click on the course from menu
 public class SingleCourseModel {
     private Course course;
     private boolean boughtCourse;

@@ -70,10 +70,12 @@ public class CourseService {
 
         boolean boughtCourse;
         Optional<Double> userRate;
+
         Optional<CourseRating> association = target.getRatings()
                 .stream()
                 .filter(rating -> rating.getId().getUserId() == userId)
                 .findFirst();
+
         if (association.isEmpty()) {
             boughtCourse = false;
             userRate = null;
@@ -83,12 +85,12 @@ public class CourseService {
                     .map(CourseRating::getRating)
                     .filter(rate -> rate != null)
                     .findFirst();
+            // FIXME: isn't it better ?
+            //userRate = Optional.ofNullable(association.get().getRating());
         }
 
-        Optional<User> willingUser = target.getWillingUsers()
-                .stream().filter(user -> user.getUserId() == userId)
-                .findFirst();
-        boolean isCourseLiked = willingUser.isPresent();
+        boolean isCourseLiked = target.getWillingUsers()
+                .stream().anyMatch(user -> user.getUserId() == userId);
 
         return new SingleCourseModel(target, boughtCourse, userRate, isCourseLiked, usersNumber);
     }
@@ -102,6 +104,7 @@ public class CourseService {
 
     @Transactional
     public ResponseEntity<?> buyCourse(CourseRatingKey key) {
+        // when user buy course then association between him and bought course is created
         CourseRating association = new CourseRating(key);
 
         User user = userRepository.findById(key.getUserId())
@@ -123,6 +126,8 @@ public class CourseService {
         association.setCourse(course);
         association.setUser(user);
 
+        // send money for author's budget
+        //FIXME instead of course.getPrice() type 'sum'
         if (course.getPrice() != 0) {
             Optional<Author> author = authorRepository.findCourseAuthorByCourseId(course.getId());
             if(author.isPresent()) {
@@ -149,7 +154,7 @@ public class CourseService {
         CourseRating association = ratingRepository.findById(source.getId())
                 .orElseThrow(() -> new IllegalArgumentException("This course or user is not available"));
         association.setRating(source.getRating());
-        CourseRating newSource = ratingRepository.save(association);
+        CourseRating updatedSource = ratingRepository.save(association);
 
         // update course's average rating
         int targetCourseId = source.getId().getCourseId();
@@ -159,7 +164,7 @@ public class CourseService {
                 new CourseOrderChangedEvent(source.getId().getCourseId())
         );
 
-        return newSource.getRating();
+        return updatedSource.getRating();
     }
 
     //@Transactional
@@ -187,10 +192,13 @@ public class CourseService {
     public void updateCourseSequence(CourseOrderChangedEvent event) {
         Course target = repository.findById(event.getCourseId())
                 .orElseThrow(() -> new IllegalArgumentException("No course with given id"));
+
         Integer usersNumber = target.getUsersNumber();
         Double averageRating = target.getAverageRating(); //(target.getAverageRating() * usersNumber + event.getRating()) / usersNumber;
         Optional<Integer> promotion = Optional.ofNullable(target.getPromotion());
         Integer price = target.getPrice();
+
+        // algorithm for setting course sequence
         target.setSequence(
                 (averageRating > 4.4 ? pow(averageRating + 1, 2) : pow(averageRating, 2)) * averageRating * usersNumber
                 /
@@ -205,10 +213,13 @@ public class CourseService {
     List<CourseInMenu> getOtherParticipantsCourses(Integer targetCourseId) {
         Course targetCourse = repository.findById(targetCourseId)
                 .orElseThrow(() -> new IllegalArgumentException("No course with given id"));
-        List<Integer> userIDs = targetCourse.getRatings()
+
+        List<Integer> participantIDs = targetCourse.getRatings()
                 .stream().map(rate -> rate.getId().getUserId())
                 .collect(Collectors.toList());
-        List<CourseRating> source = ratingRepository.findCourseRatingsById_UserIdIsIn(userIDs);
+
+        // find all courseRatings related with this course to take other participants courses in further part of this method
+        List<CourseRating> source = ratingRepository.findCourseRatingsById_UserIdIsIn(participantIDs);
 
         List<Integer> courseIDs = new ArrayList<>();
         source.stream().map(courseRating -> {

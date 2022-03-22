@@ -22,6 +22,7 @@ public class UserService {
     }
 
     public Optional<User> createUser(User source) {
+        // if such a name already exists then return Optional.empty() - name is unique
         Optional<User> existingUser = repository.findAll()
                 .stream()
                 .filter(user -> user.getName().equals(source.getName()))
@@ -35,6 +36,8 @@ public class UserService {
     public List<CourseInMenu> getUserFavouriteCourses(Integer id) {
         User user = repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("No user with given id"));
+
+        // find the IDs of liked courses, pass to repo and fetch them by IDs
         List<Integer> likedCourseIDs = user.getLikedCourses()
                 .stream().map(Course::getId)
                 .collect(Collectors.toList());

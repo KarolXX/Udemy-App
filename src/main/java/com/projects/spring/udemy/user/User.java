@@ -90,6 +90,7 @@ public class User extends ImageClass {
         this.likedCourses = likedCourses;
     }
 
+    // methods for keeping in-sync both sides of bidirectional association
     public void addComment(Comment comment) {
         comments.add(comment);
         comment.setUser(this);

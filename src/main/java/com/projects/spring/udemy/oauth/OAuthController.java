@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.core.Response;
@@ -38,16 +39,16 @@ public class OAuthController {
     }
 
     @PostMapping("/users")
-    ResponseEntity<?> createUser(@RequestBody UserForm source) {
+    ResponseEntity<?> createUser(@RequestBody UserForm source, HttpServletRequest request) {
         logger.info("User registration");
-        LoginResponse result = service.register(source);
+        LoginResponse result = service.register(source, request);
         return ResponseEntity.ok(result);
     }
 
     @PostMapping("/authors")
     ResponseEntity<?> createAuthor(@RequestBody AuthorForm source) {
         logger.info("Author registration");
-        LoginResponse result = service.register(source);
+        LoginResponse result = service.register(source, null);
         return ResponseEntity.ok(result);
     }
 

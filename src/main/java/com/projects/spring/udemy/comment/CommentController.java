@@ -31,10 +31,11 @@ public class CommentController {
     @PostMapping(path = basePath)
     ResponseEntity<?> createComment(
             @PathVariable Integer courseId,
-            @RequestBody CommentWithUserID comment
+            @RequestBody CommentWithUserID commentWithUserID
     ) {
         logger.info("New comment has been added");
-        Optional<Comment> result = service.createComment(courseId, comment);
+        Optional<Comment> result = service.createComment(courseId, commentWithUserID);
+
         if(result.isPresent())
             return ResponseEntity.created(URI.create("/" + result.get().getCommentId())).body(result);
         else

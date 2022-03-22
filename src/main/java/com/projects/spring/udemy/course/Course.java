@@ -161,6 +161,7 @@ public class Course extends ImageClass {
         this.sequence = sequence;
     }
 
+    // methods for keeping in-sync both sides of bidirectional association
     public void addComment(Comment comment) {
         comments.add(comment);
         comment.setCourse(this);

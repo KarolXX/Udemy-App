@@ -40,12 +40,12 @@ public class AuthorController {
             return ResponseEntity.ok(result);
     }
 
-    @PostMapping
-    ResponseEntity<Author> createAuthor(@RequestBody Author author) {
-        logger.info("Author has been added!");
-        var result = repository.save(author);
-        return ResponseEntity.created(URI.create("/" + result.getAuthorId())).body(result);
-    }
+//    @PostMapping
+//    ResponseEntity<Author> createAuthor(@RequestBody Author author) {
+//        logger.info("Author has been added!");
+//        var result = repository.save(author);
+//        return ResponseEntity.created(URI.create("/" + result.getAuthorId())).body(result);
+//    }
 
     @PutMapping("/{id}")
     ResponseEntity<?> uploadAuthorImage(@PathVariable Integer id, FileModel fileModel) {
