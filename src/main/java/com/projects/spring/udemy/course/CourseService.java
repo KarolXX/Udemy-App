@@ -158,7 +158,7 @@ public class CourseService {
 
         // update course's average rating
         int targetCourseId = source.getId().getCourseId();
-        repository.updateCourseAverageRating(targetCourseId); //FIXME - it doesn't update db
+        repository.updateCourseAverageRating(targetCourseId);
 
         eventPublisher.publishEvent(
                 new CourseOrderChangedEvent(source.getId().getCourseId())
