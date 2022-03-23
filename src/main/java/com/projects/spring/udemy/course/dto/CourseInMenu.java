@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+// DTO for displaying courses in menu.
+// This is important DTO because with the course entity we fetch EAGERLY a few sets that we do not need in the menu
 public class CourseInMenu {
     private int id;
     private String title;
