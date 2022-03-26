@@ -107,6 +107,9 @@ public class AppFileService {
             targetFile = repository.findById(((Course) target).getVideo().getFileId())
                     .orElseThrow(() -> new IllegalArgumentException("No video"));
         } else {
+            Optional<AppFile> image = Optional.of(target.getImage());
+            if(!image.isPresent())
+                return null;
             targetFile = repository.findById(target.getImage().getFileId())
                     .orElseThrow(() -> new IllegalArgumentException("No image"));
         }

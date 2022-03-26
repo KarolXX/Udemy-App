@@ -113,9 +113,9 @@ public class OAuthService {
 
         //FIXME ( see commit 2c5c212ca8a7e6f0e954312cb2ec00922ac36af8 )
         // add role in keycloak to new user/author
-//        String roleName = isAuthor ? "author" : "user";
-//        String userId = null;
-//        assignRole(prepareRoleRepresentation(roleName), userId);
+        String roleName = isAuthor ? "author" : "user";
+        String userId = null;
+        assignRole(prepareRoleRepresentation(roleName), userId);
         // save user to keycloak
         Response response = keycloakClient.realm(realmName).users().create(uR);
 

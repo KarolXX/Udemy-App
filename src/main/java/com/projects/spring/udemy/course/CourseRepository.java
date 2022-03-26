@@ -24,19 +24,27 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
 
     @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.courseId, c.title, c.averageRating, c.usersNumber, c.price, c.promotion, image.filePath, c.sequence) " +
             "FROM Course c " +
-            "LEFT JOIN CourseRating cr ON c.courseId = cr.id.courseId " +
             "LEFT JOIN c.image image " +
-            "GROUP BY c.title")
+            "GROUP BY c.title"
+    )
     List<CourseInMenu> getCourseMenu();
 
     @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.courseId, c.title, c.averageRating, c.usersNumber, c.price, c.promotion, image.filePath, c.sequence) " +
             "FROM Course c " +
-            "LEFT JOIN CourseRating cr ON c.courseId = cr.id.courseId " +
             "LEFT JOIN c.image image " +
-            "GROUP BY c.title " +
             "ORDER BY c.sequence DESC"
     )
-    Page<Course> getCourseMenu(Pageable pageable);
+    Page<CourseInMenu> getCourseMenu(Pageable pageable);
+
+//    @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.courseId, c.title, c.averageRating, c.usersNumber, c.price, c.promotion, image.filePath, c.sequence) " +
+//            "FROM Category cat " +
+//            "JOIN cat.courses c " +
+//            "LEFT JOIN c.ratings r " +
+//            "LEFT JOIN c.image image " +
+//            "WHERE cat.categoryId = :id " +
+//            "GROUP BY c.title"
+//    )
+//    List<CourseInMenu> getCourseMenuByCategoryId(@Param("id") Integer id);
 
     @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.courseId, c.title, c.averageRating, c.usersNumber, c.price, c.promotion, image.filePath, c.sequence) " +
             "FROM Category cat " +
