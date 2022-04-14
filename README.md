@@ -9,7 +9,7 @@ Application with courses - something similar to Udemy.
 * Maven
 * Keycloak 15.0.2
 * Flyway
-* MySQL as database for app, h2 for database it tests
+* MySQL as database for app, h2 for database in tests
 * Model mapper v. 2.4.5
 
 ## Interesting concepts:
