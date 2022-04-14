@@ -70,6 +70,14 @@ public class CourseInMenu {
         this.promotion = promotion;
     }
 
+    public Integer getUsersNumber() {
+        return usersNumber;
+    }
+
+    void setUsersNumber(Integer usersNumber) {
+        this.usersNumber = usersNumber;
+    }
+
     public String getImage() {
         return image;
     }
