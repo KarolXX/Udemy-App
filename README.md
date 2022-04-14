@@ -26,8 +26,10 @@ In addition to keeping users in LDAP built into Keycloak, they are also placed i
 After registration you get roles specific to your account - user or author
 
 ### Menu
-Menu is ... just menu - place where we can choose which course we want to see in detail
+Menu is ... just menu - place where we can choose which course we want to see in detail.
+
 The order of the courses is not random but depends on the course `sequence` property.
+
 To avoid flow of unnecessary data I use CourseInMenu DTO when fetching courses.
 Of course I use paging so as not to store all the data in main memory (easy and cheap memory allocation)
 ![image](https://user-images.githubusercontent.com/71709330/163381342-09b06988-a6ed-48e4-9fec-bf327323a7df.png)
