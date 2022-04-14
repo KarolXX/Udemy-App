@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.core.Response;
+import java.net.URI;
 import java.util.*;
 
 @Service
@@ -98,7 +99,7 @@ public class OAuthService {
         }
     }
 
-    LoginResponse register(UserForm source, HttpServletRequest request) {
+    LoginResponse register(UserForm source) {
         // user's/author's name should be unique
         String name = source.getName();
         boolean isAuthor = source instanceof AuthorForm;
@@ -107,18 +108,17 @@ public class OAuthService {
         if(nameExists)
             throw new NickAlreadyExistsException("User/Author with such a nick already exists");
 
-        // prepare user to be saved in keycloak
+        // prepare user/author to be saved in keycloak
         CredentialRepresentation cR = preparePasswordRepresentation(source.getPassword());
         UserRepresentation uR = prepareUserRepresentation(source.getName(), cR);
 
-        //FIXME ( see commit 2c5c212ca8a7e6f0e954312cb2ec00922ac36af8 )
-        // add role in keycloak to new user/author
-        String roleName = isAuthor ? "author" : "user";
-        String userId = null;
-        assignRole(prepareRoleRepresentation(roleName), userId);
-        // save user to keycloak
+        // save user/author to keycloak
         Response response = keycloakClient.realm(realmName).users().create(uR);
 
+        // add role describing who is registered: user or author to keycloak
+        String roleName = isAuthor ? "author" : "user";
+        String keycloakId = KeycloakHelper.getCreatedId(response);
+        assignRole(prepareRoleRepresentation(roleName), keycloakId);
 
         // save user/author to DB in order to make relations between users table and others
         // TODO: add secure password entry to DB
@@ -133,8 +133,8 @@ public class OAuthService {
         return login(source);
     }
 
-    private RoleRepresentation prepareRoleRepresentation(String name) {
-        return keycloakClient.realm(realmName).roles().get(name).toRepresentation();
+    private RoleRepresentation prepareRoleRepresentation(String roleName) {
+        return keycloakClient.realm(realmName).roles().get(roleName).toRepresentation();
     }
 
     private void assignRole(RoleRepresentation roleRepresentation, String id) {
@@ -162,4 +162,22 @@ public class OAuthService {
 
         return user;
     }
+
+    private static class KeycloakHelper {
+        public static String getCreatedId(Response response) {
+            URI location = response.getLocation();
+
+            if (!response.getStatusInfo().equals(Response.Status.CREATED)) {
+                return null;
+            }
+
+            if (location == null) {
+                return null;
+            }
+
+            String path = location.getPath();
+            return path.substring(path.lastIndexOf('/') + 1);
+        }
+    }
 }
+

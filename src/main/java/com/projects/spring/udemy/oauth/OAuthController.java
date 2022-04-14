@@ -38,17 +38,17 @@ public class OAuthController {
         return ResponseEntity.ok(result);
     }
 
+    // TODO: create one method that performs both of these methods
     @PostMapping("/users")
-    ResponseEntity<?> createUser(@RequestBody UserForm source, HttpServletRequest request) {
+    ResponseEntity<?> createUser(@RequestBody UserForm source) {
         logger.info("User registration");
-        LoginResponse result = service.register(source, request);
+        LoginResponse result = service.register(source);
         return ResponseEntity.ok(result);
     }
-
     @PostMapping("/authors")
     ResponseEntity<?> createAuthor(@RequestBody AuthorForm source) {
         logger.info("Author registration");
-        LoginResponse result = service.register(source, null);
+        LoginResponse result = service.register(source);
         return ResponseEntity.ok(result);
     }
 
