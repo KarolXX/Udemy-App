@@ -44,7 +44,6 @@ Everyone can add a course to favorites and view them later.
 
 # Lacks in app:
 * no secure saving of passwords in MySQL
-* if a customer signs up as an author, he don't get the appropriate role - the logic responsible for this should work for both the user and the author, but actually only works for the user (OAuthService register method)
 * no security by roles
 
 
