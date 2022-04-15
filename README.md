@@ -6,6 +6,7 @@ Application with courses - something similar to Udemy.
 ## Techologies:
 * Java v. 11
 * Spring Boot v. 2.5.2
+* JPA - Hibernate
 * Maven
 * Keycloak 15.0.2
 * Flyway
