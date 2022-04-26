@@ -7,9 +7,9 @@ import com.projects.spring.udemy.course.dto.CourseInMenu;
 import com.projects.spring.udemy.course.dto.SingleCourseModel;
 import com.projects.spring.udemy.course.dto.UpdatedCourse;
 import com.projects.spring.udemy.course.event.CourseOrderChangedEvent;
-import com.projects.spring.udemy.relationship.CourseRating;
-import com.projects.spring.udemy.relationship.CourseRatingKey;
-import com.projects.spring.udemy.relationship.CourseRatingRepository;
+import com.projects.spring.udemy.relationship.BoughtCourse;
+import com.projects.spring.udemy.relationship.BoughtCourseKey;
+import com.projects.spring.udemy.relationship.BoughtCourseRepository;
 import com.projects.spring.udemy.user.User;
 import com.projects.spring.udemy.user.UserRepository;
 import net.bytebuddy.utility.RandomString;
@@ -35,7 +35,7 @@ import static java.lang.Math.pow;
 public class CourseService {
     private CourseRepository repository;
     private UserRepository userRepository;
-    private CourseRatingRepository ratingRepository;
+    private BoughtCourseRepository ratingRepository;
     private AuthorRepository authorRepository;
     private ConfigurationProperties configuration;
 
@@ -47,7 +47,7 @@ public class CourseService {
     public CourseService(
             CourseRepository repository,
             UserRepository userRepository,
-            CourseRatingRepository ratingRepository,
+            BoughtCourseRepository ratingRepository,
             AuthorRepository authorRepository,
             ConfigurationProperties configuration,
             ModelMapper modelMapper,
@@ -71,7 +71,7 @@ public class CourseService {
         boolean boughtCourse;
         Optional<Double> userRate;
 
-        Optional<CourseRating> association = target.getRatings()
+        Optional<BoughtCourse> association = target.getRatings()
                 .stream()
                 .filter(rating -> rating.getId().getUserId() == userId)
                 .findFirst();
@@ -82,7 +82,7 @@ public class CourseService {
         } else {
             boughtCourse = true;
             userRate = association.stream()
-                    .map(CourseRating::getRating)
+                    .map(BoughtCourse::getRating)
                     .filter(rate -> rate != null)
                     .findFirst();
             // FIXME: isn't it better ?
@@ -103,9 +103,9 @@ public class CourseService {
 //    }
 
     @Transactional
-    public ResponseEntity<?> buyCourse(CourseRatingKey key) {
+    public ResponseEntity<?> buyCourse(BoughtCourseKey key) {
         // when user buy course then association between him and bought course is created
-        CourseRating association = new CourseRating(key);
+        BoughtCourse association = new BoughtCourse(key);
 
         User user = userRepository.findById(key.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("No user with given id"));
@@ -150,11 +150,11 @@ public class CourseService {
     }
 
     @Transactional
-    public Double rateCourse(CourseRating source) {
-        CourseRating association = ratingRepository.findById(source.getId())
+    public Double rateCourse(BoughtCourse source) {
+        BoughtCourse association = ratingRepository.findById(source.getId())
                 .orElseThrow(() -> new IllegalArgumentException("This course or user is not available"));
         association.setRating(source.getRating());
-        CourseRating updatedSource = ratingRepository.save(association);
+        BoughtCourse updatedSource = ratingRepository.save(association);
 
         // update course's average rating
         int targetCourseId = source.getId().getCourseId();
@@ -167,7 +167,6 @@ public class CourseService {
         return updatedSource.getRating();
     }
 
-    //@Transactional
     Course updateCourse(UpdatedCourse updatedCourse, Integer courseId) {
         TypeMap<UpdatedCourse, Course> propertyMapper = modelMapper.getTypeMap(UpdatedCourse.class, Course.class);
         if(propertyMapper == null)
@@ -218,8 +217,8 @@ public class CourseService {
                 .stream().map(rate -> rate.getId().getUserId())
                 .collect(Collectors.toList());
 
-        // find all courseRatings related with this course to take other participants courses in further part of this method
-        List<CourseRating> source = ratingRepository.findCourseRatingsById_UserIdIsIn(participantIDs);
+        // find all boughtCourses related with this course to take other participants courses in further part of this method
+        List<BoughtCourse> source = ratingRepository.findCourseRatingsById_UserIdIsIn(participantIDs);
 
         List<Integer> courseIDs = new ArrayList<>();
         source.stream().map(courseRating -> {

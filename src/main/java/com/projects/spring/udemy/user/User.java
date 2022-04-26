@@ -3,7 +3,7 @@ package com.projects.spring.udemy.user;
 import com.projects.spring.udemy.comment.Comment;
 import com.projects.spring.udemy.course.Course;
 import com.projects.spring.udemy.file.ImageClass;
-import com.projects.spring.udemy.relationship.CourseRating;
+import com.projects.spring.udemy.relationship.BoughtCourse;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -22,7 +22,7 @@ public class User extends ImageClass {
     private int budget;
 
     @OneToMany(mappedBy = "user")
-    private Set<CourseRating> ratings;
+    private Set<BoughtCourse> ratings;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private Set<Comment> comments;
@@ -66,11 +66,11 @@ public class User extends ImageClass {
         this.budget = budget;
     }
 
-    Set<CourseRating> getRatings() {
+    Set<BoughtCourse> getRatings() {
         return ratings;
     }
 
-    public void setRatings(Set<CourseRating> ratings) {
+    public void setRatings(Set<BoughtCourse> ratings) {
         this.ratings = ratings;
     }
 

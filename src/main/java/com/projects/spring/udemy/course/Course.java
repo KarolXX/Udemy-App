@@ -4,9 +4,8 @@ import com.projects.spring.udemy.category.Category;
 import com.projects.spring.udemy.comment.Comment;
 import com.projects.spring.udemy.file.AppFile;
 import com.projects.spring.udemy.file.ImageClass;
-import com.projects.spring.udemy.relationship.CourseRating;
+import com.projects.spring.udemy.relationship.BoughtCourse;
 import com.projects.spring.udemy.user.User;
-import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -35,7 +34,7 @@ public class Course extends ImageClass {
     private Double sequence;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<CourseRating> ratings;
+    private Set<BoughtCourse> ratings;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "course", fetch = FetchType.EAGER)
     private Set<Comment> comments;
@@ -89,11 +88,11 @@ public class Course extends ImageClass {
         this.categories = categories;
     }
 
-    Set<CourseRating> getRatings() {
+    Set<BoughtCourse> getRatings() {
         return ratings;
     }
 
-    public void setRatings(Set<CourseRating> ratings) {
+    public void setRatings(Set<BoughtCourse> ratings) {
         this.ratings = ratings;
     }
 

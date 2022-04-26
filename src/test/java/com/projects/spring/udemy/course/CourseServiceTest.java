@@ -1,7 +1,7 @@
 package com.projects.spring.udemy.course;
 
-import com.projects.spring.udemy.relationship.CourseRating;
-import com.projects.spring.udemy.relationship.CourseRatingKey;
+import com.projects.spring.udemy.relationship.BoughtCourse;
+import com.projects.spring.udemy.relationship.BoughtCourseKey;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -41,7 +41,7 @@ class CourseServiceTest {
         // given
         Course course = mock(Course.class);
         // and
-        Set<CourseRating> mockRatings = new HashSet<>(getMockCourseRatings(2, course));
+        Set<BoughtCourse> mockRatings = new HashSet<>(getMockCourseRatings(2, course));
         // and
         when(course.getTitle()).thenReturn("React");
         when(course.getRatings()).thenReturn(mockRatings);
@@ -58,16 +58,16 @@ class CourseServiceTest {
         assertThat(result.getUsersNumber()).isEqualTo(2);
     }
 
-    private Set<CourseRating> getMockCourseRatings(int amount, Course course) {
-        Set<CourseRating> ratings = new HashSet<>();
+    private Set<BoughtCourse> getMockCourseRatings(int amount, Course course) {
+        Set<BoughtCourse> ratings = new HashSet<>();
         for(int i = amount; i > 0; i--) {
-            CourseRating mockCourseRating = mock(CourseRating.class);
+            BoughtCourse mockBoughtCourse = mock(BoughtCourse.class);
             int userID= ThreadLocalRandom.current().nextInt(1, 6 + 1);
-            var key = mock(CourseRatingKey.class);
+            var key = mock(BoughtCourseKey.class);
             when(key.getUserId()).thenReturn(userID);
-            when(mockCourseRating.getId())
+            when(mockBoughtCourse.getId())
                     .thenReturn(key);
-            ratings.add(mockCourseRating);
+            ratings.add(mockBoughtCourse);
         }
         return ratings;
     }

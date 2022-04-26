@@ -19,7 +19,7 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
     Optional<Course> findById(@Param("id") Integer id);
 
     @Modifying(clearAutomatically = true)
-    @Query("UPDATE Course c set c.averageRating = ( SELECT COALESCE( AVG(cr.rating), 0 ) FROM CourseRating cr WHERE cr.id.courseId = :courseId ) WHERE c.courseId = :courseId")
+    @Query("UPDATE Course c set c.averageRating = ( SELECT COALESCE( AVG(cr.rating), 0 ) FROM BoughtCourse cr WHERE cr.id.courseId = :courseId ) WHERE c.courseId = :courseId")
     void updateCourseAverageRating(@Param("courseId") Integer courseId);
 
     @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.courseId, c.title, c.averageRating, c.usersNumber, c.price, c.promotion, image.filePath, c.sequence) " +
@@ -58,7 +58,7 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
 
     @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.courseId, c.title, c.averageRating, c.usersNumber, c.price, c.promotion, image.filePath, c.sequence) " +
             "FROM Course c " +
-            "LEFT JOIN CourseRating cr ON c.courseId = cr.id.courseId " +
+            "LEFT JOIN BoughtCourse cr ON c.courseId = cr.id.courseId " +
             "LEFT JOIN c.image image " +
             "WHERE c.courseId IN (:ids)" +
             "GROUP BY c.title")

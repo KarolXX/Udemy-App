@@ -3,30 +3,28 @@ package com.projects.spring.udemy.comment;
 import com.projects.spring.udemy.course.Course;
 import com.projects.spring.udemy.course.CourseRepository;
 import com.projects.spring.udemy.course.dto.CommentWithUserID;
-import com.projects.spring.udemy.relationship.CourseRating;
-import com.projects.spring.udemy.relationship.CourseRatingKey;
-import com.projects.spring.udemy.relationship.CourseRatingRepository;
+import com.projects.spring.udemy.relationship.BoughtCourse;
+import com.projects.spring.udemy.relationship.BoughtCourseKey;
+import com.projects.spring.udemy.relationship.BoughtCourseRepository;
 import com.projects.spring.udemy.user.User;
 import com.projects.spring.udemy.user.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class CommentService {
     private CommentRepository repository;
     private CourseRepository courseRepository;
     private UserRepository userRepository;
-    private CourseRatingRepository ratingRepository;
+    private BoughtCourseRepository ratingRepository;
 
     public CommentService(
             CommentRepository repository,
             CourseRepository courseRepository,
             UserRepository userRepository,
-            CourseRatingRepository ratingRepository
+            BoughtCourseRepository ratingRepository
     ) {
         this.repository = repository;
         this.courseRepository = courseRepository;
@@ -61,8 +59,8 @@ public class CommentService {
         User user = userRepository.findById(commentWithUserID.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("User does not exist"));
 
-        Optional<CourseRating> association = ratingRepository.findById(
-                new CourseRatingKey(commentWithUserID.getUserId(), courseId)
+        Optional<BoughtCourse> association = ratingRepository.findById(
+                new BoughtCourseKey(commentWithUserID.getUserId(), courseId)
         );
         if(association.isEmpty())
             return Optional.empty();

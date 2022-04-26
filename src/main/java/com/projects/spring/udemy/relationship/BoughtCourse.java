@@ -7,9 +7,9 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "course_ratings")
-public class CourseRating {
+public class BoughtCourse {
     @EmbeddedId
-    private CourseRatingKey id;
+    private BoughtCourseKey id;
 
     @ManyToOne
     @MapsId("userId")
@@ -23,18 +23,18 @@ public class CourseRating {
 
     private Double rating = null;
 
-    public CourseRating() {
+    public BoughtCourse() {
     }
 
-    public CourseRating(CourseRatingKey key) {
+    public BoughtCourse(BoughtCourseKey key) {
         this.id = key;
     }
 
-    public CourseRatingKey getId() {
+    public BoughtCourseKey getId() {
         return id;
     }
 
-    public void setId(CourseRatingKey id) {
+    public void setId(BoughtCourseKey id) {
         this.id = id;
     }
 

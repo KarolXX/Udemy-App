@@ -5,17 +5,17 @@ import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 @Embeddable
-public class CourseRatingKey implements Serializable {
+public class BoughtCourseKey implements Serializable {
     @Column(name = "user_id")
     private int userId;
 
     @Column(name = "course_id")
     private int courseId;
 
-    public CourseRatingKey() {
+    public BoughtCourseKey() {
     }
 
-    public CourseRatingKey(Integer userId, Integer courseId) {
+    public BoughtCourseKey(Integer userId, Integer courseId) {
         this.userId = userId;
         this.courseId = courseId;
     }
@@ -40,9 +40,9 @@ public class CourseRatingKey implements Serializable {
     public boolean equals(Object object) {
         if(this == object)
             return true;
-        if(!(object instanceof CourseRatingKey))
+        if(!(object instanceof BoughtCourseKey))
             return false;
-        CourseRatingKey other = (CourseRatingKey) object;
+        BoughtCourseKey other = (BoughtCourseKey) object;
         return
                 this.userId == other.userId && this.courseId == other.courseId;
     }

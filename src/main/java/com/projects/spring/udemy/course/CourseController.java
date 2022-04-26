@@ -6,15 +6,13 @@ import com.projects.spring.udemy.course.dto.SingleCourseModel;
 import com.projects.spring.udemy.course.dto.FileModel;
 import com.projects.spring.udemy.course.dto.UpdatedCourse;
 import com.projects.spring.udemy.file.AppFileService;
-import com.projects.spring.udemy.relationship.CourseRating;
-import com.projects.spring.udemy.relationship.CourseRatingKey;
+import com.projects.spring.udemy.relationship.BoughtCourse;
+import com.projects.spring.udemy.relationship.BoughtCourseKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -96,13 +94,13 @@ public class CourseController {
     }
 
     @PostMapping("/course-purchase")
-    ResponseEntity<?> buyCourse(@RequestBody CourseRatingKey key) {
+    ResponseEntity<?> buyCourse(@RequestBody BoughtCourseKey key) {
         logger.warn("Client bought course");
         return service.buyCourse(key);
     }
 
     @PutMapping("/course-rating")
-    ResponseEntity<?> rateCourse(@RequestBody CourseRating source) {
+    ResponseEntity<?> rateCourse(@RequestBody BoughtCourse source) {
         logger.info("Client rated course");
 //        HttpHeaders headers = new HttpHeaders();
 //        headers.add("Access-Control-Allow-Origin", "*");
@@ -111,7 +109,7 @@ public class CourseController {
     }
 
     @PatchMapping(value = "/updating/{courseId}")
-    ResponseEntity<?> setPrice(@RequestBody UpdatedCourse updatedCourse, @PathVariable Integer courseId) {
+    ResponseEntity<?> setCoursePrice(@RequestBody UpdatedCourse updatedCourse, @PathVariable Integer courseId) {
         logger.info("Course updated");
         var result = service.updateCourse(updatedCourse, courseId);
         return ResponseEntity.ok(result);
