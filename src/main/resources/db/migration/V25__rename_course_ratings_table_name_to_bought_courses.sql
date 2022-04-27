@@ -1,0 +1,1 @@
+RENAME TABLE course_ratings TO bought_courses

@@ -6,7 +6,7 @@ import com.projects.spring.udemy.user.User;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "course_ratings")
+@Table(name = "bought_courses")
 public class BoughtCourse {
     @EmbeddedId
     private BoughtCourseKey id;

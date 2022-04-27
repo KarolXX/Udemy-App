@@ -18,18 +18,18 @@ public class CommentService {
     private CommentRepository repository;
     private CourseRepository courseRepository;
     private UserRepository userRepository;
-    private BoughtCourseRepository ratingRepository;
+    private BoughtCourseRepository boughtCourseRepository;
 
     public CommentService(
             CommentRepository repository,
             CourseRepository courseRepository,
             UserRepository userRepository,
-            BoughtCourseRepository ratingRepository
+            BoughtCourseRepository boughtCourseRepository
     ) {
         this.repository = repository;
         this.courseRepository = courseRepository;
         this.userRepository = userRepository;
-        this.ratingRepository = ratingRepository;
+        this.boughtCourseRepository = boughtCourseRepository;
     }
 
     @Transactional
@@ -59,7 +59,7 @@ public class CommentService {
         User user = userRepository.findById(commentWithUserID.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("User does not exist"));
 
-        Optional<BoughtCourse> association = ratingRepository.findById(
+        Optional<BoughtCourse> association = boughtCourseRepository.findById(
                 new BoughtCourseKey(commentWithUserID.getUserId(), courseId)
         );
         if(association.isEmpty())

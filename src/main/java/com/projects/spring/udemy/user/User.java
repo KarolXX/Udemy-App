@@ -22,7 +22,7 @@ public class User extends ImageClass {
     private int budget;
 
     @OneToMany(mappedBy = "user")
-    private Set<BoughtCourse> ratings;
+    private Set<BoughtCourse> courses;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private Set<Comment> comments;
@@ -66,12 +66,12 @@ public class User extends ImageClass {
         this.budget = budget;
     }
 
-    Set<BoughtCourse> getRatings() {
-        return ratings;
+    Set<BoughtCourse> getCourses() {
+        return courses;
     }
 
-    public void setRatings(Set<BoughtCourse> ratings) {
-        this.ratings = ratings;
+    public void setCourses(Set<BoughtCourse> ratings) {
+        this.courses = ratings;
     }
 
     Set<Comment> getComments() {

@@ -35,7 +35,7 @@ import static java.lang.Math.pow;
 public class CourseService {
     private CourseRepository repository;
     private UserRepository userRepository;
-    private BoughtCourseRepository ratingRepository;
+    private BoughtCourseRepository boughtCourseRepository;
     private AuthorRepository authorRepository;
     private ConfigurationProperties configuration;
 
@@ -47,7 +47,7 @@ public class CourseService {
     public CourseService(
             CourseRepository repository,
             UserRepository userRepository,
-            BoughtCourseRepository ratingRepository,
+            BoughtCourseRepository boughtCourseRepository,
             AuthorRepository authorRepository,
             ConfigurationProperties configuration,
             ModelMapper modelMapper,
@@ -55,7 +55,7 @@ public class CourseService {
     ) {
         this.repository = repository;
         this.userRepository = userRepository;
-        this.ratingRepository = ratingRepository;
+        this.boughtCourseRepository = boughtCourseRepository;
         this.authorRepository = authorRepository;
         this.configuration = configuration;
         this.modelMapper = modelMapper;
@@ -136,7 +136,7 @@ public class CourseService {
             }
         }
 
-        ratingRepository.save(association);
+        boughtCourseRepository.save(association);
 
         // update the number of course users
         // (there is no need to update the average rating because the user cannot rate and buy a course at the same time)
@@ -151,10 +151,10 @@ public class CourseService {
 
     @Transactional
     public Double rateCourse(BoughtCourse source) {
-        BoughtCourse association = ratingRepository.findById(source.getId())
+        BoughtCourse association = boughtCourseRepository.findById(source.getId())
                 .orElseThrow(() -> new IllegalArgumentException("This course or user is not available"));
         association.setRating(source.getRating());
-        BoughtCourse updatedSource = ratingRepository.save(association);
+        BoughtCourse updatedSource = boughtCourseRepository.save(association);
 
         // update course's average rating
         int targetCourseId = source.getId().getCourseId();
@@ -218,11 +218,11 @@ public class CourseService {
                 .collect(Collectors.toList());
 
         // find all boughtCourses related with this course to take other participants courses in further part of this method
-        List<BoughtCourse> source = ratingRepository.findCourseRatingsById_UserIdIsIn(participantIDs);
+        List<BoughtCourse> source = boughtCourseRepository.findBoughtCoursesById_UserIdIsIn(participantIDs);
 
         List<Integer> courseIDs = new ArrayList<>();
-        source.stream().map(courseRating -> {
-            Integer courseId = courseRating.getId().getCourseId();
+        source.stream().map(boughtCourse -> {
+            Integer courseId = boughtCourse.getId().getCourseId();
             if (courseIDs.contains(courseId) || courseId.equals(targetCourseId))
                 return null;
             else

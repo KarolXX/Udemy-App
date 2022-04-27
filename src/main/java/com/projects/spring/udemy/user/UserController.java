@@ -56,7 +56,7 @@ public class UserController {
     ResponseEntity<?> test(@PathVariable int id) {
         var user = repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("No such user"));
-        var courseWithId1 = user.getRatings()
+        var courseWithId1 = user.getCourses()
                 .stream().filter(rate -> rate.getId().getCourseId() == 1 )
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("This user has no course with id 1"));

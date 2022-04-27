@@ -7,7 +7,7 @@ import java.util.List;
 
 @Repository
 public interface BoughtCourseRepository extends JpaRepository<BoughtCourse, BoughtCourseKey> {
-    List<BoughtCourse> findCourseRatingsById_UserIdIsIn(List<Integer> id);
+    List<BoughtCourse> findBoughtCoursesById_UserIdIsIn(List<Integer> id);
 
     Boolean existsById_CourseIdAndId_UserId(Integer courseId, Integer userId);
 }

@@ -18,10 +18,10 @@ import java.util.Arrays;
 @Configurable
 class LogicAspect {
     private static final Logger logger = LoggerFactory.getLogger(LogicAspect.class);
-    private final BoughtCourseRepository ratingRepository;
+    private final BoughtCourseRepository boughtCourseRepository;
 
-    public LogicAspect(final BoughtCourseRepository ratingRepository) {
-        this.ratingRepository = ratingRepository;
+    public LogicAspect(final BoughtCourseRepository boughtCourseRepository) {
+        this.boughtCourseRepository = boughtCourseRepository;
     }
 
     // FIXME: this logic is here only for education purposes. It should be in normal code bcs it's not cross cutting concern
@@ -29,7 +29,7 @@ class LogicAspect {
     Object aroundBuyCourseMethod(ProceedingJoinPoint jp) throws Throwable {
         Object[] args = jp.getArgs();
         BoughtCourseKey key = (BoughtCourseKey) Arrays.stream(args).findFirst().get();
-        Boolean isAlreadyBought = ratingRepository.existsById_CourseIdAndId_UserId(
+        Boolean isAlreadyBought = boughtCourseRepository.existsById_CourseIdAndId_UserId(
                 key.getCourseId(),
                 key.getUserId()
         );
