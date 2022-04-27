@@ -23,7 +23,7 @@ public class Author extends ImageClass {
     private String description;
     //@Transient // to avoid "Unknown column 'average_rating' in 'field list'"
     //@Formula("( SELECT COALESCE(AVG(( SELECT COALESCE( AVG(cr.rating), 0 ) FROM course_ratings cr WHERE cr.course_id = c.course_id )), 0 ) FROM author_course ac JOIN courses c ON ac.course_id = c.course_id WHERE ac.author_id = 15 )")
-    @Formula("( SELECT COALESCE( AVG(cr.rating), 0 ) FROM course_ratings cr " +
+    @Formula("( SELECT COALESCE( AVG(cr.rating), 0 ) FROM bought_courses cr " +
             "WHERE cr.course_id IN ( " +
             "SELECT c.course_id FROM author_course ac, courses c " +
             "WHERE ac.course_id = c.course_id AND ac.author_id = author_id " +
