@@ -45,8 +45,8 @@ public class Author extends AppUserTemplate {
     }
 
     // FIXME: do I need @NotBlank for constructor parameters ?
-    public Author(@NotBlank(message = "Author needs name") String name,@NotBlank(message = "Author needs password") String password, String occupation, @NotBlank(message = "Author must have a description") String description) {
-        super(name, password);
+    public Author(@NotBlank(message = "Author needs name") String name, @NotBlank(message = "Author needs password") String password, String salt, String occupation, @NotBlank(message = "Author must have a description") String description) {
+        super(name, password, salt);
         this.occupation = occupation;
         this.description = description;
     }

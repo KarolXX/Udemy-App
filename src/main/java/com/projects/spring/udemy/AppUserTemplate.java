@@ -11,6 +11,7 @@ abstract public class AppUserTemplate extends ImageClass {
     private String name;
     @NotBlank(message = "Add password!")
     private String password;
+    private String salt;
 
     /**
      * Author and User entities (subclasses) needs this no-argument constructor for their no-argument constructors
@@ -18,9 +19,10 @@ abstract public class AppUserTemplate extends ImageClass {
     public AppUserTemplate() {
     }
 
-    public AppUserTemplate(@NotBlank(message = "Add username!") String name, @NotBlank(message = "Add password!") String password) {
+    public AppUserTemplate(@NotBlank(message = "Add username!") String name, @NotBlank(message = "Add password!") String password, String salt) {
         this.name = name;
         this.password = password;
+        this.salt = salt;
     }
 
     public String getName() {

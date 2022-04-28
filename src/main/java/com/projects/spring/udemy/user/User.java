@@ -40,8 +40,8 @@ public class User extends AppUserTemplate {
     public User() {
     }
 
-    public User(@NotBlank(message = "Add username!") String name, @NotBlank(message = "Add password!") String password) {
-        super(name, password);
+    public User(@NotBlank(message = "Add username!") String name, @NotBlank(message = "Add password!") String password, String salt) {
+        super(name, password, salt);
     }
 
     public int getUserId() {
