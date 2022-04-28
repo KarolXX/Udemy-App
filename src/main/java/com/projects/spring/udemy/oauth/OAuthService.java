@@ -10,6 +10,7 @@ import com.projects.spring.udemy.oauth.dto.LoginResponse;
 import com.projects.spring.udemy.oauth.dto.UserForm;
 import com.projects.spring.udemy.user.User;
 import com.projects.spring.udemy.user.UserRepository;
+import net.bytebuddy.utility.RandomString;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.CredentialRepresentation;
@@ -33,6 +34,8 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.core.Response;
 import java.net.URI;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 @Service
@@ -122,17 +125,19 @@ public class OAuthService {
 
         // save user/author to DB in order to make relations between users table and others
         // TODO: add secure password entry to DB
+        String hashedPassword = hash(source.getPassword());
         if(isAuthor) {
             // before saving cast source to AuthorForm to get access to e.g. getDescription()
             AuthorForm authorSource = (AuthorForm) source;
-            authorRepository.save(new Author(name, authorSource.getDescription(), authorSource.getOccupation()));
+            authorRepository.save(new Author(name, hashedPassword, authorSource.getDescription(), authorSource.getOccupation()));
         }
         else
-            userRepository.save(new User(name));
+            userRepository.save(new User(name, hashedPassword));
 
         return login(source);
     }
 
+    // functions for keycloak
     private RoleRepresentation prepareRoleRepresentation(String roleName) {
         return keycloakClient.realm(realmName).roles().get(roleName).toRepresentation();
     }
@@ -178,6 +183,31 @@ public class OAuthService {
             String path = location.getPath();
             return path.substring(path.lastIndexOf('/') + 1);
         }
+    }
+
+    // functions for MySQL hashing
+    private String hash(String password) {
+        try {
+            MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
+            String salt = getRandomSalt();
+            String passWithSalt = password + salt;
+            byte[] passBytes = passWithSalt.getBytes();
+            byte[] passHash = sha256.digest(passBytes);
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < passHash.length; i++) {
+                sb.append(Integer.toString((passHash[i] & 0xff) + 0x100, 16).substring(1));
+            }
+            String generatedPassword = sb.toString();
+            return generatedPassword;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // TODO: improve this demo method
+    private String getRandomSalt() {
+        return "sample_hash";
     }
 }
 
