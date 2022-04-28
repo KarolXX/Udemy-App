@@ -242,17 +242,4 @@ public class CourseService {
         course.setImage(null);
     }
 
-    private String generateUniqueFilename() {
-        RandomString random = new RandomString(64);
-        String filename = null;
-
-        while (filename == null || new File(configuration.getImagesPath() + File.separator + filename).exists()) {
-            filename = configuration.getImagesPath() + File.separator + random.nextString();
-        }
-
-        filename = filename + ".png";
-
-        return filename;
-    }
-
 }
