@@ -1,5 +1,6 @@
 package com.projects.spring.udemy.author;
 
+import com.projects.spring.udemy.AppUserTemplate;
 import com.projects.spring.udemy.course.Course;
 import com.projects.spring.udemy.file.ImageClass;
 import org.hibernate.annotations.Formula;
@@ -11,13 +12,11 @@ import java.util.Set;
 
 @Entity
 @Table(name = "authors")
-public class Author extends ImageClass {
+public class Author extends AppUserTemplate {
     @Id
     @GeneratedValue(generator = "inc")
     @GenericGenerator(name = "inc", strategy = "increment")
     private int authorId;
-    @NotBlank(message = "Author needs name")
-    private String name;
     private String occupation;
     @NotBlank(message = "Author must have a description")
     private String description;
@@ -39,11 +38,15 @@ public class Author extends ImageClass {
     )
     private Set<Course> courses;
 
+    /**
+     * Hibernate needs no-argument constructor
+     */
     public Author() {
     }
 
-    public Author(@NotBlank(message = "Author needs name") String name, String occupation, @NotBlank(message = "Author must have a description") String description) {
-        this.name = name;
+    // FIXME: do I need @NotBlank for constructor parameters ?
+    public Author(@NotBlank(message = "Author needs name") String name,@NotBlank(message = "Author needs password") String password, String occupation, @NotBlank(message = "Author must have a description") String description) {
+        super(name, password);
         this.occupation = occupation;
         this.description = description;
     }
@@ -54,14 +57,6 @@ public class Author extends ImageClass {
 
     public void setAuthorId(int authorId) {
         this.authorId = authorId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getOccupation() {

@@ -1,5 +1,6 @@
 package com.projects.spring.udemy.user;
 
+import com.projects.spring.udemy.AppUserTemplate;
 import com.projects.spring.udemy.comment.Comment;
 import com.projects.spring.udemy.course.Course;
 import com.projects.spring.udemy.file.ImageClass;
@@ -12,13 +13,11 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users")
-public class User extends ImageClass {
+public class User extends AppUserTemplate {
     @Id
     @GeneratedValue(generator = "inc")
     @GenericGenerator(name = "inc", strategy = "increment")
     private int userId;
-    @NotBlank(message = "Add username!")
-    private String name;
     private int budget;
 
     @OneToMany(mappedBy = "user")
@@ -35,11 +34,14 @@ public class User extends ImageClass {
     )
     private Set<Course> likedCourses;
 
+    /**
+     * Hibernate needs no-argument constructor
+     */
     public User() {
     }
 
-    public User(@NotBlank(message = "Add username!") String name) {
-        this.name = name;
+    public User(@NotBlank(message = "Add username!") String name, @NotBlank(message = "Add password!") String password) {
+        super(name, password);
     }
 
     public int getUserId() {
@@ -48,14 +50,6 @@ public class User extends ImageClass {
 
     public void setUserId(int userId) {
         this.userId = userId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public int getBudget() {
