@@ -1,0 +1,2 @@
+ALTER TABLE courses ADD COLUMN password VARCHAR(600);
+ALTER TABLE authors ADD COLUMN password VARCHAR(600);
