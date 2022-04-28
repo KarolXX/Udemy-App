@@ -31,6 +31,8 @@ public class OAuthController {
         this.service = service;
     }
 
+    // FIXME: this method will not work for AuthorForm because request body is casted to UserForm
+    //  make this method correct for logging author as well
     @PostMapping("/login")
     ResponseEntity<?> logIn(@RequestBody UserForm userForm) {
         logger.info("Signing in");
