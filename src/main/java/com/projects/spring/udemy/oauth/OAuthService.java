@@ -2,6 +2,7 @@ package com.projects.spring.udemy.oauth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.projects.spring.udemy.AppUserTemplate;
 import com.projects.spring.udemy.author.Author;
 import com.projects.spring.udemy.author.AuthorRepository;
 import com.projects.spring.udemy.file.ImageClass;
@@ -124,15 +125,17 @@ public class OAuthService {
         assignRole(prepareRoleRepresentation(roleName), keycloakId);
 
         // save user/author to DB in order to make relations between users table and others
-        // TODO: add secure password entry to DB
-        String hashedPassword = hash(source.getPassword());
+        PersonType personType = isAuthor ? PersonType.AUTHOR : PersonType.USER;
+        String salt = getRandomSalt(personType);
+        String hashedPassword = hash(source.getPassword(), roleName);
+
         if(isAuthor) {
             // before saving cast source to AuthorForm to get access to e.g. getDescription()
             AuthorForm authorSource = (AuthorForm) source;
-            authorRepository.save(new Author(name, hashedPassword, authorSource.getDescription(), authorSource.getOccupation()));
+            authorRepository.save(new Author(name, hashedPassword, salt, authorSource.getDescription(), authorSource.getOccupation()));
         }
         else
-            userRepository.save(new User(name, hashedPassword));
+            userRepository.save(new User(name, hashedPassword, salt));
 
         return login(source);
     }
@@ -186,10 +189,9 @@ public class OAuthService {
     }
 
     // functions for MySQL hashing
-    private String hash(String password) {
+    private String hash(String password, String salt) {
         try {
             MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
-            String salt = getRandomSalt();
             String passWithSalt = password + salt;
             byte[] passBytes = passWithSalt.getBytes();
             byte[] passHash = sha256.digest(passBytes);
@@ -205,9 +207,20 @@ public class OAuthService {
         return null;
     }
 
-    // TODO: improve this demo method
-    private String getRandomSalt() {
-        return "sample_hash";
+    private enum PersonType {
+        USER,
+        AUTHOR
+    }
+
+    private String getRandomSalt(PersonType personType) {
+        RandomString salt = new RandomString(32);
+        String result = null;
+
+        while (result == null || personType.equals(PersonType.AUTHOR) ? userRepository.existsBySalt(result) : authorRepository.existsBySalt(result)) {
+            result = salt.nextString();
+        }
+
+        return result;
     }
 }
 

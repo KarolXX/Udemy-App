@@ -10,6 +10,7 @@ import java.util.Optional;
 @Repository
 public interface AuthorRepository extends JpaRepository<Author, Integer> {
     Boolean existsByName(String name);
+    Boolean existsBySalt(String name);
     Optional<Author> findByName(String name);
 
     @Query(
