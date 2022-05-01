@@ -17,6 +17,7 @@ Application with courses - something similar to Udemy.
 * JPQL
 * events
 * work with the `org.keycloak.admin.client.Keycloak`
+* hashing of user passwords using salt
 
 # Brief app description
 ### Start page
