@@ -44,7 +44,7 @@ Everyone can add a course to favorites and view them later.
 
 
 # Lacks in app:
-* no secure saving of passwords in MySQL
+* no tests
 * no security by roles
 
 
