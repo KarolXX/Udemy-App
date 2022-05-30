@@ -36,16 +36,6 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
     )
     Page<CourseInMenu> getCourseMenu(Pageable pageable);
 
-//    @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.courseId, c.title, c.averageRating, c.usersNumber, c.price, c.promotion, image.filePath, c.sequence) " +
-//            "FROM Category cat " +
-//            "JOIN cat.courses c " +
-//            "LEFT JOIN c.ratings r " +
-//            "LEFT JOIN c.image image " +
-//            "WHERE cat.categoryId = :id " +
-//            "GROUP BY c.title"
-//    )
-//    List<CourseInMenu> getCourseMenuByCategoryId(@Param("id") Integer id);
-
     @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.courseId, c.title, c.averageRating, c.usersNumber, c.price, c.promotion, image.filePath, c.sequence) " +
             "FROM Category cat " +
             "JOIN cat.courses c " +
