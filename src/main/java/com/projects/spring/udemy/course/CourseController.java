@@ -90,7 +90,7 @@ public class CourseController {
     ResponseEntity<Course> createCourse(@RequestBody Course source) {
         logger.info("New course has been created");
         var result = repository.save(source);
-        return ResponseEntity.created(URI.create("/" + result.getId())).body(source);
+        return ResponseEntity.created(URI.create("/" + result.getId())).body(result);
     }
 
     @PostMapping("/course-purchase")
