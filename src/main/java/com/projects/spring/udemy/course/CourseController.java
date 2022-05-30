@@ -40,19 +40,10 @@ public class CourseController {
         this.configuration = configuration;
     }
 
-//    @Transactional
-//    @GetMapping(path = "/test")
-//    ResponseEntity<Course> setCourseAverageRating() {
-//        Course result = repository.findById(5).get();
-//        result.setAverageRating(1.0);
-//        return ResponseEntity.ok(result);
-//    }
-
     @GetMapping(params = {"!sort", "!page", "!size"})
     ResponseEntity<?> getAllCourses() {
         logger.warn("Exposing all the courses!");
         var result = repository.getCourseMenu();
-//        var result = service.getMenu(pageable);
         return ResponseEntity.ok(result);
     }
 
@@ -102,8 +93,6 @@ public class CourseController {
     @PutMapping("/course-rating")
     ResponseEntity<?> rateCourse(@RequestBody BoughtCourse source) {
         logger.info("Client rated course");
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.add("Access-Control-Allow-Origin", "*");
         double result = service.rateCourse(source);
         return ResponseEntity.ok(result);
     }
