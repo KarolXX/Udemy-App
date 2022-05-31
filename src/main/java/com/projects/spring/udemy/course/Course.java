@@ -24,9 +24,6 @@ public class Course extends ImageClass {
     private String description;
     private int price;
     private Integer promotion;
-//    @Formula("( SELECT COALESCE( AVG(cr.rating), 0 ) FROM course_ratings cr WHERE cr.course_id = course_id )")
-   // @Formula("SELECT AVG(cr.rating) FROM course_ratings cr WHERE cr.course_id = course_id")
-    //@Transient
     private Double averageRating;
     private Integer usersNumber;
     // this field determines the order in which the course is displayed.
@@ -56,6 +53,8 @@ public class Course extends ImageClass {
     public Course() {
     }
 
+    // model mapper needs public setters for title, description, price, promotion - especially for updateCourse() in CourseService
+
     public int getId() {
         return courseId;
     }
@@ -84,7 +83,7 @@ public class Course extends ImageClass {
         return categories;
     }
 
-    public void setCategories(Set<Category> categories) {
+    void setCategories(Set<Category> categories) {
         this.categories = categories;
     }
 
@@ -92,7 +91,7 @@ public class Course extends ImageClass {
         return ratings;
     }
 
-    public void setRatings(Set<BoughtCourse> ratings) {
+    void setRatings(Set<BoughtCourse> ratings) {
         this.ratings = ratings;
     }
 
@@ -116,7 +115,7 @@ public class Course extends ImageClass {
         return comments;
     }
 
-    public void setComments(Set<Comment> comments) {
+    void setComments(Set<Comment> comments) {
         this.comments = comments;
     }
 
@@ -124,7 +123,7 @@ public class Course extends ImageClass {
         return willingUsers;
     }
 
-    public void setWillingUsers(Set<User> willingUsers) {
+    void setWillingUsers(Set<User> willingUsers) {
         this.willingUsers = willingUsers;
     }
 
@@ -148,7 +147,7 @@ public class Course extends ImageClass {
         return averageRating;
     }
 
-    public void setAverageRating(Double averageRating) {
+    void setAverageRating(Double averageRating) {
         this.averageRating = averageRating;
     }
 

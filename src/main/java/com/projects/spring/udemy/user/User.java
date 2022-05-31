@@ -48,7 +48,7 @@ public class User extends AppUserTemplate {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    void setUserId(int userId) {
         this.userId = userId;
     }
 

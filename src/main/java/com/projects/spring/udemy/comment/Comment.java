@@ -33,7 +33,7 @@ public class Comment extends ImageClass {
         return commentId;
     }
 
-    public void setCommentId(int commentId) {
+    void setCommentId(int commentId) {
         this.commentId = commentId;
     }
 

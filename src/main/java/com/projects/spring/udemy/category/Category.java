@@ -32,7 +32,7 @@ public class Category {
         return categoryId;
     }
 
-    public void setId(int id) {
+    void setId(int id) {
         this.categoryId = id;
     }
 
@@ -40,7 +40,7 @@ public class Category {
         return name;
     }
 
-    public void setName(String name) {
+    void setName(String name) {
         this.name = name;
     }
 

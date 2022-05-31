@@ -55,7 +55,7 @@ public class Author extends AppUserTemplate {
         return authorId;
     }
 
-    public void setAuthorId(int authorId) {
+    void setAuthorId(int authorId) {
         this.authorId = authorId;
     }
 
@@ -71,7 +71,7 @@ public class Author extends AppUserTemplate {
         return description;
     }
 
-    public void setDescription(String description) {
+    void setDescription(String description) {
         this.description = description;
     }
 
