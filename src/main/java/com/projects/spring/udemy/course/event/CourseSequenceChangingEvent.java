@@ -1,10 +1,10 @@
 package com.projects.spring.udemy.course.event;
 
 // FIXME: rename to CourseSequenceChangedEvent as in course there is 'sequence' field, not 'order' because of problems with 'order' keyword in SQL
-public class CourseOrderChangedEvent {
+public class CourseSequenceChangingEvent {
     private int courseId;
 
-    public CourseOrderChangedEvent(int courseId) {
+    public CourseSequenceChangingEvent(int courseId) {
         this.courseId = courseId;
     }
 

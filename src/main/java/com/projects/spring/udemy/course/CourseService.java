@@ -6,13 +6,12 @@ import com.projects.spring.udemy.author.AuthorRepository;
 import com.projects.spring.udemy.course.dto.CourseInMenu;
 import com.projects.spring.udemy.course.dto.SingleCourseModel;
 import com.projects.spring.udemy.course.dto.UpdatedCourse;
-import com.projects.spring.udemy.course.event.CourseOrderChangedEvent;
+import com.projects.spring.udemy.course.event.CourseSequenceChangingEvent;
 import com.projects.spring.udemy.relationship.BoughtCourse;
 import com.projects.spring.udemy.relationship.BoughtCourseKey;
 import com.projects.spring.udemy.relationship.BoughtCourseRepository;
 import com.projects.spring.udemy.user.User;
 import com.projects.spring.udemy.user.UserRepository;
-import net.bytebuddy.utility.RandomString;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.Provider;
 import org.modelmapper.TypeMap;
@@ -25,7 +24,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -81,12 +79,7 @@ public class CourseService {
             userRate = null;
         } else {
             boughtCourse = true;
-            userRate = association.stream()
-                    .map(BoughtCourse::getRating)
-                    .filter(rate -> rate != null)
-                    .findFirst();
-            // FIXME: isn't it better ?
-            //userRate = Optional.ofNullable(association.get().getRating());
+            userRate = Optional.ofNullable(association.get().getRating());
         }
 
         boolean isCourseLiked = target.getWillingUsers()
@@ -121,8 +114,6 @@ public class CourseService {
         if(user.getBudget() < sum)
             return ResponseEntity.ok("Not enough founds on the account");
 
-        //FIXME: add methods responsible for keeping in-sync both sides of association as it is in Course class: addComment(), removeComment()
-        //EDIT: IDK if this is necessary bcs teacher told when you associate A and B wih join table C then just set A and B in C (it is already done)
         association.setCourse(course);
         association.setUser(user);
 
@@ -139,11 +130,11 @@ public class CourseService {
         boughtCourseRepository.save(association);
 
         // update the number of course users
-        // (there is no need to update the average rating because the user cannot rate and buy a course at the same time)
+        // (there is no need to update the course' average rating because the user cannot rate and buy a course at the same time)
         course.setUsersNumber(course.getUsersNumber() + 1);
 
         eventPublisher.publishEvent(
-                new CourseOrderChangedEvent(course.getId())
+                new CourseSequenceChangingEvent(course.getId())
         );
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -161,7 +152,7 @@ public class CourseService {
         repository.updateCourseAverageRating(targetCourseId);
 
         eventPublisher.publishEvent(
-                new CourseOrderChangedEvent(source.getId().getCourseId())
+                new CourseSequenceChangingEvent(source.getId().getCourseId())
         );
 
         return updatedSource.getRating();
@@ -188,7 +179,7 @@ public class CourseService {
 
     @Transactional
     @EventListener
-    public void updateCourseSequence(CourseOrderChangedEvent event) {
+    public void updateCourseSequence(CourseSequenceChangingEvent event) {
         Course target = repository.findById(event.getCourseId())
                 .orElseThrow(() -> new IllegalArgumentException("No course with given id"));
 
