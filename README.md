@@ -39,8 +39,8 @@ Of course I use paging so as not to store all the data in main memory (easy and 
 ![image](https://user-images.githubusercontent.com/71709330/163381342-09b06988-a6ed-48e4-9fec-bf327323a7df.png)
 
 ### Course
-The user who purchased course can rate, comment and watch the video instead of the image as a user who did not buy the course.
-Everyone can add a course to favorites and view them later.
+The user who purchased course can rate, comment and watch the video instead of just seeing a picture of the course as a user who did not buy the course.
+Everyone can add a course to favorites and view them later in favourite-courses tab.
 ![image](https://user-images.githubusercontent.com/71709330/163387792-a0254ec4-7099-4b87-ad52-1d00a071f5df.png)
 ![image](https://user-images.githubusercontent.com/71709330/163387462-9d20e5bc-70a0-49f5-b662-35fddf421f83.png)
 
