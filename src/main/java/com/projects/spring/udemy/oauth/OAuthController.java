@@ -54,11 +54,6 @@ public class OAuthController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/users")
-    ResponseEntity<List<UserRepresentation>> getAllUsers() {
-        return ResponseEntity.ok(service.getAllUsers());
-    }
-
     @ExceptionHandler(NickAlreadyExistsException.class)
     ResponseEntity<?> illegalNickHandler(NickAlreadyExistsException e) {
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(e.getMessage());
