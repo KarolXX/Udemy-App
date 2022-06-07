@@ -20,7 +20,7 @@ Application with courses - something similar to Udemy.
 
 # Brief app description
 ### Scheme operation:
-![image](https://user-images.githubusercontent.com/71709330/171060554-0002f344-f7f4-4ba8-9faa-2bb9eb470a09.png)
+![image](https://user-images.githubusercontent.com/71709330/172498398-c3f4eafc-cb24-4894-a6ec-297151317389.png)
 
 ### Start page
 Login and registration requests are send to keycloak, from where we get TokenData (project class).
