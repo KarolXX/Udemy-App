@@ -19,17 +19,17 @@ Application with courses - something similar to Udemy.
 * work with the `org.keycloak.admin.client.Keycloak`
 
 # Brief app description
-### Scheme operation:
+## Scheme operation:
 ![image](https://user-images.githubusercontent.com/71709330/172498398-c3f4eafc-cb24-4894-a6ec-297151317389.png)
 
-### Start page
+## Start page
 Login and registration requests are send to keycloak, from where we get TokenData (project class).
 In addition to keeping users in LDAP built into Keycloak, they are also placed in the MySQL database
 ![image](https://user-images.githubusercontent.com/71709330/163377719-39ec7303-57eb-497d-89a8-9883098efe5f.png)
 
 After registration you get roles specific to your account - user or author
 
-### Menu
+## Menu
 Menu is ... just menu - place where we can choose which course we want to see in detail.
 
 The order of the courses is not random but depends on the course `sequence` property.
@@ -38,7 +38,7 @@ To avoid flow of unnecessary data I use CourseInMenu DTO when fetching courses.
 Of course I use paging so as not to store all the data in main memory (easy and cheap memory allocation).
 ![image](https://user-images.githubusercontent.com/71709330/163381342-09b06988-a6ed-48e4-9fec-bf327323a7df.png)
 
-### Course
+## Course
 The user who purchased course can rate, comment and watch the video instead of just seeing a picture of the course as a user who did not buy the course.
 Everyone can add a course to favorites and view them later in favourite-courses tab.
 ![image](https://user-images.githubusercontent.com/71709330/163387792-a0254ec4-7099-4b87-ad52-1d00a071f5df.png)
