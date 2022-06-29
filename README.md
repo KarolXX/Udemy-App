@@ -18,6 +18,7 @@ Note: this application has no tests implemented yet :( but they will appear in a
 ## Interesting concepts:
 * JPQL
 * events
+* "Composition over inheritance"
 * work with the `org.keycloak.admin.client.Keycloak`
 
 # Brief app description
