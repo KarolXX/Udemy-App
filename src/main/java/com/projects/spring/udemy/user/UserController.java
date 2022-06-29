@@ -30,6 +30,13 @@ public class UserController {
         return ResponseEntity.ok(result);
     }
 
+    @DeleteMapping("/{id}")
+    ResponseEntity<?> deleteUser(@PathVariable Integer id) {
+        logger.warn("User with " + id + "deleted");
+        service.deleteUser(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/{id}/favourite-courses")
     ResponseEntity<List<CourseInMenu>> getUserFavouriteCourses(@PathVariable Integer id) {
         logger.warn("Exposing all the user favourite courses");
