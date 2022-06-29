@@ -50,5 +50,6 @@ Everyone can add a course to favorites and view them later in favourite-courses 
 * temporary inability to log in as an author in the application
 * no security by roles
 * a few unresolved fixme statements
+* no tests yet
 
 
