@@ -50,17 +50,4 @@ public class UserController {
         repository.dislikeCourse(userId, courseId);
         return ResponseEntity.noContent().build();
     }
-
-    @Transactional
-    @PatchMapping("/{id}")
-    ResponseEntity<?> test(@PathVariable int id) {
-        var user = repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("No such user"));
-        var courseWithId1 = user.getCourses()
-                .stream().filter(rate -> rate.getId().getCourseId() == 1 )
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("This user has no course with id 1"));
-        courseWithId1.setRating(5.0); //FIXME - it's not reflected in DB
-        return ResponseEntity.ok(courseWithId1.getRating());
-    }
 }

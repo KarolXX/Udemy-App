@@ -3,7 +3,6 @@ package com.projects.spring.udemy.user;
 import com.projects.spring.udemy.AppUserTemplate;
 import com.projects.spring.udemy.comment.Comment;
 import com.projects.spring.udemy.course.Course;
-import com.projects.spring.udemy.file.ImageClass;
 import com.projects.spring.udemy.relationship.BoughtCourse;
 import org.hibernate.annotations.GenericGenerator;
 

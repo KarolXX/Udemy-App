@@ -27,23 +27,10 @@ public class CategoryController {
         return ResponseEntity.ok(result);
     }
 
-//    @GetMapping("/{id}")
-//    ResponseEntity<List<CourseInMenu>> getCategoryCourses(@PathVariable Integer id) {
-//        logger.warn("Exposing category courses");
-//        var result = repository.getCourseMenuByCategoryId(id);
-//        return ResponseEntity.ok(result);
-//    }
-
     @PostMapping
     ResponseEntity createCategory(@RequestBody Category source) {
         logger.info("New category has been created");
         var result = repository.save(source);
         return ResponseEntity.created(URI.create("/" + result.getId())).body(result);
     }
-
-//    @DeleteMapping("/{categoryId}")
-//    ResponseEntity deleteCategory(@PathVariable Integer categoryId) {
-//        logger.warn("Category has been deleted");
-//
-//    }
 }

@@ -40,6 +40,7 @@ public class AuthorController {
             return ResponseEntity.ok(result);
     }
 
+    // responsibility for creating the author entity has been transferred to OAuthController
 //    @PostMapping
 //    ResponseEntity<Author> createAuthor(@RequestBody Author author) {
 //        logger.info("Author has been added!");

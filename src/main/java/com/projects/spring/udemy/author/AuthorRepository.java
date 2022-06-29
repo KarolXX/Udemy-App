@@ -18,5 +18,5 @@ public interface AuthorRepository extends JpaRepository<Author, Integer> {
             value = "SELECT a.* FROM author_course ac " +
                     "JOIN authors a ON ac.author_id = a.author_id " +
                     "WHERE ac.course_id = :id")
-    Optional<Author> findCourseAuthorByCourseId(@Param("id") Integer courseId);
+    Optional<Author> findAuthorCourseByCourseId(@Param("id") Integer courseId);
 }

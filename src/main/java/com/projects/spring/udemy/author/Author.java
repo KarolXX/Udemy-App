@@ -20,8 +20,6 @@ public class Author extends AppUserTemplate {
     private String occupation;
     @NotBlank(message = "Author must have a description")
     private String description;
-    //@Transient // to avoid "Unknown column 'average_rating' in 'field list'"
-    //@Formula("( SELECT COALESCE(AVG(( SELECT COALESCE( AVG(cr.rating), 0 ) FROM course_ratings cr WHERE cr.course_id = c.course_id )), 0 ) FROM author_course ac JOIN courses c ON ac.course_id = c.course_id WHERE ac.author_id = 15 )")
     @Formula("( SELECT COALESCE( AVG(cr.rating), 0 ) FROM bought_courses cr " +
             "WHERE cr.course_id IN ( " +
             "SELECT c.course_id FROM author_course ac, courses c " +
@@ -44,7 +42,6 @@ public class Author extends AppUserTemplate {
     public Author() {
     }
 
-    // FIXME: do I need @NotBlank for constructor parameters ?
     public Author(@NotBlank(message = "Author needs name") String name, @NotBlank(message = "Author needs password") String password, String salt, String occupation, @NotBlank(message = "Author must have a description") String description) {
         super(name, password, salt);
         this.occupation = occupation;

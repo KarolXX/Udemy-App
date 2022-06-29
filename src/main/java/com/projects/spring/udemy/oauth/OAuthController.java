@@ -40,7 +40,7 @@ public class OAuthController {
         return ResponseEntity.ok(result);
     }
 
-    // TODO: create one method that performs both of these methods
+    // TODO: create one method that performs both of these two methods below
     @PostMapping("/users")
     ResponseEntity<?> createUser(@RequestBody UserForm source) {
         logger.info("User registration");

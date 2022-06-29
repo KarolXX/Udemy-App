@@ -5,8 +5,7 @@ import javax.validation.constraints.NotBlank;
 public class UserForm {
     @NotBlank(message = "Please enter your name")
     private String name;
-    // FIXME: uncomment this line when password will be stored in DB
-//    @NotBlank(message = "Please enter your name")
+    @NotBlank(message = "Please enter your name")
     private String password;
 
     public UserForm() {

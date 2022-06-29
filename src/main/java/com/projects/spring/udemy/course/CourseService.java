@@ -15,8 +15,6 @@ import com.projects.spring.udemy.user.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.Provider;
 import org.modelmapper.TypeMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
@@ -39,8 +37,6 @@ public class CourseService {
 
     private ModelMapper modelMapper;
     private ApplicationEventPublisher eventPublisher;
-
-    private static final Logger logger = LoggerFactory.getLogger(CourseService.class);
 
     public CourseService(
             CourseRepository repository,
@@ -120,7 +116,7 @@ public class CourseService {
         // send money for author's budget
         //FIXME instead of course.getPrice() type 'sum'
         if (course.getPrice() != 0) {
-            Optional<Author> author = authorRepository.findCourseAuthorByCourseId(course.getId());
+            Optional<Author> author = authorRepository.findAuthorCourseByCourseId(course.getId());
             if(author.isPresent()) {
                 author.get().setBudget(author.get().getBudget() + sum);
                 user.setBudget(user.getBudget() - sum);
@@ -208,7 +204,7 @@ public class CourseService {
                 .stream().map(rate -> rate.getId().getUserId())
                 .collect(Collectors.toList());
 
-        // find all boughtCourses related with this course to take other participants courses in further part of this method
+        // find all boughtCourses related with this course' participants to take their other courses in further part of this method
         List<BoughtCourse> source = boughtCourseRepository.findBoughtCoursesById_UserIdIsIn(participantIDs);
 
         List<Integer> courseIDs = new ArrayList<>();
