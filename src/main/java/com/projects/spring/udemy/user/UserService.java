@@ -13,27 +13,19 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService {
-    private UserRepository repository;
-    private CourseRepository courseRepository;
+    private final UserRepository repository;
+    private final CourseRepository courseRepository;
 
     public UserService(UserRepository repository, CourseRepository courseRepository) {
         this.repository = repository;
         this.courseRepository = courseRepository;
     }
 
-    public Optional<User> createUser(User source) {
-        // if such a name already exists then return Optional.empty() - name is unique
-        Optional<User> existingUser = repository.findAll()
-                .stream()
-                .filter(user -> user.getName().equals(source.getName()))
-                .findAny();
-        if(existingUser.isPresent())
-            return Optional.empty();
-        else
-            return Optional.of(repository.save(source));
+    void likeCourse(Integer userId, Integer courseId) {
+        repository.likeCourse(userId, courseId);
     }
 
-    public List<CourseInMenu> getUserFavouriteCourses(Integer id) {
+    List<CourseInMenu> getUserFavouriteCourses(Integer id) {
         User user = repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("No user with given id"));
 
@@ -42,5 +34,9 @@ public class UserService {
                 .stream().map(Course::getId)
                 .collect(Collectors.toList());
         return courseRepository.getCourseMenuByIdIsIn(likedCourseIDs);
+    }
+
+    void dislikeCourse(Integer userId, Integer courseId) {
+        repository.dislikeCourse(userId, courseId);
     }
 }

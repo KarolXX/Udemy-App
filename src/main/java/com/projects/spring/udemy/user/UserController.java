@@ -15,8 +15,8 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-    private UserRepository repository;
-    private UserService service;
+    private final UserRepository repository;
+    private final UserService service;
 
     public UserController(UserRepository repository, UserService service) {
         this.repository = repository;
@@ -40,14 +40,14 @@ public class UserController {
     @PostMapping("/{userId}/courses/{courseId}/course-liking")
     ResponseEntity<?> likeCourse(@PathVariable Integer userId, @PathVariable Integer courseId) {
         logger.info("User liked the course");
-        repository.likeCourse(userId, courseId);
+        service.likeCourse(userId, courseId);
         return ResponseEntity.created(URI.create("/")).build();
     }
 
     @DeleteMapping("/{userId}/courses/{courseId}/course-disliking")
     ResponseEntity<?> dislikeCourse(@PathVariable Integer userId, @PathVariable Integer courseId) {
         logger.info("User disliked course");
-        repository.dislikeCourse(userId, courseId);
+        service.dislikeCourse(userId, courseId);
         return ResponseEntity.noContent().build();
     }
 }
