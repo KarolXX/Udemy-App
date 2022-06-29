@@ -54,15 +54,15 @@ public class CommentService {
     }
 
     public Optional<Comment> createComment(Integer courseId, CommentWithUserID commentWithUserID) {
+        Integer userId = commentWithUserID.getUserId();
+        // find user who post a comment and the course that he want to comment
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new IllegalArgumentException("You can not add comment to non-existing course"));
-        User user = userRepository.findById(commentWithUserID.getUserId())
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User does not exist"));
 
-        Optional<BoughtCourse> association = boughtCourseRepository.findById(
-                new BoughtCourseKey(commentWithUserID.getUserId(), courseId)
-        );
-        if(association.isEmpty())
+        // if user hasn't bought course then he can't comment
+        if(!boughtCourseRepository.existsById_CourseIdAndId_UserId(courseId, userId))
             return Optional.empty();
 
         // keep in-sync bidirectional associations
