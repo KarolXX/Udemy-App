@@ -51,5 +51,5 @@ Everyone can add a course to favorites and view them later in favourite-courses 
 * no security by roles
 * a few unresolved fixme statements
 * no tests yet
-
+* no lombock yet
 
