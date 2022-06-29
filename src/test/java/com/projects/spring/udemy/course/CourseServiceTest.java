@@ -62,7 +62,7 @@ class CourseServiceTest {
         Set<BoughtCourse> ratings = new HashSet<>();
         for(int i = amount; i > 0; i--) {
             BoughtCourse mockBoughtCourse = mock(BoughtCourse.class);
-            int userID= ThreadLocalRandom.current().nextInt(1, 6 + 1);
+            int userID = ThreadLocalRandom.current().nextInt(1, 6 + 1);
             var key = mock(BoughtCourseKey.class);
             when(key.getUserId()).thenReturn(userID);
             when(mockBoughtCourse.getId())
