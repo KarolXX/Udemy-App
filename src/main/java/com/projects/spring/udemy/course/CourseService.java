@@ -108,14 +108,13 @@ public class CourseService {
         else
             sum = course.getPrice();
         if(user.getBudget() < sum)
-            return ResponseEntity.ok("Not enough founds on the account");
+            throw new NotEnoughMoneyAvailableException("You don't have enough money on the account to purchase this course");
 
         association.setCourse(course);
         association.setUser(user);
 
         // send money for author's budget
-        //FIXME instead of course.getPrice() type 'sum'
-        if (course.getPrice() != 0) {
+        if (sum != 0) {
             Optional<Author> author = authorRepository.findAuthorCourseByCourseId(course.getId());
             if(author.isPresent()) {
                 author.get().setBudget(author.get().getBudget() + sum);
