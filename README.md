@@ -1,6 +1,8 @@
 # Udemy
 Application with courses - something similar to Udemy.
 
+Note: this application has no tests implemented yet :( but they will appear in a few days
+
 [Frontend for this app](https://github.com/KarolXX/Udemy-react)
 
 ## Techologies:
