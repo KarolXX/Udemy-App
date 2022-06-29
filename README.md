@@ -8,7 +8,7 @@ Application with courses - something similar to Udemy.
 * Spring Boot v. 2.5.2
 * JPA - Hibernate
 * Maven
-* Keycloak 15.0.2
+* Keycloak 15.0.2 (as an external authentication system but hashed sensitive user information are also stored in MySQL db in the event of opting out of the external system)
 * Flyway
 * MySQL as database for app, h2 for database in tests
 * Model mapper v. 2.4.5
