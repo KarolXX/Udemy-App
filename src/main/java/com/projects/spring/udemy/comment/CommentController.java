@@ -3,6 +3,7 @@ package com.projects.spring.udemy.comment;
 import com.projects.spring.udemy.course.dto.CommentWithUserID;
 import com.projects.spring.udemy.course.dto.FileModel;
 import com.projects.spring.udemy.file.AppFileService;
+import com.projects.spring.udemy.file.EntityType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -48,13 +49,13 @@ public class CommentController {
             FileModel fileModel
     ) {
         logger.info("Image has been added to comment");
-        return appFileService.saveFile(commentId, fileModel, "comment");
+        return appFileService.saveFile(commentId, fileModel, EntityType.COMMENT);
     }
 
     @GetMapping(path = "/{commentId}/img")
     ResponseEntity<?> getCommentImage(@PathVariable Integer commentId) {
         logger.warn("Exposing comment image");
-        return appFileService.getFile(commentId, "comment", false);
+        return appFileService.getFile(commentId, EntityType.COMMENT, false);
     }
 
     @PutMapping(path = "/{commentId}")

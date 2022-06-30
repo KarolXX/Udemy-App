@@ -48,10 +48,10 @@ public class AppFileService {
 
     // save image for course/comment/author (distinguished by entityName) or video for course
     @Transactional
-    public ResponseEntity<?> saveFile(Integer id, FileModel image, String entityName) {
+    public ResponseEntity<?> saveFile(Integer id, FileModel image, EntityType entityType) {
         // FIXME: replace manually comparing extensions with mimeType
         //String mimeType = image.getFile().getContentType();
-        ImageClass target = returnTarget(id, entityName);
+        ImageClass target = returnTarget(id, entityType);
         if(target == null)
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
@@ -84,7 +84,7 @@ public class AppFileService {
 
             boolean isVideo = false;
             // if entity is of type course then check if client want to save video for this course or just image
-            if(entityName.equals("course")) {
+            if(entityType == EntityType.COURSE) {
                 List<String> videoExtensions = configuration.getVideoExtensions();
                 // if the given extension is for video then it will be uploaded as video. Otherwise as file - isVideo flag contains information about it
                 isVideo = videoExtensions.stream()
@@ -102,8 +102,8 @@ public class AppFileService {
     }
 
     // get course/comment/author image (distinguished by entityName) or course' video if playVideo == true
-    public ResponseEntity<?> getFile(Integer id, String entity, boolean playVideo) {
-        ImageClass target = returnTarget(id, entity);
+    public ResponseEntity<?> getFile(Integer id, EntityType entityType, boolean playVideo) {
+        ImageClass target = returnTarget(id, entityType);
         if(target == null)
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
@@ -152,15 +152,15 @@ public class AppFileService {
     }
 
     // return target entity of given type - the repository type is used based on the entity name
-    private ImageClass returnTarget(Integer id, String entityName) {
-        switch (entityName) {
-            case "course":
+    private ImageClass returnTarget(Integer id, EntityType entityType) {
+        switch (entityType) {
+            case COURSE:
                 return courseRepository.findById(id)
                         .orElseThrow(() -> new IllegalArgumentException("No such course"));
-            case "comment":
+            case COMMENT:
                 return commentRepository.findById(id)
                         .orElseThrow(() -> new IllegalArgumentException("No such comment"));
-            case "author":
+            case AUTHOR:
                 return authorRepository.findById(id)
                         .orElseThrow(() -> new IllegalArgumentException("No such author"));
             default:

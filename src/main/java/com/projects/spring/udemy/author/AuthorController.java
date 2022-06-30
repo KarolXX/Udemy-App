@@ -2,6 +2,7 @@ package com.projects.spring.udemy.author;
 
 import com.projects.spring.udemy.course.dto.FileModel;
 import com.projects.spring.udemy.file.AppFileService;
+import com.projects.spring.udemy.file.EntityType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -51,6 +52,6 @@ public class AuthorController {
     @PutMapping("/{id}")
     ResponseEntity<?> uploadAuthorImage(@PathVariable Integer id, FileModel fileModel) {
         logger.info("Author's image has been set");
-        return imageService.saveFile(id, fileModel, "author");
+        return imageService.saveFile(id, fileModel, EntityType.AUTHOR);
     }
 }

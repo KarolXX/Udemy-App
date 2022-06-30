@@ -6,6 +6,7 @@ import com.projects.spring.udemy.course.dto.SingleCourseModel;
 import com.projects.spring.udemy.course.dto.FileModel;
 import com.projects.spring.udemy.course.dto.UpdatedCourse;
 import com.projects.spring.udemy.file.AppFileService;
+import com.projects.spring.udemy.file.EntityType;
 import com.projects.spring.udemy.relationship.BoughtCourse;
 import com.projects.spring.udemy.relationship.BoughtCourseKey;
 import org.slf4j.Logger;
@@ -120,18 +121,18 @@ public class CourseController {
     @PostMapping(value = "/{id}/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<?> uploadFile(@PathVariable Integer id, FileModel fileModel) {
         logger.info("Uploading course image/video");
-        return appFileService.saveFile(id, fileModel, "course");
+        return appFileService.saveFile(id, fileModel, EntityType.COURSE);
     }
 
     @GetMapping(value = "/{id}/img")
     ResponseEntity<?> getCourseImage(@PathVariable Integer id) {
         logger.warn("Exposing course image");
-        return appFileService.getFile(id, "course", false);
+        return appFileService.getFile(id, EntityType.COURSE, false);
     }
 
     @GetMapping(value = "/{id}/video")
     ResponseEntity<?> getCourseVideo(@PathVariable Integer id) {
         logger.warn("Exposing course video");
-        return appFileService.getFile(id, "course", true);
+        return appFileService.getFile(id, EntityType.COURSE, true);
     }
 }
