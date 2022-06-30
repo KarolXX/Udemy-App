@@ -15,10 +15,10 @@ import java.util.Optional;
 
 @Service
 public class CommentService {
-    private CommentRepository repository;
-    private CourseRepository courseRepository;
-    private UserRepository userRepository;
-    private BoughtCourseRepository boughtCourseRepository;
+    private final CommentRepository repository;
+    private final CourseRepository courseRepository;
+    private final UserRepository userRepository;
+    private final BoughtCourseRepository boughtCourseRepository;
 
     public CommentService(
             CommentRepository repository,
@@ -39,7 +39,7 @@ public class CommentService {
         target.setText(source.getText());
     }
 
-    public void deleteComment(Integer commentId) {
+    void deleteComment(Integer commentId) {
         Comment target = repository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("No Comment with given id"));
 
@@ -53,7 +53,7 @@ public class CommentService {
         repository.deleteById(commentId);
     }
 
-    public Optional<Comment> createComment(Integer courseId, CommentWithUserID commentWithUserID) {
+    Optional<Comment> createComment(Integer courseId, CommentWithUserID commentWithUserID) {
         Integer userId = commentWithUserID.getUserId();
         // find user who post a comment and the course that he want to comment
         Course course = courseRepository.findById(courseId)

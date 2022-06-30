@@ -38,7 +38,7 @@ public class UserService {
 
         // find the IDs of liked courses, pass to repo and fetch them by IDs
         List<Integer> likedCourseIDs = user.getLikedCourses()
-                .stream().map(Course::getId)
+                .stream().map(Course::getCourseId)
                 .collect(Collectors.toList());
         return courseRepository.getCourseMenuByIdIsIn(likedCourseIDs);
     }

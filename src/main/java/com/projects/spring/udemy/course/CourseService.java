@@ -17,6 +17,8 @@ import org.modelmapper.Provider;
 import org.modelmapper.TypeMap;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -72,7 +74,7 @@ public class CourseService {
 
         if (association.isEmpty()) {
             boughtCourse = false;
-            userRate = null;
+            userRate = Optional.empty();
         } else {
             boughtCourse = true;
             userRate = Optional.ofNullable(association.get().getRating());
@@ -81,15 +83,12 @@ public class CourseService {
         boolean isCourseLiked = target.getWillingUsers()
                 .stream().anyMatch(user -> user.getUserId() == userId);
 
-        return new SingleCourseModel(target, boughtCourse, userRate, isCourseLiked, usersNumber);
+        return new SingleCourseModel(target, boughtCourse, userRate.orElse(null), isCourseLiked, usersNumber);
     }
 
-//    Page<CourseInMenu> getMenu(Pageable pageable) {
-//        List<CourseInMenu> courses = repository.getCourseMenu(pageable)
-//                .stream().sorted(new CourseOrderComparator().reversed())
-//                .collect(Collectors.toList());
-//        return new PageImpl<>(repository.getCourseMenu(pageable));
-//    }
+    Page<CourseInMenu> getMenu(Pageable pageable) {
+        return repository.getCourseMenu(pageable);
+    }
 
     @Transactional
     public ResponseEntity<?> buyCourse(BoughtCourseKey key) {
@@ -103,19 +102,22 @@ public class CourseService {
 
         //check if user has enough money
         int sum = 0;
-        if (course.getPromotion() != null)
+        if (course.getPromotion() != null) {
             sum = course.getPromotion();
-        else
+        }
+        else {
             sum = course.getPrice();
-        if(user.getBudget() < sum)
+        }
+        if (user.getBudget() < sum) {
             throw new NotEnoughMoneyAvailableException("You don't have enough money on the account to purchase this course");
+        }
 
         association.setCourse(course);
         association.setUser(user);
 
         // send money for author's budget
         if (sum != 0) {
-            Optional<Author> author = authorRepository.findAuthorCourseByCourseId(course.getId());
+            Optional<Author> author = authorRepository.findAuthorCourseByCourseId(course.getCourseId());
             if(author.isPresent()) {
                 author.get().setBudget(author.get().getBudget() + sum);
                 user.setBudget(user.getBudget() - sum);
@@ -129,7 +131,7 @@ public class CourseService {
         course.setUsersNumber(course.getUsersNumber() + 1);
 
         eventPublisher.publishEvent(
-                new CourseSequenceChangingEvent(course.getId())
+                new CourseSequenceChangingEvent(course.getCourseId())
         );
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -184,15 +186,9 @@ public class CourseService {
         Integer price = target.getPrice();
 
         // algorithm for setting course sequence
-        target.setSequence(
-                (averageRating > 4.4 ? pow(averageRating + 1, 2) : pow(averageRating, 2)) * averageRating * usersNumber
-                /
-                (promotion.isPresent() ?
-                        (promotion.get() == 0 ? 5 : promotion.get())
-                        :
-                        (price == 0 ? 20 : price)
-                )
-        );
+        double promotionRatio = (promotion.map(integer -> (integer == 0 ? 5 : integer)).orElseGet(() -> (price == 0 ? 20 : price)));
+        double sequence = ( averageRating > 4.4 ? pow(averageRating + 1, 2) : pow(averageRating, 2)) * averageRating * usersNumber / promotionRatio;
+        target.setSequence(sequence);
     }
 
     List<CourseInMenu> getOtherParticipantsCourses(Integer targetCourseId) {
@@ -209,13 +205,16 @@ public class CourseService {
         List<Integer> courseIDs = new ArrayList<>();
         source.stream().map(boughtCourse -> {
             Integer courseId = boughtCourse.getId().getCourseId();
-            if (courseIDs.contains(courseId) || courseId.equals(targetCourseId))
+            if (courseIDs.contains(courseId) || courseId.equals(targetCourseId)) {
                 return null;
-            else
+            }
+            else {
                 return courseId;
+            }
         }).forEach(courseId -> {
-            if (courseId != null)
+            if (courseId != null) {
                 courseIDs.add(courseId);
+            }
         });
 
         return repository.getCourseMenuByIdIsIn(courseIDs);

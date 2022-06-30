@@ -3,6 +3,10 @@ package com.projects.spring.udemy.comment;
 import com.projects.spring.udemy.course.Course;
 import com.projects.spring.udemy.file.ImageClass;
 import com.projects.spring.udemy.user.User;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -10,10 +14,13 @@ import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "comments")
+@NoArgsConstructor
+@Data
 public class Comment extends ImageClass {
     @Id
     @GeneratedValue(generator = "inc")
     @GenericGenerator(name = "inc", strategy = "increment")
+    @Setter(AccessLevel.PRIVATE)
     private int commentId;
     @NotBlank(message = "Your comment is empty!")
     private String text;
@@ -25,40 +32,5 @@ public class Comment extends ImageClass {
     @ManyToOne
     @JoinColumn(name = "course_id")
     private Course course;
-
-    public Comment() {
-    }
-
-    public int getCommentId() {
-        return commentId;
-    }
-
-    void setCommentId(int commentId) {
-        this.commentId = commentId;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    Course getCourse() {
-        return course;
-    }
-
-    public void setCourse(Course course) {
-        this.course = course;
-    }
 
 }

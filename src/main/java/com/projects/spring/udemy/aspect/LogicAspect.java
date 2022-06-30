@@ -24,8 +24,10 @@ class LogicAspect {
         this.boughtCourseRepository = boughtCourseRepository;
     }
 
-    // this logic is here only for education purposes.
-    // It should be in normal code bcs it's not cross cutting concern
+    /**
+     this logic is here only for education purposes.
+     It should be in normal code bcs it's not cross cutting concern
+      */
     @Around("execution(* com.projects.spring.udemy.course.CourseService.buyCourse(..))")
     Object aroundBuyCourseMethod(ProceedingJoinPoint jp) throws Throwable {
         Object[] args = jp.getArgs();

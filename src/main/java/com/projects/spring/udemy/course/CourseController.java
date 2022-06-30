@@ -1,11 +1,11 @@
 package com.projects.spring.udemy.course;
 
-import com.projects.spring.udemy.ConfigurationProperties;
 import com.projects.spring.udemy.course.dto.CourseInMenu;
 import com.projects.spring.udemy.course.dto.SingleCourseModel;
 import com.projects.spring.udemy.course.dto.FileModel;
 import com.projects.spring.udemy.course.dto.UpdatedCourse;
 import com.projects.spring.udemy.file.AppFileService;
+import com.projects.spring.udemy.file.EntityType;
 import com.projects.spring.udemy.relationship.BoughtCourse;
 import com.projects.spring.udemy.relationship.BoughtCourseKey;
 import org.slf4j.Logger;
@@ -23,21 +23,18 @@ import java.util.List;
 @RequestMapping("/courses")
 public class CourseController {
     private static final Logger logger = LoggerFactory.getLogger(CourseController.class);
-    private CourseRepository repository;
-    private CourseService service;
-    private AppFileService appFileService;
-    private ConfigurationProperties configuration;
+    private final CourseRepository repository;
+    private final CourseService service;
+    private final AppFileService appFileService;
 
     public CourseController(
             CourseRepository repository,
             CourseService service,
-            AppFileService appFileService,
-            ConfigurationProperties configuration
+            AppFileService appFileService
     ) {
         this.repository = repository;
         this.service = service;
         this.appFileService = appFileService;
-        this.configuration = configuration;
     }
 
     @GetMapping(params = {"!sort", "!page", "!size"})
@@ -50,7 +47,7 @@ public class CourseController {
     @GetMapping
     ResponseEntity<?> getAllCourses(Pageable pageable) {
         logger.warn("Exposing all the courses!");
-        var result = repository.getCourseMenu(pageable);
+        var result = service.getMenu(pageable);
         return ResponseEntity.ok(result);
     }
 
@@ -72,7 +69,7 @@ public class CourseController {
     ResponseEntity<List<CourseInMenu>> getCoursesByCategoryId(
             @RequestParam("category") Integer categoryId
     ) {
-        logger.warn("Exposing course");
+        logger.warn("Exposing courses by category");
         var result = repository.getCourseMenuByCategoryId(categoryId);
         return ResponseEntity.ok(result);
     }
@@ -81,7 +78,7 @@ public class CourseController {
     ResponseEntity<Course> createCourse(@RequestBody Course source) {
         logger.info("New course has been created");
         var result = repository.save(source);
-        return ResponseEntity.created(URI.create("/" + result.getId())).body(result);
+        return ResponseEntity.created(URI.create("/" + result.getCourseId())).body(result);
     }
 
     @PostMapping("/course-purchase")
@@ -123,18 +120,18 @@ public class CourseController {
     @PostMapping(value = "/{id}/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<?> uploadFile(@PathVariable Integer id, FileModel fileModel) {
         logger.info("Uploading course image/video");
-        return appFileService.saveFile(id, fileModel, "course");
+        return appFileService.saveFile(id, fileModel, EntityType.COURSE);
     }
 
     @GetMapping(value = "/{id}/img")
     ResponseEntity<?> getCourseImage(@PathVariable Integer id) {
         logger.warn("Exposing course image");
-        return appFileService.getFile(id, "course", false);
+        return appFileService.getFile(id, EntityType.COURSE, false);
     }
 
     @GetMapping(value = "/{id}/video")
     ResponseEntity<?> getCourseVideo(@PathVariable Integer id) {
         logger.warn("Exposing course video");
-        return appFileService.getFile(id, "course", true);
+        return appFileService.getFile(id, EntityType.COURSE, true);
     }
 }

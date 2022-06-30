@@ -2,6 +2,7 @@ package com.projects.spring.udemy.oauth.dto;
 
 import javax.validation.constraints.NotBlank;
 
+
 public class AuthorForm extends UserForm{
     private String occupation;
     @NotBlank(message = "Author must have a description")

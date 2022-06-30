@@ -1,5 +1,8 @@
 package com.projects.spring.udemy.course.event;
 
+/**
+ * Event that occurs when somebody bought or rated course - then sequence changes
+ */
 public class CourseSequenceChangingEvent {
     private int courseId;
 

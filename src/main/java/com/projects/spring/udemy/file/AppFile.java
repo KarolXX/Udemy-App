@@ -1,5 +1,7 @@
 package com.projects.spring.udemy.file;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Entity;
@@ -9,6 +11,8 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "app_files")
+@NoArgsConstructor
+@Data
 public class AppFile {
     @Id
     @GeneratedValue(generator = "inc")
@@ -17,34 +21,8 @@ public class AppFile {
     private String filePath;
     private String extension;
 
-    public AppFile() {
-    }
-
     public AppFile(String filePath) {
         this.filePath = filePath;
     }
 
-    public int getFileId() {
-        return fileId;
-    }
-
-    public void setFileId(int fileId) {
-        this.fileId = fileId;
-    }
-
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
-
-    public String getExtension() {
-        return extension;
-    }
-
-    public void setExtension(String extension) {
-        this.extension = extension;
-    }
 }

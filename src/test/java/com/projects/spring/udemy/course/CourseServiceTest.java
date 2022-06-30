@@ -41,7 +41,7 @@ class CourseServiceTest {
         // given
         Course course = mock(Course.class);
         // and
-        Set<BoughtCourse> mockRatings = new HashSet<>(getMockCourseRatings(2, course));
+        Set<BoughtCourse> mockRatings = new HashSet<>(getMockBoughtCourses(2));
         // and
         when(course.getTitle()).thenReturn("React");
         when(course.getRatings()).thenReturn(mockRatings);
@@ -58,8 +58,10 @@ class CourseServiceTest {
         assertThat(result.getUsersNumber()).isEqualTo(2);
     }
 
-    private Set<BoughtCourse> getMockCourseRatings(int amount, Course course) {
-        Set<BoughtCourse> ratings = new HashSet<>();
+
+
+    private Set<BoughtCourse> getMockBoughtCourses(int amount) {
+        Set<BoughtCourse> boughtCourses = new HashSet<>();
         for(int i = amount; i > 0; i--) {
             BoughtCourse mockBoughtCourse = mock(BoughtCourse.class);
             int userID = ThreadLocalRandom.current().nextInt(1, 6 + 1);
@@ -67,8 +69,8 @@ class CourseServiceTest {
             when(key.getUserId()).thenReturn(userID);
             when(mockBoughtCourse.getId())
                     .thenReturn(key);
-            ratings.add(mockBoughtCourse);
+            boughtCourses.add(mockBoughtCourse);
         }
-        return ratings;
+        return boughtCourses;
     }
 }

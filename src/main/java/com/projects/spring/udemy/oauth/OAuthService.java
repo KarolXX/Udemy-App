@@ -2,7 +2,6 @@ package com.projects.spring.udemy.oauth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.projects.spring.udemy.AppUserTemplate;
 import com.projects.spring.udemy.author.Author;
 import com.projects.spring.udemy.author.AuthorRepository;
 import com.projects.spring.udemy.file.ImageClass;
@@ -12,7 +11,6 @@ import com.projects.spring.udemy.oauth.dto.UserForm;
 import com.projects.spring.udemy.user.User;
 import com.projects.spring.udemy.user.UserRepository;
 import net.bytebuddy.utility.RandomString;
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
@@ -30,7 +28,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.core.Response;
@@ -41,7 +38,7 @@ import java.util.*;
 
 @Service
 public class OAuthService {
-    // FIXME: inject by construtor
+    // TODO: inject by constructor
     @Autowired
     private Keycloak keycloakClient;
     private final UserRepository userRepository;
@@ -106,7 +103,7 @@ public class OAuthService {
     LoginResponse register(UserForm source) {
         // user's/author's name should be unique
         String name = source.getName();
-        boolean isAuthor = source instanceof AuthorForm;
+        boolean isAuthor = source instanceof AuthorForm; // check if source is of Author type to use proper repository (authorRepo or userRepo)
         boolean nameExists = isAuthor ?
                 authorRepository.existsByName(name) : userRepository.existsByName(name);
         if(nameExists)
@@ -132,11 +129,23 @@ public class OAuthService {
         if(isAuthor) {
             // before saving cast source to AuthorForm to get access to e.g. getDescription()
             AuthorForm authorSource = (AuthorForm) source;
-            authorRepository.save(new Author(name, hashedPassword, salt, authorSource.getDescription(), authorSource.getOccupation()));
+            Author author = Author.builder()
+                    .name(name)
+                    .password(hashedPassword)
+                    .salt(salt)
+                    .description(authorSource.getDescription())
+                    .occupation(authorSource.getOccupation())
+                    .build();
+            authorRepository.save(author);
         }
-        else
-            userRepository.save(new User(name, hashedPassword, salt));
-
+        else { // it is user
+            User user = User.builder()
+                    .name(name)
+                    .password(hashedPassword)
+                    .salt(salt)
+                    .build();
+            userRepository.save(user);
+        }
         return login(source);
     }
 
