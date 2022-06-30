@@ -138,7 +138,7 @@ public class CourseService {
     @Transactional
     public Double rateCourse(BoughtCourse source) {
         BoughtCourse association = boughtCourseRepository.findById(source.getId())
-                .orElseThrow(() -> new IllegalArgumentException("This course or user is not available"));
+                .orElseThrow(() -> new IllegalArgumentException("Buy course before commenting"));
         association.setRating(source.getRating());
         BoughtCourse updatedSource = boughtCourseRepository.save(association);
 
