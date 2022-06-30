@@ -14,7 +14,7 @@ import java.util.List;
 @RequestMapping("/categories")
 public class CategoryController {
     private static final Logger logger = LoggerFactory.getLogger(CategoryController.class);
-    private CategoryRepository repository;
+    private final CategoryRepository repository;
 
     public CategoryController(CategoryRepository repository) {
         this.repository = repository;
@@ -31,6 +31,6 @@ public class CategoryController {
     ResponseEntity createCategory(@RequestBody Category source) {
         logger.info("New category has been created");
         var result = repository.save(source);
-        return ResponseEntity.created(URI.create("/" + result.getId())).body(result);
+        return ResponseEntity.created(URI.create("/" + result.getCategoryId())).build();
     }
 }
