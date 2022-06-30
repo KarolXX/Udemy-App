@@ -184,15 +184,9 @@ public class CourseService {
         Integer price = target.getPrice();
 
         // algorithm for setting course sequence
-        target.setSequence(
-                (averageRating > 4.4 ? pow(averageRating + 1, 2) : pow(averageRating, 2)) * averageRating * usersNumber
-                /
-                (promotion.isPresent() ?
-                        (promotion.get() == 0 ? 5 : promotion.get())
-                        :
-                        (price == 0 ? 20 : price)
-                )
-        );
+        double promotionRatio = (promotion.map(integer -> (integer == 0 ? 5 : integer)).orElseGet(() -> (price == 0 ? 20 : price)));
+        double sequence = ( averageRating > 4.4 ? pow(averageRating + 1, 2) : pow(averageRating, 2)) * averageRating * usersNumber / promotionRatio;
+        target.setSequence(sequence);
     }
 
     List<CourseInMenu> getOtherParticipantsCourses(Integer targetCourseId) {
