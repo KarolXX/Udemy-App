@@ -7,11 +7,13 @@ import com.projects.spring.udemy.course.dto.FileModel;
 import com.projects.spring.udemy.course.dto.UpdatedCourse;
 import com.projects.spring.udemy.file.AppFileService;
 import com.projects.spring.udemy.file.EntityType;
+import com.projects.spring.udemy.oauth.NickAlreadyExistsException;
 import com.projects.spring.udemy.relationship.BoughtCourse;
 import com.projects.spring.udemy.relationship.BoughtCourseKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -137,5 +139,11 @@ public class CourseController {
     ResponseEntity<?> getCourseVideo(@PathVariable Integer id) {
         logger.warn("Exposing course video");
         return appFileService.getFile(id, EntityType.COURSE, true);
+    }
+
+    // exceptions
+    @ExceptionHandler(NotEnoughMoneyAvailableException.class)
+    ResponseEntity<?> illegalNickHandler(NotEnoughMoneyAvailableException e) {
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(e.getMessage());
     }
 }
