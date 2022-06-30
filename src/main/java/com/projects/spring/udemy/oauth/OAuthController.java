@@ -23,8 +23,8 @@ import java.util.Optional;
 @RequestMapping("/oauth")
 public class OAuthController {
     private static final Logger logger = LoggerFactory.getLogger(OAuthController.class);
-    private UserRepository repository;
-    private OAuthService service;
+    private final UserRepository repository;
+    private final OAuthService service;
 
     public OAuthController(UserRepository repository, OAuthService service) {
         this.repository = repository;

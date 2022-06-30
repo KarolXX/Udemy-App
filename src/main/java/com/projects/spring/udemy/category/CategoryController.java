@@ -14,7 +14,7 @@ import java.util.List;
 @RequestMapping("/categories")
 public class CategoryController {
     private static final Logger logger = LoggerFactory.getLogger(CategoryController.class);
-    private CategoryRepository repository;
+    private final CategoryRepository repository;
 
     public CategoryController(CategoryRepository repository) {
         this.repository = repository;

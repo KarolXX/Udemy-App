@@ -23,21 +23,18 @@ import java.util.List;
 @RequestMapping("/courses")
 public class CourseController {
     private static final Logger logger = LoggerFactory.getLogger(CourseController.class);
-    private CourseRepository repository;
-    private CourseService service;
-    private AppFileService appFileService;
-    private ConfigurationProperties configuration;
+    private final CourseRepository repository;
+    private final CourseService service;
+    private final AppFileService appFileService;
 
     public CourseController(
             CourseRepository repository,
             CourseService service,
-            AppFileService appFileService,
-            ConfigurationProperties configuration
+            AppFileService appFileService
     ) {
         this.repository = repository;
         this.service = service;
         this.appFileService = appFileService;
-        this.configuration = configuration;
     }
 
     @GetMapping(params = {"!sort", "!page", "!size"})

@@ -16,8 +16,8 @@ import java.util.List;
 @RequestMapping("/authors")
 public class AuthorController {
     private static final Logger logger = LoggerFactory.getLogger(AuthorController.class);
-    private AuthorRepository repository;
-    private AppFileService imageService;
+    private final AuthorRepository repository;
+    private final AppFileService imageService;
 
     public AuthorController(AuthorRepository repository, AppFileService imageService) {
         this.repository = repository;

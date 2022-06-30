@@ -17,9 +17,9 @@ import java.util.Optional;
 @RestController
 public class CommentController {
     private static final Logger logger = LoggerFactory.getLogger(CommentController.class);
-    private CommentService service;
-    private CommentRepository repository;
-    private AppFileService appFileService;
+    private final CommentService service;
+    private final CommentRepository repository;
+    private final AppFileService appFileService;
     private final String basePath = "/courses/{courseId}/comments";
 
     public CommentController(CommentService service, CommentRepository repository, AppFileService appFileService) {

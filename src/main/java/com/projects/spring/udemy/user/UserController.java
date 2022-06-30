@@ -15,8 +15,8 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-    private UserRepository repository;
-    private UserService service;
+    private final UserRepository repository;
+    private final UserService service;
 
     public UserController(UserRepository repository, UserService service) {
         this.repository = repository;
