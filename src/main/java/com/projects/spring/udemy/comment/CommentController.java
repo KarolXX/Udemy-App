@@ -43,7 +43,7 @@ public class CommentController {
     }
 
     @PostMapping(path = basePath + "/{commentId}/img", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ResponseEntity<?> uploadCourseImage(
+    ResponseEntity<?> uploadCommentImage(
             @PathVariable Integer commentId,
             FileModel fileModel
     ) {
@@ -52,7 +52,7 @@ public class CommentController {
     }
 
     @GetMapping(path = basePath + "/{commentId}/img")
-    ResponseEntity<?> getCourseImage(@PathVariable Integer commentId) {
+    ResponseEntity<?> getCommentImage(@PathVariable Integer commentId) {
         logger.warn("Exposing comment image");
         return appFileService.getFile(commentId, "comment", false);
     }
