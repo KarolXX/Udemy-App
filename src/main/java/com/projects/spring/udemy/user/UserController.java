@@ -47,7 +47,7 @@ public class UserController {
     @PostMapping("/{userId}/courses/{courseId}/course-liking")
     ResponseEntity<?> likeCourse(@PathVariable Integer userId, @PathVariable Integer courseId) {
         logger.info("User liked the course");
-        repository.likeCourse(userId, courseId);
+        service.likeCourse(userId, courseId);
         return ResponseEntity.created(URI.create("/")).build();
     }
 
