@@ -189,16 +189,18 @@ public class CourseService {
         target.setSequence(sequence);
     }
 
-    List<CourseInMenu> getOtherParticipantsCourses(Integer targetCourseId) {
+    List<CourseInMenu> getOtherParticipantsCourses(Integer targetCourseId, Integer userId) {
         Course targetCourse = repository.findById(targetCourseId)
                 .orElseThrow(() -> new IllegalArgumentException("No course with given id"));
 
-        List<Integer> participantIDs = targetCourse.getRatings()
-                .stream().map(rate -> rate.getId().getUserId())
+        List<Integer> otherParticipantIDs = targetCourse.getRatings()
+                .stream()
+                .filter(rate -> rate.getId().getUserId() != userId) // only users other than the currently logged in are taken into account
+                .map(rate -> rate.getId().getUserId())
                 .collect(Collectors.toList());
 
         // find all boughtCourses related with this course' participants to take their other courses in further part of this method
-        List<BoughtCourse> source = boughtCourseRepository.findBoughtCoursesById_UserIdIsIn(participantIDs);
+        List<BoughtCourse> source = boughtCourseRepository.findBoughtCoursesById_UserIdIsIn(otherParticipantIDs);
 
         List<Integer> courseIDs = new ArrayList<>();
         source.stream().map(boughtCourse -> {

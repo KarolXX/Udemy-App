@@ -59,10 +59,13 @@ public class CourseController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping(path = "/{id}/participants/other-courses")
-    ResponseEntity<List<CourseInMenu>> getOtherParticipantsCourses(@PathVariable("id") Integer targetCourseId) {
-        logger.warn("Exposing users courses");
-        var result = service.getOtherParticipantsCourses(targetCourseId);
+    @GetMapping(path = "/{courseId}/participants/other-courses/{userId}")
+    ResponseEntity<List<CourseInMenu>> getOtherParticipantsCourses(
+            @PathVariable("courseId") Integer targetCourseId,
+            @PathVariable("userId") Integer userId
+    ) {
+        logger.warn("Exposing other participants courses of this course");
+        var result = service.getOtherParticipantsCourses(targetCourseId, userId);
         return ResponseEntity.ok(result);
     }
 
