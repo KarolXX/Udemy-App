@@ -15,12 +15,12 @@ import java.util.Optional;
 
 @CrossOrigin
 @RestController
+@RequestMapping("/courses/{courseId}/comments")
 public class CommentController {
     private static final Logger logger = LoggerFactory.getLogger(CommentController.class);
     private final CommentService service;
     private final CommentRepository repository;
     private final AppFileService appFileService;
-    private final String basePath = "/courses/{courseId}/comments";
 
     public CommentController(CommentService service, CommentRepository repository, AppFileService appFileService) {
         this.service = service;
@@ -28,7 +28,7 @@ public class CommentController {
         this.appFileService = appFileService;
     }
 
-    @PostMapping(path = basePath)
+    @PostMapping
     ResponseEntity<?> createComment(
             @PathVariable Integer courseId,
             @RequestBody CommentWithUserID commentWithUserID
@@ -42,7 +42,7 @@ public class CommentController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Buy course first and then you can comment it");
     }
 
-    @PostMapping(path = basePath + "/{commentId}/img", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "/{commentId}/img", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<?> uploadCommentImage(
             @PathVariable Integer commentId,
             FileModel fileModel
@@ -51,20 +51,20 @@ public class CommentController {
         return appFileService.saveFile(commentId, fileModel, "comment");
     }
 
-    @GetMapping(path = basePath + "/{commentId}/img")
+    @GetMapping(path = "/{commentId}/img")
     ResponseEntity<?> getCommentImage(@PathVariable Integer commentId) {
         logger.warn("Exposing comment image");
         return appFileService.getFile(commentId, "comment", false);
     }
 
-    @PutMapping(path = basePath + "/{commentId}")
+    @PutMapping(path = "/{commentId}")
     ResponseEntity<?> editComment(@PathVariable Integer commentId, @RequestBody Comment source) {
         logger.warn("Comment has been edited");
         service.editComment(commentId, source);
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping(path = basePath + "/{commentId}")
+    @DeleteMapping(path = "/{commentId}")
     ResponseEntity<?> deleteComment(@PathVariable Integer commentId) {
         logger.warn("Comment has been deleted");
         service.deleteComment(commentId);
