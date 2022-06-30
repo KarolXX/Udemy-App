@@ -71,15 +71,6 @@ public class CourseController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping(params = "category")
-    ResponseEntity<List<CourseInMenu>> getCoursesByCategoryId(
-            @RequestParam("category") Integer categoryId
-    ) {
-        logger.warn("Exposing course");
-        var result = repository.getCourseMenuByCategoryId(categoryId);
-        return ResponseEntity.ok(result);
-    }
-
     @PostMapping
     ResponseEntity<Course> createCourse(@RequestBody Course source) {
         logger.info("New course has been created");
