@@ -24,8 +24,8 @@ public class Course extends ImageClass {
     private String description;
     private int price;
     private Integer promotion;
-    private Double averageRating;
-    private Integer usersNumber;
+    private Double averageRating = 0.0; // default value to avoid NullPointer
+    private Integer usersNumber = 0; // default value to avoid NullPointer
     // this field determines the order in which the course is displayed.
     // The higher the value, the faster it is displayed to the user
     private Double sequence;
