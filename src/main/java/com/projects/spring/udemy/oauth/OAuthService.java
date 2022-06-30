@@ -55,8 +55,6 @@ public class OAuthService {
     @Value("${keycloak.credentials.secret}")
     private String secret;
 
-    private static final Logger logger = LoggerFactory.getLogger(OAuthService.class);
-
     public OAuthService(UserRepository userRepository, AuthorRepository authorRepository) {
         this.userRepository = userRepository;
         this.authorRepository = authorRepository;
@@ -74,7 +72,7 @@ public class OAuthService {
         Optional<?> person = source instanceof AuthorForm ?
                 authorRepository.findByName(name) : userRepository.findByName(name);
         // if input is invalid
-        if(!person.isPresent())
+        if(person.isEmpty())
             throw new BadRequestException("Invalid nick or password :(");
 
         RestTemplate restTemplate = new RestTemplate();
@@ -132,7 +130,8 @@ public class OAuthService {
         if(isAuthor) {
             // before saving cast source to AuthorForm to get access to e.g. getDescription()
             AuthorForm authorSource = (AuthorForm) source;
-            authorRepository.save(new Author(name, hashedPassword, salt, authorSource.getDescription(), authorSource.getOccupation()));
+            Author author = new Author(name, hashedPassword, salt, authorSource.getDescription(), authorSource.getOccupation());
+            authorRepository.save(author);
         }
         else
             userRepository.save(new User(name, hashedPassword, salt));
