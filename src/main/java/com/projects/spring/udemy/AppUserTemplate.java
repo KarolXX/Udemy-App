@@ -1,5 +1,6 @@
 package com.projects.spring.udemy;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.projects.spring.udemy.file.ImageClass;
 
 import javax.persistence.MappedSuperclass;
@@ -10,6 +11,7 @@ abstract public class AppUserTemplate extends ImageClass {
     @NotBlank(message = "Add username!")
     private String name;
     @NotBlank(message = "Add password!")
+    @JsonIgnore
     private String password;
     private String salt;
 
