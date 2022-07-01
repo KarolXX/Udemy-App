@@ -131,10 +131,4 @@ public class CourseController {
         logger.warn("Exposing course video");
         return appFileService.getFile(id, EntityType.COURSE, true);
     }
-
-    // exceptions
-    @ExceptionHandler(NotEnoughMoneyAvailableException.class)
-    ResponseEntity<?> illegalNickHandler(NotEnoughMoneyAvailableException e) {
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(e.getMessage());
-    }
 }

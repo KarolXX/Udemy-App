@@ -31,8 +31,6 @@ public class OAuthController {
         this.service = service;
     }
 
-    // FIXME: this method will not work for AuthorForm because request body is casted to UserForm
-    //  make this method correct for logging author as well
     @PostMapping("/login")
     ResponseEntity<?> logIn(@RequestBody UserForm userForm) {
         logger.info("Signing in");
@@ -47,6 +45,7 @@ public class OAuthController {
         LoginResponse result = service.register(source);
         return ResponseEntity.ok(result);
     }
+
     @PostMapping("/authors")
     ResponseEntity<?> createAuthor(@RequestBody AuthorForm source) {
         logger.info("Author registration");
@@ -54,18 +53,18 @@ public class OAuthController {
         return ResponseEntity.ok(result);
     }
 
-    @ExceptionHandler(NickAlreadyExistsException.class)
-    ResponseEntity<?> illegalNickHandler(NickAlreadyExistsException e) {
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(e.getMessage());
-    }
-
-    @ExceptionHandler(BadRequestException.class)
-    ResponseEntity<?> illegalLoginDataHandler(BadRequestException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-    }
-
-    @ExceptionHandler(InternalServerErrorException.class)
-    ResponseEntity<?> serverErrorHandler(InternalServerErrorException e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server error...");
-    }
+//    @ExceptionHandler(NickAlreadyExistsException.class)
+//    ResponseEntity<?> illegalNickHandler(NickAlreadyExistsException e) {
+//        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(e.getMessage());
+//    }
+//
+//    @ExceptionHandler(BadRequestException.class)
+//    ResponseEntity<?> illegalLoginDataHandler(BadRequestException e) {
+//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+//    }
+//
+//    @ExceptionHandler(InternalServerErrorException.class)
+//    ResponseEntity<?> serverErrorHandler(InternalServerErrorException e) {
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server error...");
+//    }
 }
