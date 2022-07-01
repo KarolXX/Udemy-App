@@ -29,11 +29,11 @@ import static java.lang.Math.pow;
 
 @Service
 public class CourseService {
-    private CourseRepository repository;
-    private UserRepository userRepository;
-    private BoughtCourseRepository boughtCourseRepository;
-    private AuthorRepository authorRepository;
-    private ConfigurationProperties configuration;
+    private final CourseRepository repository;
+    private final UserRepository userRepository;
+    private final BoughtCourseRepository boughtCourseRepository;
+    private final AuthorRepository authorRepository;
+    private final ConfigurationProperties configuration;
 
     private ModelMapper modelMapper;
     private ApplicationEventPublisher eventPublisher;
@@ -83,13 +83,6 @@ public class CourseService {
 
         return new SingleCourseModel(target, boughtCourse, userRate, isCourseLiked, usersNumber);
     }
-
-//    Page<CourseInMenu> getMenu(Pageable pageable) {
-//        List<CourseInMenu> courses = repository.getCourseMenu(pageable)
-//                .stream().sorted(new CourseOrderComparator().reversed())
-//                .collect(Collectors.toList());
-//        return new PageImpl<>(repository.getCourseMenu(pageable));
-//    }
 
     @Transactional
     public ResponseEntity<?> buyCourse(BoughtCourseKey key) {
@@ -179,7 +172,7 @@ public class CourseService {
                 .orElseThrow(() -> new IllegalArgumentException("No course with given id"));
 
         Integer usersNumber = target.getUsersNumber();
-        Double averageRating = target.getAverageRating(); //(target.getAverageRating() * usersNumber + event.getRating()) / usersNumber;
+        Double averageRating = target.getAverageRating();
         Optional<Integer> promotion = Optional.ofNullable(target.getPromotion());
         Integer price = target.getPrice();
 

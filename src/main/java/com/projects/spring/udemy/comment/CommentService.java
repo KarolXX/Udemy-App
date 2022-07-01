@@ -15,10 +15,10 @@ import java.util.Optional;
 
 @Service
 public class CommentService {
-    private CommentRepository repository;
-    private CourseRepository courseRepository;
-    private UserRepository userRepository;
-    private BoughtCourseRepository boughtCourseRepository;
+    private final CommentRepository repository;
+    private final CourseRepository courseRepository;
+    private final UserRepository userRepository;
+    private final BoughtCourseRepository boughtCourseRepository;
 
     public CommentService(
             CommentRepository repository,

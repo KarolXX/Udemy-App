@@ -26,11 +26,11 @@ import java.util.Optional;
 
 @Service
 public class AppFileService {
-    private AppFileRepository repository;
-    private CommentRepository commentRepository;
-    private CourseRepository courseRepository;
-    private AuthorRepository authorRepository;
-    private ConfigurationProperties configuration;
+    private final AppFileRepository repository;
+    private final CommentRepository commentRepository;
+    private final CourseRepository courseRepository;
+    private final AuthorRepository authorRepository;
+    private final ConfigurationProperties configuration;
 
     public AppFileService(
             AppFileRepository repository,
