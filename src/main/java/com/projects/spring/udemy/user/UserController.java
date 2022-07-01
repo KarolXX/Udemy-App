@@ -31,6 +31,13 @@ public class UserController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/{id}")
+    ResponseEntity<?> getUser(@PathVariable Integer id) {
+        logger.info("Exposing user");
+        var result = service.findUserById(id);
+        return ResponseEntity.ok(result);
+    }
+
     @DeleteMapping("/{id}")
     ResponseEntity<?> deleteUser(@PathVariable Integer id) {
         logger.warn("User with " + id + "deleted");
