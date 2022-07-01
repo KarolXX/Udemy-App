@@ -4,7 +4,9 @@ import com.projects.spring.udemy.course.Course;
 import com.projects.spring.udemy.course.CourseRepository;
 import com.projects.spring.udemy.course.dto.CourseInMenu;
 import com.projects.spring.udemy.relationship.BoughtCourseRepository;
+import com.projects.spring.udemy.user.dto.TransferMoney;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,10 +31,6 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("No user with given id"));
     }
 
-    void likeCourse(Integer userId, Integer courseId) {
-        repository.likeCourse(userId, courseId);
-    }
-
     List<CourseInMenu> getUserFavouriteCourses(Integer id) {
         User user = findUserById(id);
 
@@ -43,6 +41,10 @@ public class UserService {
         return courseRepository.getCourseMenuByIdIsIn(likedCourseIDs);
     }
 
+    void likeCourse(Integer userId, Integer courseId) {
+        repository.likeCourse(userId, courseId);
+    }
+
     void dislikeCourse(Integer userId, Integer courseId) {
         repository.dislikeCourse(userId, courseId);
     }
@@ -50,5 +52,13 @@ public class UserService {
     void deleteUser(Integer id) {
         if (repository.existsById(id))
             repository.deleteById(id);
+    }
+
+    @Transactional
+    public void addMoneyToUserBudget(Integer id, TransferMoney money) {
+        User user = findUserById(id);
+        int previousBudget = user.getBudget();
+        int transferredMoney = money.getAmount();
+        user.setBudget(previousBudget + transferredMoney);
     }
 }

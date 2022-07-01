@@ -1,6 +1,7 @@
 package com.projects.spring.udemy.user;
 
 import com.projects.spring.udemy.course.dto.CourseInMenu;
+import com.projects.spring.udemy.user.dto.TransferMoney;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +43,13 @@ public class UserController {
         logger.warn("Exposing all the user favourite courses");
         var result = service.getUserFavouriteCourses(id);
         return ResponseEntity.ok(result);
+    }
+
+    @PatchMapping("/{id}/budget")
+    ResponseEntity<?> addMoneyToBudget(@PathVariable Integer id, @RequestBody TransferMoney amount) {
+        logger.info("Adding money to user's budget");
+        service.addMoneyToUserBudget(id, amount);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{userId}/courses/{courseId}/course-liking")
