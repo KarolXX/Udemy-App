@@ -27,7 +27,7 @@ public class UserServiceTest {
         UserRepository mockUserRepo = mock(UserRepository.class);
         when(mockUserRepo.findById(anyInt())).thenReturn(Optional.empty());
         // system under test
-        var toTest = new UserService(mockUserRepo, null, null);
+        var toTest = new UserService(mockUserRepo, null);
 
         // when
         var exception = catchThrowable(() -> toTest.findUserById(1));
@@ -48,7 +48,7 @@ public class UserServiceTest {
         UserRepository mockUserRepo = mock(UserRepository.class);
         when(mockUserRepo.findById(anyInt())).thenReturn(Optional.of(mockUser));
         // system under test
-        var toTest = new UserService(mockUserRepo, null, null);
+        var toTest = new UserService(mockUserRepo, null);
 
         // when
         var result = toTest.findUserById(1);

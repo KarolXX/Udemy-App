@@ -18,12 +18,10 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository repository;
     private final CourseRepository courseRepository;
-    private final BoughtCourseRepository boughtCourseRepository;
 
-    public UserService(UserRepository repository, CourseRepository courseRepository, BoughtCourseRepository boughtCourseRepository) {
+    public UserService(UserRepository repository, CourseRepository courseRepository) {
         this.repository = repository;
         this.courseRepository = courseRepository;
-        this.boughtCourseRepository = boughtCourseRepository;
     }
 
     User findUserById(Integer id) {
