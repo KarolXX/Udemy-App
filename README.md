@@ -1,8 +1,6 @@
 # Udemy
 Application with courses - something similar to Udemy.
 
-Note: this application has no tests implemented yet :( but they will appear in a few days
-
 [Frontend for this app](https://github.com/KarolXX/Udemy-react)
 
 ## Techologies:
@@ -53,6 +51,6 @@ Everyone can add a course to favorites and view them later in favourite-courses 
 * temporary inability to log in as an author in the application
 * no security by roles
 * a few unresolved fixme statements
-* no tests yet
+* not all tests are already implemented
 * no lombock yet
 
