@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-interface SqlAuthorRepository extends AuthorRepository, JpaRepository<Author, Integer> {
+interface AuthorRepositoryBean extends AuthorRepository, JpaRepository<Author, Integer> {
     @Query(
             nativeQuery = true,
             value = "SELECT a.* FROM author_course ac " +

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-interface SqlCategoryRepository extends CategoryRepository, JpaRepository<Category, Integer> {
+interface CategoryRepositoryBean extends CategoryRepository, JpaRepository<Category, Integer> {
     @Override
     @Query("SELECT cat FROM Category cat JOIN FETCH cat.courses WHERE cat.categoryId = :id")
     Optional<Category> findById(@Param("id") Integer id);

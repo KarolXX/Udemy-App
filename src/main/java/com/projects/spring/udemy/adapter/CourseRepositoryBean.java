@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-interface SqlCourseRepository extends CourseRepository, JpaRepository<Course, Integer> {
+interface CourseRepositoryBean extends CourseRepository, JpaRepository<Course, Integer> {
     @Override
     @Query("SELECT course FROM Course course LEFT JOIN FETCH course.ratings WHERE course.courseId = :id")
     Optional<Course> findById(@Param("id") Integer id);
