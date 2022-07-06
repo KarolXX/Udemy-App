@@ -2,7 +2,7 @@
 Application with courses - something similar to Udemy.
 
 ### INFORMATION FOR RECRUITER ABOUT MY TESTING SKILLS! 
-This application is not fully tested. If you want to see my tests, please see these tests for another project where I already did the tests:
+This application is not fully tested. If you want to see my testing skills, please take a look at these tests for another project where I've already done them:
 * [Unit tests in to-do-app](https://github.com/KarolXX/Todo-app-Spring-Boot-/tree/main/src/test/java/io/github/mat3e/todoapp/logic),
 * [E2E and integration tests in to-do-app](https://github.com/KarolXX/Todo-app-Spring-Boot-/tree/main/src/test/java/io/github/mat3e/todoapp/controller)
 
