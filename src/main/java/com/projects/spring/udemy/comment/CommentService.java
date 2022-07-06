@@ -69,7 +69,7 @@ public class CommentService {
         course.addComment(commentWithUserID.getComment());
         user.addComment(commentWithUserID.getComment());
 
-        var result =  repository.save(commentWithUserID.getComment());
+        var result = repository.save(commentWithUserID.getComment());
         return Optional.of(result);
     }
 

@@ -2,5 +2,12 @@ package com.projects.spring.udemy.comment;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CommentRepository extends JpaRepository<Comment, Integer> {
+import java.util.Optional;
+
+public interface CommentRepository {
+    Optional<Comment> findById(Integer integer);
+
+    Comment save(Comment comment);
+
+    void deleteById(Integer id);
 }
