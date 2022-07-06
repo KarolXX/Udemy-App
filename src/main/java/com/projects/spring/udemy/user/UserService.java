@@ -39,6 +39,7 @@ public class UserService {
         return courseRepository.getCourseMenuByIdIsIn(likedCourseIDs);
     }
 
+    // FIXME: secure against duplications
     void likeCourse(Integer userId, Integer courseId) {
         repository.likeCourse(userId, courseId);
     }

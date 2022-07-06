@@ -1,27 +1,28 @@
 package com.projects.spring.udemy.user;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
-@Repository
-public interface UserRepository extends JpaRepository<User, Integer> {
-    Optional<User> findByName(String name);
-    Boolean existsByName(String name);
-    Boolean existsBySalt(String name);
+public interface UserRepository {
+    boolean existsById(Integer id);
 
-    @Query(
-            nativeQuery = true,
-            value = "INSERT INTO course_likes (course_id, user_id) VALUES (:courseId, :userId)"
-    )
+    boolean existsByName(String name);
+
+    boolean existsBySalt(String name);
+
+    Optional<User> findById(Integer id);
+
+    Optional<User> findByName(String name);
+
+    List<User> findAll();
+
+    User save(User user);
+
+    void deleteById(Integer id);
+
     void likeCourse(@Param("userId") Integer userId, @Param("courseId") Integer courseId);
 
-    @Query(
-            nativeQuery = true,
-            value = "DELETE FROM course_likes WHERE course_id = :courseId AND user_id = :userId"
-    )
     void dislikeCourse(@Param("userId") Integer userId, @Param("courseId") Integer courseId);
 }
