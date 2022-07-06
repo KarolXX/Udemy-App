@@ -3,8 +3,6 @@ package com.projects.spring.udemy.comment;
 import com.projects.spring.udemy.course.Course;
 import com.projects.spring.udemy.course.CourseRepository;
 import com.projects.spring.udemy.course.dto.CommentWithUserID;
-import com.projects.spring.udemy.relationship.BoughtCourse;
-import com.projects.spring.udemy.relationship.BoughtCourseKey;
 import com.projects.spring.udemy.relationship.BoughtCourseRepository;
 import com.projects.spring.udemy.user.User;
 import com.projects.spring.udemy.user.UserRepository;
