@@ -10,9 +10,10 @@ import com.projects.spring.udemy.course.dto.CourseInMenu;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
-public interface CategoryRepository extends JpaRepository<Category, Integer> {
-    @Override
-    @Query("SELECT cat FROM Category cat JOIN FETCH cat.courses WHERE cat.categoryId = :id")
+public interface CategoryRepository {
     Optional<Category> findById(@Param("id") Integer id);
+
+    Category save(Category c);
+
+    List<Category> findAll();
 }
