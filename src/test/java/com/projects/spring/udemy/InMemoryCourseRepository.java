@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.*;
 
-class InMemoryCourseRepository implements CourseRepository {
+public class InMemoryCourseRepository implements CourseRepository {
     // this map is sample db
     Map<Integer, Course> courses = new HashMap<>();
     int size = 0;
@@ -17,7 +17,7 @@ class InMemoryCourseRepository implements CourseRepository {
     }
 
     // constructor that adds sample courses to db
-    InMemoryCourseRepository(List<Course> source) {
+    public InMemoryCourseRepository(List<Course> source) {
         source.forEach(course -> {
             courses.put(++size, course);
         });
