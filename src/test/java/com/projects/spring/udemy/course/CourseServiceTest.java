@@ -151,6 +151,30 @@ class CourseServiceTest {
                 .hasMessage("No user with given id");
     }
 
+    @Test
+    @DisplayName("should throw IllegalArgumentException when user exists and no course with given id")
+    void buyCourse_userExists_and_noCourse_throwsIllegalArgumentException() {
+        // given
+        UserRepository mockUserRepo = mock(UserRepository.class);
+        User user = new User();
+        when(mockUserRepo.findById(anyInt())).thenReturn(Optional.of(user));
+        // and
+        CourseRepository mockCourseRepo = mock(CourseRepository.class);
+        when(mockCourseRepo.findById(anyInt())).thenReturn(Optional.empty());
+        // and
+        BoughtCourseKey argument = new BoughtCourseKey(1, 1);
+        // system under test
+        var toTest = new CourseService(mockCourseRepo, mockUserRepo, null, null, null, null, null);
+
+        // when
+        var exception = catchThrowable(() -> toTest.buyCourse(argument));
+
+        // then
+        assertThat(exception)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("No course with given id");
+    }
+
     private Course returnCourseWith(Integer id, String title, Set<BoughtCourse> ratings, Set<Integer> willingUsersIDs) {
         Course course = new Course();
         course.setTitle(title);
