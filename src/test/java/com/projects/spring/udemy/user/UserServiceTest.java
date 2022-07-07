@@ -40,10 +40,10 @@ public class UserServiceTest {
     void findUserById_userExists_throwsIllegalArgumentException() {
         // given
         String userName = "Name";
-        User mockUser = mock(User.class);
-        when(mockUser.getName()).thenReturn(userName);
+        User user = new User();
+        user.setName(userName);
         // and
-        UserRepository mockUserRepo = userRepositoryReturning(mockUser);
+        UserRepository mockUserRepo = userRepositoryReturning(user);
         // system under test
         var toTest = new UserService(mockUserRepo, null);
 
@@ -58,14 +58,14 @@ public class UserServiceTest {
     @DisplayName("should return list of CourseInMenu DTO")
     void getUserFavouriteCourses_userAndCoursesExist_returnsListOfCourseInMenuDTO() {
         // given
-        // two mocked courses and only one of them is the liked one
-        Course mockC1 = mock(Course.class);
-        when(mockC1.getId()).thenReturn(1);
-        Course mockLikedC2 = mock(Course.class); // note that this is the only liked course
+        // two courses and only one of them is the liked one
+        Course course = mock(Course.class);
+        when(course.getId()).thenReturn(1);
+        Course likeCourse = mock(Course.class); // note that this is the only liked course
         int likedC2Id = 2;
-        when(mockLikedC2.getId()).thenReturn(likedC2Id);
-        List<Course> sampleCourses = List.of(mockC1, mockLikedC2);
-        Set<Course> likedCourses = Set.of(mockLikedC2);
+        when(likeCourse.getId()).thenReturn(likedC2Id);
+        List<Course> sampleCourses = List.of(course, likeCourse);
+        Set<Course> likedCourses = Set.of(likeCourse);
         // and
         User mockUser = mock(User.class);
         when(mockUser.getUserId()).thenReturn(1);

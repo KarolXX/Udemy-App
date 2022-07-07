@@ -1,14 +1,15 @@
 package com.projects.spring.udemy.course;
 
+import com.projects.spring.udemy.InMemoryCourseRepository;
 import com.projects.spring.udemy.relationship.BoughtCourse;
 import com.projects.spring.udemy.relationship.BoughtCourseKey;
+import com.projects.spring.udemy.user.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -35,40 +36,17 @@ class CourseServiceTest {
                 .hasMessage("No course with given id");
     }
 
-    @Test
-    @DisplayName("should give course with list of userIDs and the number of these users")
-    void getCourse_courseAssociatedWithCommentsAndUsers_returnCourseAndUserIDsList() {
-        // given
-        Course course = mock(Course.class);
-        // and
-        Set<BoughtCourse> mockRatings = new HashSet<>(getMockCourseRatings(2, course));
-        // and
-        when(course.getTitle()).thenReturn("React");
-        when(course.getRatings()).thenReturn(mockRatings);
-        // and
-        CourseRepository mockCourseRepo = mock(CourseRepository.class);
-        when(mockCourseRepo.findById(anyInt())).thenReturn(Optional.ofNullable(course));
-        // system under test
-        var toTest = new CourseService(mockCourseRepo, null, null, null, null, null,  null);
-
-        // when
-        var result = toTest.getCourse(1, 1);
-        // then
-        assertThat(result.getCourse()).isEqualTo(course);
-        assertThat(result.getUsersNumber()).isEqualTo(2);
+    private Set<BoughtCourse> getBoughtCourses(List<Integer> userIDs) {
+        return userIDs.stream().map(id -> {
+            BoughtCourseKey key = new BoughtCourseKey();
+            key.setUserId(id);
+            BoughtCourse bc = new BoughtCourse();
+            bc.setId(key);
+            return bc;
+        }).collect(Collectors.toSet());
     }
 
-    private Set<BoughtCourse> getMockCourseRatings(int amount, Course course) {
-        Set<BoughtCourse> ratings = new HashSet<>();
-        for(int i = amount; i > 0; i--) {
-            BoughtCourse mockBoughtCourse = mock(BoughtCourse.class);
-            int userID = ThreadLocalRandom.current().nextInt(1, 6 + 1);
-            var key = mock(BoughtCourseKey.class);
-            when(key.getUserId()).thenReturn(userID);
-            when(mockBoughtCourse.getId())
-                    .thenReturn(key);
-            ratings.add(mockBoughtCourse);
-        }
-        return ratings;
+    private InMemoryCourseRepository getMockedCourseRepoWithGivenCourses(List<Course> courses) {
+        return new InMemoryCourseRepository(courses);
     }
 }
