@@ -86,6 +86,8 @@ public class CourseService {
 
     @Transactional
     public ResponseEntity<?> buyCourse(BoughtCourseKey key) {
+        // logic responsible for checking if user already bought this course is in LogicAspect (I am aware that it's not a cross cutting concern - I did aspect for educational purposes)
+
         // when user buy course then association between him and bought course is created
         BoughtCourse association = new BoughtCourse(key);
 
