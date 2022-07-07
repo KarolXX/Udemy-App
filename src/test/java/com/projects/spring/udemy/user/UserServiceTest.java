@@ -3,8 +3,11 @@ package com.projects.spring.udemy.user;
 import com.projects.spring.udemy.InMemoryCourseRepository;
 import com.projects.spring.udemy.course.Course;
 import com.projects.spring.udemy.course.dto.CourseInMenu;
+import com.projects.spring.udemy.user.dto.TransferMoney;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import java.util.*;
 
@@ -64,29 +67,53 @@ public class UserServiceTest {
         List<Course> sampleCourses = List.of(mockC1, mockLikedC2);
         Set<Course> likedCourses = Set.of(mockLikedC2);
         // and
-        User user = mock(User.class);
-        when(user.getUserId()).thenReturn(1);
-        when(user.getLikedCourses()).thenReturn(likedCourses);
+        User mockUser = mock(User.class);
+        when(mockUser.getUserId()).thenReturn(1);
+        when(mockUser.getLikedCourses()).thenReturn(likedCourses);
         // and
-        var userRepoMock = userRepositoryReturning(user);
+        var userRepoMock = userRepositoryReturning(mockUser);
         // and
         var courseRepoMock = getMockedCourseRepoWithGivenCourses(sampleCourses);
 
         // system under test
-        var underTest = new UserService(userRepoMock, courseRepoMock);
+        var toTest = new UserService(userRepoMock, courseRepoMock);
 
         // when
-        List<CourseInMenu> result = underTest.getUserFavouriteCourses(1);
+        List<CourseInMenu> result = toTest.getUserFavouriteCourses(1);
 
         // then
         assertThat(result.size()).isEqualTo(1); // only one liked course
         assertThat(result.get(0).getId()).isEqualTo(likedC2Id);
     }
 
+    @Test
+    @DisplayName("should add given a given amount of money to that user account")
+    void addMoneyToUserBudget_userExists_addsMoneyToUserBudget() {
+        // given
+        int budgetBefore = 100;
+        int amount = 100;
+        TransferMoney transferMoney = new TransferMoney(amount);
+        // and
+        final User user = new User();
+        user.setUserId(1);
+        user.setBudget(budgetBefore);
+        // and
+        var userRepoMock = userRepositoryReturning(user);
+        // system under test
+        var toTest = new UserService(userRepoMock, null);
+
+        // when
+        toTest.addMoneyToUserBudget(1, transferMoney);
+
+        // then
+        assertThat(user.getBudget()).isEqualTo(budgetBefore + amount);
+    }
+
     private InMemoryCourseRepository getMockedCourseRepoWithGivenCourses(List<Course> courses) {
         return new InMemoryCourseRepository(courses);
     }
 
+    // mocked userRepository that serve findById method
     private UserRepository userRepositoryReturning(User user) {
         var userRepoMock = mock(UserRepository.class);
         when(userRepoMock.findById(anyInt()))
