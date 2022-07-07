@@ -182,6 +182,7 @@ public class CourseService {
         target.setSequence(sequence);
     }
 
+    // TODO: add pagination for this bcs method in case of a large number of data(courses) memory should be managed wisely
     List<CourseInMenu> getOtherParticipantsCourses(Integer targetCourseId, Integer userId) {
         Course targetCourse = repository.findById(targetCourseId)
                 .orElseThrow(() -> new IllegalArgumentException("No course with given id"));
