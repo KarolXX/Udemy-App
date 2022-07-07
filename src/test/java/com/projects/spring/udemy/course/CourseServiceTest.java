@@ -21,7 +21,7 @@ class CourseServiceTest {
 
     @Test
     @DisplayName("should throw IllegalArgumentException when no course with given id")
-    void getCourse_noCourse_throwIllegalArgumentException() {
+    void getCourse_noCourse_throwsIllegalArgumentException() {
         // given
         CourseRepository mockCourseRepo = mock(CourseRepository.class);
         when(mockCourseRepo.findById(anyInt())).thenReturn(Optional.empty());
@@ -129,6 +129,26 @@ class CourseServiceTest {
         assertThat(result.getCourse().getTitle()).isEqualTo(title);
         assertThat(result.getUserRate()).isEqualTo(Optional.of(loggedUserRate));
         assertThat(result.isLikedCourse()).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("should throw IllegalArgumentException when no user with given id")
+    void buyCourse_noUser_throwsIllegalArgumentException() {
+        // given
+        UserRepository mockUserRepo = mock(UserRepository.class);
+        when(mockUserRepo.findById(anyInt())).thenReturn(Optional.empty());
+        // and
+        BoughtCourseKey argument = new BoughtCourseKey(1, 1);
+        // system under test
+        var toTest = new CourseService(null, mockUserRepo, null, null, null, null, null);
+
+        // when
+        var exception = catchThrowable(() -> toTest.buyCourse(argument));
+
+        // then
+        assertThat(exception)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("No user with given id");
     }
 
     private Course returnCourseWith(Integer id, String title, Set<BoughtCourse> ratings, Set<Integer> willingUsersIDs) {
