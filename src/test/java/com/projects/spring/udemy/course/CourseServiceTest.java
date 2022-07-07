@@ -204,6 +204,35 @@ class CourseServiceTest {
                 .hasMessage("You don't have enough money on the account to purchase this course");
     }
 
+    @Test
+    @DisplayName("should throw NotEnoughMoneyAvailableException when user and course exist but user has no enough money and course has promotion")
+    void buyCourse_userAndCourseExist_and_userHasNoEnoughMoney_and_isPromotion_throwsNotEnoughMoneyAvailableException() {
+        // given
+        Integer budget = 100;
+        Integer price = 150;
+        Integer promotion = 120;
+        // and
+        User user = returnUserWith(1, budget);
+        UserRepository mockUserRepo = mock(UserRepository.class);
+        when(mockUserRepo.findById(anyInt())).thenReturn(Optional.of(user));
+        // and
+        Course course = returnCourseWith(1, "", null, Set.of(), price, promotion);
+        CourseRepository mockCourseRepo = mock(CourseRepository.class);
+        when(mockCourseRepo.findById(anyInt())).thenReturn(Optional.of(course));
+        // and
+        BoughtCourseKey argument = new BoughtCourseKey(1, 1);
+        // system under test
+        var toTest = new CourseService(mockCourseRepo, mockUserRepo, null, null, null, null, null);
+
+        // when
+        var exception = catchThrowable(() -> toTest.buyCourse(argument));
+
+        // then
+        assertThat(exception)
+                .isInstanceOf(NotEnoughMoneyAvailableException.class)
+                .hasMessage("You don't have enough money on the account to purchase this course");
+    }
+
     private Course returnCourseWith(Integer id, String title, Set<BoughtCourse> ratings, Set<Integer> willingUsersIDs, Integer price, Integer promotion) {
         Course course = new Course();
         course.setTitle(title);
