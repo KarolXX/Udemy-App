@@ -48,7 +48,7 @@ class CourseServiceTest {
         Set<BoughtCourse> ratings = getAssociationsBetweenUserAndCourse(courseID, usersRate);
         // and
         final String title = "React";
-        Set<User> willingUsers = Set.of(); // no willing users
+        Set<Integer> willingUsers = Set.of(); // no willing users
         Course course = returnCourseWith(courseID, title, ratings, willingUsers);
         // and
         CourseRepository mockCourseRepo = mock(CourseRepository.class);
@@ -58,6 +58,7 @@ class CourseServiceTest {
 
         // when
         var result = toTest.getCourse(courseID, loggedInUserID);
+
         // then
         assertThat(result.getCourse().getTitle()).isEqualTo(title);
         assertThat(result.getUserRate()).isEqualTo(null);
@@ -67,7 +68,7 @@ class CourseServiceTest {
 
     @Test
     @DisplayName("should return SingleCourseModel DTO with the rate of logged in user and with likedCourse flag set to false")
-    void getCourse_courseAssociatedWithUsers_and_loggedInUserBoughtCourse_and_noWillingUsers_returnsSingleCourseModelDTOAndLoggedInUserRate() {
+    void getCourse_courseAssociatedWithUsers_and_loggedInUserBoughtCourse_and_noWillingUsers_returnsSingleCourseModelDTO_And_LoggedInUserRate() {
         // given
         int loggedUserID = 1; // a user who has bought but hasn't liked the course
         Double loggedUserRate = 3.5;
@@ -79,7 +80,7 @@ class CourseServiceTest {
         Set<BoughtCourse> ratings = getAssociationsBetweenUserAndCourse(courseID, usersRate);
         // and
         final String title = "React";
-        Set<User> willingUsers = Set.of(); // no willing users
+        Set<Integer> willingUsers = Set.of(); // no willing users
         Course course = returnCourseWith(courseID, title, ratings, willingUsers);
         // and
         CourseRepository mockCourseRepo = mock(CourseRepository.class);
@@ -89,6 +90,7 @@ class CourseServiceTest {
 
         // when
         var result = toTest.getCourse(courseID, loggedUserID);
+
         // then
         assertThat(result.getCourse().getTitle()).isEqualTo(title);
         assertThat(result.getUserRate()).isEqualTo(Optional.of(loggedUserRate));
@@ -96,10 +98,45 @@ class CourseServiceTest {
         assertThat(result.isLikedCourse()).isEqualTo(false);
     }
 
-    private Course returnCourseWith(Integer id, String title, Set<BoughtCourse> ratings, Set<User> willingUsers) {
+    @Test
+    @DisplayName("should return SingleCourseModel DTO with the rate of logged in user and with likedCourse flag set to true")
+    void getCourse_courseAssociatedWithUsers_and_loggedInUserBoughtAndLikedCourse_willingUsersExists_returnsSingleCourseModelDTO_And_LoggedInUserRate() {
+        // given
+        int loggedUserID = 1; // a user who has bought but hasn't liked the course
+        Double loggedUserRate = 3.5;
+        int courseID = 1;
+        // and
+        Map<Integer, Double> usersRate = new HashMap<>();
+        usersRate.put(loggedUserID, loggedUserRate);
+        usersRate.put(4, 2.5); // another sample associations
+        Set<BoughtCourse> ratings = getAssociationsBetweenUserAndCourse(courseID, usersRate);
+        // and
+        final String title = "React";
+        Set<Integer> willingUsersIDs = Set.of(4, 5, 6, loggedUserID, 11);
+        Course course = returnCourseWith(courseID, title, ratings, willingUsersIDs);
+        // and
+        CourseRepository mockCourseRepo = mock(CourseRepository.class);
+        when(mockCourseRepo.findById(1)).thenReturn(Optional.of(course));
+        // system under test
+        var toTest = new CourseService(mockCourseRepo, null, null, null, null, null,  null);
+
+        // when
+        var result = toTest.getCourse(courseID, loggedUserID);
+
+        // then
+        assertThat(result.getCourse().getTitle()).isEqualTo(title);
+        assertThat(result.getUserRate()).isEqualTo(Optional.of(loggedUserRate));
+        assertThat(result.isLikedCourse()).isEqualTo(true);
+    }
+
+    private Course returnCourseWith(Integer id, String title, Set<BoughtCourse> ratings, Set<Integer> willingUsersIDs) {
         Course course = new Course();
         course.setTitle(title);
         course.setRatings(ratings);
+        // create sample Users with id
+        Set<User> willingUsers = willingUsersIDs.stream()
+                .map(this::returnUserWith)
+                .collect(Collectors.toSet());
         course.setWillingUsers(willingUsers);
         // no public setter for Id so use reflection
         try {
@@ -109,7 +146,22 @@ class CourseServiceTest {
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+
         return course;
+    }
+
+    private User returnUserWith(Integer id) {
+        User user = new User();
+        // no public setter for Id so use reflection
+        try {
+            var field = User.class.getDeclaredField("userId");
+            field.setAccessible(true);
+            field.set(user, id);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+        return user;
     }
 
     private Set<BoughtCourse> getAssociationsBetweenUserAndCourse(Integer courseID, Map<Integer, Double> usersRate) {
