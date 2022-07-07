@@ -36,6 +36,37 @@ class CourseServiceTest {
                 .hasMessage("No course with given id");
     }
 
+    @Test
+    @DisplayName("should give SingleCourseModel DTO")
+    void getCourse_courseAssociatedWithUsers_and_loggedInUserNotAssociatedAndNotWilling_returnCourseAndUserIDsList() {
+        // given
+        int loggedInUserID = 1; // a user who has neither bought nor liked the course (willing user == user who liked course)
+        List<Integer> associatedUserIDs = List.of(4, 5);
+        Set<BoughtCourse> boughtCourses = getBoughtCourses(associatedUserIDs);
+        // and
+        final String title = "React";
+        Course course = returnCourseWith(title, boughtCourses, Set.of());
+        // and
+        CourseRepository mockCourseRepo = mock(CourseRepository.class);
+        when(mockCourseRepo.findById(anyInt())).thenReturn(Optional.of(course));
+        // system under test
+        var toTest = new CourseService(mockCourseRepo, null, null, null, null, null,  null);
+
+        // when
+        var result = toTest.getCourse(1, loggedInUserID);
+        // then
+        assertThat(result.getCourse().getTitle()).isEqualTo(title);
+        assertThat(result.getUsersNumber()).isEqualTo(2);
+    }
+
+    private Course returnCourseWith(String title, Set<BoughtCourse> ratings, Set<User> willingUsers) {
+        Course course = new Course();
+        course.setTitle(title);
+        course.setRatings(ratings);
+        course.setWillingUsers(willingUsers);
+        return course;
+    }
+
     private Set<BoughtCourse> getBoughtCourses(List<Integer> userIDs) {
         return userIDs.stream().map(id -> {
             BoughtCourseKey key = new BoughtCourseKey();
