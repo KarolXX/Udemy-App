@@ -51,7 +51,7 @@ class CourseServiceTest {
         // and
         final String title = "React";
         Set<Integer> willingUsersIDs = Set.of(); // no willing users
-        Course course = returnCourseWith(courseID, title, ratings, willingUsersIDs);
+        Course course = returnCourseWith(courseID, title, ratings, willingUsersIDs, null, null);
         // and
         CourseRepository mockCourseRepo = mock(CourseRepository.class);
         when(mockCourseRepo.findById(courseID)).thenReturn(Optional.of(course));
@@ -83,7 +83,7 @@ class CourseServiceTest {
         // and
         final String title = "React";
         Set<Integer> willingUsersIDs = Set.of(); // no willing users
-        Course course = returnCourseWith(courseID, title, ratings, willingUsersIDs);
+        Course course = returnCourseWith(courseID, title, ratings, willingUsersIDs, null, null);
         // and
         CourseRepository mockCourseRepo = mock(CourseRepository.class);
         when(mockCourseRepo.findById(1)).thenReturn(Optional.of(course));
@@ -115,7 +115,7 @@ class CourseServiceTest {
         // and
         final String title = "Spring";
         Set<Integer> willingUsersIDs = Set.of(7, loggedUserID, 4, 11);
-        Course course = returnCourseWith(courseID, title, ratings, willingUsersIDs);
+        Course course = returnCourseWith(courseID, title, ratings, willingUsersIDs, null, null);
         // and
         CourseRepository mockCourseRepo = mock(CourseRepository.class);
         when(mockCourseRepo.findById(1)).thenReturn(Optional.of(course));
@@ -155,8 +155,8 @@ class CourseServiceTest {
     @DisplayName("should throw IllegalArgumentException when user exists and no course with given id")
     void buyCourse_userExists_and_noCourse_throwsIllegalArgumentException() {
         // given
-        UserRepository mockUserRepo = mock(UserRepository.class);
         User user = new User();
+        UserRepository mockUserRepo = mock(UserRepository.class);
         when(mockUserRepo.findById(anyInt())).thenReturn(Optional.of(user));
         // and
         CourseRepository mockCourseRepo = mock(CourseRepository.class);
@@ -175,12 +175,43 @@ class CourseServiceTest {
                 .hasMessage("No course with given id");
     }
 
-    private Course returnCourseWith(Integer id, String title, Set<BoughtCourse> ratings, Set<Integer> willingUsersIDs) {
+    @Test
+    @DisplayName("should throw NotEnoughMoneyAvailableException when user and course exist but user has no enough money and course has no promotion")
+    void buyCourse_userAndCourseExist_and_userHasNoEnoughMoney_and_noPromotion_throwsNotEnoughMoneyAvailableException() {
+        // given
+        Integer budget = 100;
+        Integer price = 150;
+        Integer promotion = null;
+        // and
+        User user = returnUserWith(1, budget);
+        UserRepository mockUserRepo = mock(UserRepository.class);
+        when(mockUserRepo.findById(anyInt())).thenReturn(Optional.of(user));
+        // and
+        Course course = returnCourseWith(1, "", null, Set.of(), price, promotion);
+        CourseRepository mockCourseRepo = mock(CourseRepository.class);
+        when(mockCourseRepo.findById(anyInt())).thenReturn(Optional.of(course));
+        // and
+        BoughtCourseKey argument = new BoughtCourseKey(1, 1);
+        // system under test
+        var toTest = new CourseService(mockCourseRepo, mockUserRepo, null, null, null, null, null);
+
+        // when
+        var exception = catchThrowable(() -> toTest.buyCourse(argument));
+
+        // then
+        assertThat(exception)
+                .isInstanceOf(NotEnoughMoneyAvailableException.class)
+                .hasMessage("You don't have enough money on the account to purchase this course");
+    }
+
+    private Course returnCourseWith(Integer id, String title, Set<BoughtCourse> ratings, Set<Integer> willingUsersIDs, Integer price, Integer promotion) {
         Course course = new Course();
         course.setTitle(title);
+        course.setPrice(price);
+        course.setPromotion(promotion);
         course.setRatings(ratings);
         Set<User> willingUsers = willingUsersIDs.stream()
-                .map(this::returnUserWith)
+                .map(userID -> returnUserWith(userID, null))
                 .collect(Collectors.toSet());
         course.setWillingUsers(willingUsers);
         // no public setter for Id so use reflection
@@ -194,8 +225,9 @@ class CourseServiceTest {
         return course;
     }
 
-    private User returnUserWith(Integer id) {
+    private User returnUserWith(Integer id, Integer budget) {
         User user = new User();
+        user.setBudget(budget);
         // no public setter for Id so use reflection
         try {
             var field = User.class.getDeclaredField("userId");
