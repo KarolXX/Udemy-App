@@ -29,7 +29,8 @@ class LogicAspect {
     @Around("execution(* com.projects.spring.udemy.course.CourseService.buyCourse(..))")
     Object aroundBuyCourseMethod(ProceedingJoinPoint jp) throws Throwable {
         Object[] args = jp.getArgs();
-        BoughtCourseKey key = (BoughtCourseKey) Arrays.stream(args).findFirst().get();
+        BoughtCourseKey key = (BoughtCourseKey) Arrays.stream(args)
+                .findFirst().orElseThrow(() -> new IllegalArgumentException("No key argument passed to buyCourse method"));
         Boolean isAlreadyBought = boughtCourseRepository.existsById_CourseIdAndId_UserId(
                 key.getCourseId(),
                 key.getUserId()
