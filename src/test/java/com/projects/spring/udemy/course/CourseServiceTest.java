@@ -1,6 +1,5 @@
 package com.projects.spring.udemy.course;
 
-import com.projects.spring.udemy.InMemoryCourseRepository;
 import com.projects.spring.udemy.relationship.BoughtCourse;
 import com.projects.spring.udemy.relationship.BoughtCourseKey;
 import com.projects.spring.udemy.user.User;
@@ -14,8 +13,7 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class CourseServiceTest {
 
@@ -51,7 +49,7 @@ class CourseServiceTest {
         // and
         final String title = "React";
         Set<Integer> willingUsersIDs = Set.of(); // no willing users
-        Course course = returnCourseWith(courseID, title, ratings, willingUsersIDs, null, null);
+        Course course = returnCourseWith(courseID, title, ratings, willingUsersIDs, 0, null);
         // and
         CourseRepository mockCourseRepo = mock(CourseRepository.class);
         when(mockCourseRepo.findById(courseID)).thenReturn(Optional.of(course));
@@ -83,7 +81,7 @@ class CourseServiceTest {
         // and
         final String title = "React";
         Set<Integer> willingUsersIDs = Set.of(); // no willing users
-        Course course = returnCourseWith(courseID, title, ratings, willingUsersIDs, null, null);
+        Course course = returnCourseWith(courseID, title, ratings, willingUsersIDs, 0, null);
         // and
         CourseRepository mockCourseRepo = mock(CourseRepository.class);
         when(mockCourseRepo.findById(1)).thenReturn(Optional.of(course));
@@ -115,7 +113,7 @@ class CourseServiceTest {
         // and
         final String title = "Spring";
         Set<Integer> willingUsersIDs = Set.of(7, loggedUserID, 4, 11);
-        Course course = returnCourseWith(courseID, title, ratings, willingUsersIDs, null, null);
+        Course course = returnCourseWith(courseID, title, ratings, willingUsersIDs, 0, null);
         // and
         CourseRepository mockCourseRepo = mock(CourseRepository.class);
         when(mockCourseRepo.findById(1)).thenReturn(Optional.of(course));
@@ -240,7 +238,7 @@ class CourseServiceTest {
         course.setPromotion(promotion);
         course.setRatings(ratings);
         Set<User> willingUsers = willingUsersIDs.stream()
-                .map(userID -> returnUserWith(userID, null))
+                .map(userID -> returnUserWith(userID, 0))
                 .collect(Collectors.toSet());
         course.setWillingUsers(willingUsers);
         // no public setter for Id so use reflection
@@ -287,7 +285,4 @@ class CourseServiceTest {
                 }).collect(Collectors.toSet());
     }
 
-    private InMemoryCourseRepository getMockedCourseRepoWithGivenCourses(List<Course> courses) {
-        return new InMemoryCourseRepository(courses);
-    }
 }
