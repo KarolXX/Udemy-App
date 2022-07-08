@@ -1,11 +1,16 @@
 package com.projects.spring.udemy.course;
 
+import com.projects.spring.udemy.InMemoryRepositoryConfiguration;
+import com.projects.spring.udemy.course.event.CourseSequenceChangingEvent;
 import com.projects.spring.udemy.relationship.BoughtCourse;
 import com.projects.spring.udemy.relationship.BoughtCourseKey;
 import com.projects.spring.udemy.user.User;
 import com.projects.spring.udemy.user.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,7 +20,11 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
+@SpringBootTest // to enable autowiring but it slows down unit tests, maybe there is another solution ?
 class CourseServiceTest {
+
+    @Autowired
+    private InMemoryRepositoryConfiguration configuration;
 
     @Test
     @DisplayName("should throw IllegalArgumentException when no course with given id")
@@ -229,6 +238,38 @@ class CourseServiceTest {
         assertThat(exception)
                 .isInstanceOf(NotEnoughMoneyAvailableException.class)
                 .hasMessage("You don't have enough money on the account to purchase this course");
+    }
+
+    @Test
+    @DisplayName("should create an association and publish the event when the user and course exist and no need to send money")
+    void buyCourse_userAndCourseExist_and_courseForFree_createsAndSavesAssociation_and_publishCourseSequenceChangingEvent() {
+        // given
+        Integer budget = 0;
+        Integer price = 0;
+        // and
+        User user = returnUserWith(1, budget);
+        UserRepository mockUserRepo = mock(UserRepository.class);
+        when(mockUserRepo.findById(anyInt())).thenReturn(Optional.of(user));
+        // and
+        Course course = returnCourseWith(1, "", null, Set.of(), price, null);
+        CourseRepository mockCourseRepo = mock(CourseRepository.class);
+        when(mockCourseRepo.findById(anyInt())).thenReturn(Optional.of(course));
+        // and
+        var bcRepo = configuration.getInMemoryBoughtCourseRepository();
+        // and
+        BoughtCourseKey argument = new BoughtCourseKey(1, 1);
+        // and
+        ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
+
+        // system under test
+        var toTest = new CourseService(mockCourseRepo, mockUserRepo, bcRepo, null, null, null, eventPublisher);
+
+        // when
+        toTest.buyCourse(argument);
+
+        // then
+        assertThat(bcRepo.getSize()).isEqualTo(1); // check if association was saved
+        verify(eventPublisher).publishEvent(any(CourseSequenceChangingEvent.class)); // check if event was published
     }
 
     private Course returnCourseWith(Integer id, String title, Set<BoughtCourse> ratings, Set<Integer> willingUsersIDs, Integer price, Integer promotion) {
