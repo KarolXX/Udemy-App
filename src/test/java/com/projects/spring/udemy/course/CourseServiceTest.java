@@ -30,8 +30,7 @@ class CourseServiceTest {
     @DisplayName("should throw IllegalArgumentException when no course with given id")
     void getCourse_noCourse_throwsIllegalArgumentException() {
         // given
-        CourseRepository mockCourseRepo = mock(CourseRepository.class);
-        when(mockCourseRepo.findById(anyInt())).thenReturn(Optional.empty());
+        CourseRepository mockCourseRepo =  getCourseRepoWithFindByIdReturning(null);
         // system under test
         var toTest = new CourseService(mockCourseRepo, null, null, null, null, null, null);
 
@@ -60,8 +59,7 @@ class CourseServiceTest {
         Set<Integer> willingUsersIDs = Set.of(); // no willing users
         Course course = returnCourseWith(courseID, title, ratings, willingUsersIDs, 0, null);
         // and
-        CourseRepository mockCourseRepo = mock(CourseRepository.class);
-        when(mockCourseRepo.findById(courseID)).thenReturn(Optional.of(course));
+        CourseRepository mockCourseRepo =  getCourseRepoWithFindByIdReturning(course);
         // system under test
         var toTest = new CourseService(mockCourseRepo, null, null, null, null, null,  null);
 
@@ -92,8 +90,7 @@ class CourseServiceTest {
         Set<Integer> willingUsersIDs = Set.of(); // no willing users
         Course course = returnCourseWith(courseID, title, ratings, willingUsersIDs, 0, null);
         // and
-        CourseRepository mockCourseRepo = mock(CourseRepository.class);
-        when(mockCourseRepo.findById(1)).thenReturn(Optional.of(course));
+        CourseRepository mockCourseRepo =  getCourseRepoWithFindByIdReturning(course);
         // system under test
         var toTest = new CourseService(mockCourseRepo, null, null, null, null, null,  null);
 
@@ -124,8 +121,7 @@ class CourseServiceTest {
         Set<Integer> willingUsersIDs = Set.of(7, loggedUserID, 4, 11);
         Course course = returnCourseWith(courseID, title, ratings, willingUsersIDs, 0, null);
         // and
-        CourseRepository mockCourseRepo = mock(CourseRepository.class);
-        when(mockCourseRepo.findById(1)).thenReturn(Optional.of(course));
+        CourseRepository mockCourseRepo =  getCourseRepoWithFindByIdReturning(course);
         // system under test
         var toTest = new CourseService(mockCourseRepo, null, null, null, null, null,  null);
 
@@ -142,8 +138,7 @@ class CourseServiceTest {
     @DisplayName("should throw IllegalArgumentException when no user with given id")
     void buyCourse_noUser_throwsIllegalArgumentException() {
         // given
-        UserRepository mockUserRepo = mock(UserRepository.class);
-        when(mockUserRepo.findById(anyInt())).thenReturn(Optional.empty());
+        UserRepository mockUserRepo = getUserRepoWithFindByIdReturning(null);
         // and
         BoughtCourseKey argument = new BoughtCourseKey(1, 1);
         // system under test
@@ -163,11 +158,9 @@ class CourseServiceTest {
     void buyCourse_userExists_and_noCourse_throwsIllegalArgumentException() {
         // given
         User user = new User();
-        UserRepository mockUserRepo = mock(UserRepository.class);
-        when(mockUserRepo.findById(anyInt())).thenReturn(Optional.of(user));
+        UserRepository mockUserRepo = getUserRepoWithFindByIdReturning(user);
         // and
-        CourseRepository mockCourseRepo = mock(CourseRepository.class);
-        when(mockCourseRepo.findById(anyInt())).thenReturn(Optional.empty());
+        CourseRepository mockCourseRepo =  getCourseRepoWithFindByIdReturning(null);
         // and
         BoughtCourseKey argument = new BoughtCourseKey(1, 1);
         // system under test
@@ -191,12 +184,10 @@ class CourseServiceTest {
         Integer promotion = null;
         // and
         User user = returnUserWith(1, budget);
-        UserRepository mockUserRepo = mock(UserRepository.class);
-        when(mockUserRepo.findById(anyInt())).thenReturn(Optional.of(user));
+        UserRepository mockUserRepo = getUserRepoWithFindByIdReturning(user);
         // and
         Course course = returnCourseWith(1, "", null, Set.of(), price, promotion);
-        CourseRepository mockCourseRepo = mock(CourseRepository.class);
-        when(mockCourseRepo.findById(anyInt())).thenReturn(Optional.of(course));
+        CourseRepository mockCourseRepo =  getCourseRepoWithFindByIdReturning(course);
         // and
         BoughtCourseKey argument = new BoughtCourseKey(1, 1);
         // system under test
@@ -220,12 +211,10 @@ class CourseServiceTest {
         Integer promotion = 120;
         // and
         User user = returnUserWith(1, budget);
-        UserRepository mockUserRepo = mock(UserRepository.class);
-        when(mockUserRepo.findById(anyInt())).thenReturn(Optional.of(user));
+        UserRepository mockUserRepo = getUserRepoWithFindByIdReturning(user);
         // and
         Course course = returnCourseWith(1, "", null, Set.of(), price, promotion);
-        CourseRepository mockCourseRepo = mock(CourseRepository.class);
-        when(mockCourseRepo.findById(anyInt())).thenReturn(Optional.of(course));
+        CourseRepository mockCourseRepo =  getCourseRepoWithFindByIdReturning(course);
         // and
         BoughtCourseKey argument = new BoughtCourseKey(1, 1);
         // system under test
@@ -248,12 +237,10 @@ class CourseServiceTest {
         Integer price = 0;
         // and
         User user = returnUserWith(1, budget);
-        UserRepository mockUserRepo = mock(UserRepository.class);
-        when(mockUserRepo.findById(anyInt())).thenReturn(Optional.of(user));
+        UserRepository mockUserRepo = getUserRepoWithFindByIdReturning(user);
         // and
         Course course = returnCourseWith(1, "", null, Set.of(), price, null);
-        CourseRepository mockCourseRepo = mock(CourseRepository.class);
-        when(mockCourseRepo.findById(anyInt())).thenReturn(Optional.of(course));
+        CourseRepository mockCourseRepo = getCourseRepoWithFindByIdReturning(course);
         // and
         var bcRepo = configuration.getInMemoryBoughtCourseRepository();
         // and
@@ -270,6 +257,18 @@ class CourseServiceTest {
         // then
         assertThat(bcRepo.getSize()).isEqualTo(1); // check if association was saved
         verify(eventPublisher).publishEvent(any(CourseSequenceChangingEvent.class)); // check if event was published
+    }
+
+    private CourseRepository getCourseRepoWithFindByIdReturning(Course course) {
+        CourseRepository mockCourseRepo = mock(CourseRepository.class);
+        when(mockCourseRepo.findById(anyInt())).thenReturn(Optional.ofNullable(course));
+        return mockCourseRepo;
+    }
+
+    private UserRepository getUserRepoWithFindByIdReturning(User user) {
+        UserRepository mockUserRepo = mock(UserRepository.class);
+        when(mockUserRepo.findById(anyInt())).thenReturn(Optional.ofNullable(user));
+        return mockUserRepo;
     }
 
     private Course returnCourseWith(Integer id, String title, Set<BoughtCourse> ratings, Set<Integer> willingUsersIDs, Integer price, Integer promotion) {
@@ -307,6 +306,7 @@ class CourseServiceTest {
 
         return user;
     }
+
 
     private Set<BoughtCourse> getAssociationsBetweenUserAndCourse(Integer courseID, Map<Integer, Double> usersRate) {
         return usersRate.entrySet().stream()
