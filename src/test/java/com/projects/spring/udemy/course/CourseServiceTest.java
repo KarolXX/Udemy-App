@@ -53,7 +53,7 @@ class CourseServiceTest {
         Map<Integer, Double> usersRate = new HashMap<>();
         usersRate.put(3, null); // sample associations
         usersRate.put(4, 2.5); // sample associations
-        Set<BoughtCourse> ratings = getAssociationsBetweenUserAndCourse(courseID, usersRate);
+        Set<BoughtCourse> ratings = getAssociationsBetweenUsersAndCourse(courseID, usersRate);
         // and
         final String title = "React";
         Set<Integer> willingUsersIDs = Set.of(); // no willing users
@@ -84,7 +84,7 @@ class CourseServiceTest {
         Map<Integer, Double> usersRate = new HashMap<>();
         usersRate.put(loggedUserID, loggedUserRate);
         usersRate.put(4, 2.5); // another sample associations
-        Set<BoughtCourse> ratings = getAssociationsBetweenUserAndCourse(courseID, usersRate);
+        Set<BoughtCourse> ratings = getAssociationsBetweenUsersAndCourse(courseID, usersRate);
         // and
         final String title = "React";
         Set<Integer> willingUsersIDs = Set.of(); // no willing users
@@ -115,7 +115,7 @@ class CourseServiceTest {
         Map<Integer, Double> usersRate = new HashMap<>();
         usersRate.put(loggedUserID, loggedUserRate);
         usersRate.put(4, 2.5); // another sample associations
-        Set<BoughtCourse> ratings = getAssociationsBetweenUserAndCourse(courseID, usersRate);
+        Set<BoughtCourse> ratings = getAssociationsBetweenUsersAndCourse(courseID, usersRate);
         // and
         final String title = "Spring";
         Set<Integer> willingUsersIDs = Set.of(7, loggedUserID, 4, 11);
@@ -308,7 +308,7 @@ class CourseServiceTest {
     }
 
 
-    private Set<BoughtCourse> getAssociationsBetweenUserAndCourse(Integer courseID, Map<Integer, Double> usersRate) {
+    private Set<BoughtCourse> getAssociationsBetweenUsersAndCourse(Integer courseID, Map<Integer, Double> usersRate) {
         return usersRate.entrySet().stream()
                 .map(e -> {
                     // take id and rate
