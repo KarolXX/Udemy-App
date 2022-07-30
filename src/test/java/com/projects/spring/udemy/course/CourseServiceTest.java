@@ -17,8 +17,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
@@ -27,6 +26,8 @@ class CourseServiceTest {
 
     @Autowired
     private InMemoryRepositoryConfiguration configuration;
+
+    ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
 
     @Test
     @DisplayName("should throw IllegalArgumentException when no course with given id")
@@ -247,8 +248,6 @@ class CourseServiceTest {
         var bcRepo = configuration.getInMemoryBoughtCourseRepository();
         // and
         BoughtCourseKey argument = new BoughtCourseKey(1, 1);
-        // and
-        ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
 
         // system under test
         var toTest = new CourseService(mockCourseRepo, mockUserRepo, bcRepo, null, null, null, eventPublisher);
@@ -282,8 +281,6 @@ class CourseServiceTest {
         var bcRepo = configuration.getInMemoryBoughtCourseRepository();
         // and
         BoughtCourseKey argument = new BoughtCourseKey(1, 1);
-        // and
-        ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
 
         // system under test
         var toTest = new CourseService(mockCourseRepo, mockUserRepo, bcRepo, authorRepo, null, null, eventPublisher);
@@ -295,6 +292,34 @@ class CourseServiceTest {
         assertThat(bcRepo.getSize()).isEqualTo(1); // check if association was saved
         assertThat(author.getBudget()).isEqualTo(initialAuthorBudget + price);
         verify(eventPublisher).publishEvent(any(CourseSequenceChangingEvent.class)); // check if event was published
+    }
+
+    @Test
+    @DisplayName("should rate an BoughtCourse association (between User and Course) and publish the event when association exists")
+    void rateCourse_associationExists_assignsRating_and_publishCourseSequenceChangingEvent() {
+        // given
+        Integer courseID = 1;
+        Course course = returnCourseWith(courseID, "", Set.of(), Set.of(), 0, 0);
+        // and
+        BoughtCourse association = new BoughtCourse();
+        BoughtCourseKey associationID = new BoughtCourseKey(1, courseID);
+        association.setId(associationID);
+        Double rating = 3.5;
+        association.setRating(rating);
+        // and
+        CourseRepository courseRepo = configuration.getInMemoryCourseRepositoryWith(List.of(course));
+        // and
+        var bcRepo = configuration.getInMemoryBoughtCourseRepositoryWith(List.of(association));
+
+        // system under test
+        var toTest = new CourseService(courseRepo, null, bcRepo, null, null, null, eventPublisher);
+
+        // when
+        Double result = toTest.rateCourse(association);
+
+        // then
+        assertThat(result).isEqualTo(rating);
+        verify(eventPublisher).publishEvent(any(CourseSequenceChangingEvent.class));
     }
 
     private CourseRepository getCourseRepoWithFindByIdReturning(Course course) {
