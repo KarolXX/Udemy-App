@@ -378,6 +378,24 @@ class CourseServiceTest {
                 .hasMessage("No course with given id");
     }
 
+    @Test
+    @DisplayName("should throw IllegalArgumentException when association doesn't exist")
+    void getOtherParticipantsCourses_noCourse_throwsIllegalArgumentException() {
+        // given
+        CourseRepository courseRepo = getCourseRepoWithFindByIdReturning(null);
+
+        // system under test
+        var toTest = new CourseService(courseRepo, null, null, null, null, null, null);
+
+        // when
+        var exception = catchThrowable(() -> toTest.getOtherParticipantsCourses(1, 1));
+
+        // then
+        assertThat(exception)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("No course with given id");
+    }
+
     private CourseRepository getCourseRepoWithFindByIdReturning(Course course) {
         CourseRepository mockCourseRepo = mock(CourseRepository.class);
         when(mockCourseRepo.findById(anyInt())).thenReturn(Optional.ofNullable(course));
