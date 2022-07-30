@@ -77,7 +77,7 @@ public class UserServiceTest {
         // and
         var userRepoMock = userRepositoryReturning(mockUser);
         // and
-        var courseRepoMock = configuration.getInMemoryCourseRepository(sampleCourses);
+        var courseRepoMock = configuration.getInMemoryCourseRepositoryWith(sampleCourses);
 
         // system under test
         var toTest = new UserService(userRepoMock, courseRepoMock);

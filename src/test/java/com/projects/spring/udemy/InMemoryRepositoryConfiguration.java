@@ -19,7 +19,7 @@ public class InMemoryRepositoryConfiguration {
         return new InMemoryCourseRepository();
     }
 
-    public InMemoryCourseRepository getInMemoryCourseRepository(List<Course> courses) {
+    public InMemoryCourseRepository getInMemoryCourseRepositoryWith(List<Course> courses) {
         return new InMemoryCourseRepository(courses);
     }
 
@@ -27,12 +27,23 @@ public class InMemoryRepositoryConfiguration {
         return new InMemoryBoughtCourseRepository();
     }
 
+    public InMemoryBoughtCourseRepository getInMemoryBoughtCourseRepositoryWith(List<BoughtCourse> associations) {
+        return new InMemoryBoughtCourseRepository(associations);
+    }
+
     public static class InMemoryBoughtCourseRepository implements BoughtCourseRepository {
         // this map is sample db
-        Map<Integer, BoughtCourse> boughtCourses = new HashMap<>();
+        Map<BoughtCourseKey, BoughtCourse> boughtCourses = new HashMap<>();
         int size = 0;
 
         InMemoryBoughtCourseRepository() {
+        }
+
+        InMemoryBoughtCourseRepository(List<BoughtCourse> source) {
+            source.forEach(association -> {
+                size++;
+                boughtCourses.put(association.getId(), association);
+            });
         }
 
         public int getSize() {
@@ -41,12 +52,13 @@ public class InMemoryRepositoryConfiguration {
 
         @Override
         public Optional<BoughtCourse> findById(BoughtCourseKey id) {
-            return Optional.empty();
+            return Optional.ofNullable(boughtCourses.get(id));
         }
 
         @Override
         public BoughtCourse save(BoughtCourse bc) {
-            int id = ++size;
+            size++;
+            BoughtCourseKey id = bc.getId();
             boughtCourses.put(id, bc);
             return boughtCourses.get(id);
         }
@@ -99,7 +111,6 @@ public class InMemoryRepositoryConfiguration {
 
         @Override
         public void updateCourseAverageRating(Integer courseId) {
-
         }
 
         @Override
