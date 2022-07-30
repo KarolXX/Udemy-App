@@ -176,8 +176,8 @@ public class CourseService {
         Integer price = target.getPrice();
 
         // algorithm for setting course sequence
-        double promotionRatio = (promotion.map(integer -> (integer == 0 ? 5 : integer)).orElseGet(() -> (price == 0 ? 20 : price)));
-        double sequence = ( averageRating > 4.4 ? pow(averageRating + 1, 2) : pow(averageRating, 2)) * averageRating * usersNumber / promotionRatio;
+        double promotionRatio = (promotion.map(value -> (value == 0 ? 5 : value + 5)).orElseGet(() -> (price == 0 ? 10 : price + 10)));
+        double sequence = ( averageRating > 4.4 ? pow(averageRating + 1, 3) : pow(averageRating, 3)) * usersNumber / promotionRatio;
         target.setSequence(sequence);
     }
 
