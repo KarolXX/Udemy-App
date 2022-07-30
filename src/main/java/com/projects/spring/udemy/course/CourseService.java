@@ -133,7 +133,6 @@ public class CourseService {
         BoughtCourse association = boughtCourseRepository.findById(source.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Buy course before rating"));
         association.setRating(source.getRating());
-        BoughtCourse updatedSource = boughtCourseRepository.save(association);
 
         // update course's average rating
         int targetCourseId = source.getId().getCourseId();
@@ -143,7 +142,7 @@ public class CourseService {
                 new CourseSequenceChangingEvent(source.getId().getCourseId())
         );
 
-        return updatedSource.getRating();
+        return association.getRating();
     }
 
     Course updateCourse(UpdatedCourse updatedCourse, Integer courseId) {
