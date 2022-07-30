@@ -1,6 +1,8 @@
 package com.projects.spring.udemy.course;
 
 import com.projects.spring.udemy.InMemoryRepositoryConfiguration;
+import com.projects.spring.udemy.author.Author;
+import com.projects.spring.udemy.author.AuthorRepository;
 import com.projects.spring.udemy.course.event.CourseSequenceChangingEvent;
 import com.projects.spring.udemy.relationship.BoughtCourse;
 import com.projects.spring.udemy.relationship.BoughtCourseKey;
@@ -259,6 +261,42 @@ class CourseServiceTest {
         verify(eventPublisher).publishEvent(any(CourseSequenceChangingEvent.class)); // check if event was published
     }
 
+    @Test
+    @DisplayName("should create an association, send money from user to author's budget  and publish the event when the course and user with enough amount of money exist")
+    void buyCourse_userAndCourseExist_and_userHasEnoughMoney_createsAndSavesAssociation_and_publishCourseSequenceChangingEvent_and_sendsMoneyToAuthor() {
+        // given
+        Integer budget = 150;
+        Integer price = 100;
+        // and
+        User user = returnUserWith(1, budget);
+        UserRepository mockUserRepo = getUserRepoWithFindByIdReturning(user);
+        // and
+        Author author = new Author();
+        int initialAuthorBudget = 0;
+        author.setBudget(initialAuthorBudget);
+        AuthorRepository authorRepo = getAuthorRepoWithFindByIdReturning(author);
+        // and
+        Course course = returnCourseWith(1, "", null, Set.of(), price, null);
+        CourseRepository mockCourseRepo = getCourseRepoWithFindByIdReturning(course);
+        // and
+        var bcRepo = configuration.getInMemoryBoughtCourseRepository();
+        // and
+        BoughtCourseKey argument = new BoughtCourseKey(1, 1);
+        // and
+        ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
+
+        // system under test
+        var toTest = new CourseService(mockCourseRepo, mockUserRepo, bcRepo, authorRepo, null, null, eventPublisher);
+
+        // when
+        toTest.buyCourse(argument);
+
+        // then
+        assertThat(bcRepo.getSize()).isEqualTo(1); // check if association was saved
+        assertThat(author.getBudget()).isEqualTo(initialAuthorBudget + price);
+        verify(eventPublisher).publishEvent(any(CourseSequenceChangingEvent.class)); // check if event was published
+    }
+
     private CourseRepository getCourseRepoWithFindByIdReturning(Course course) {
         CourseRepository mockCourseRepo = mock(CourseRepository.class);
         when(mockCourseRepo.findById(anyInt())).thenReturn(Optional.ofNullable(course));
@@ -269,6 +307,12 @@ class CourseServiceTest {
         UserRepository mockUserRepo = mock(UserRepository.class);
         when(mockUserRepo.findById(anyInt())).thenReturn(Optional.ofNullable(user));
         return mockUserRepo;
+    }
+
+    private AuthorRepository getAuthorRepoWithFindByIdReturning(Author author) {
+        AuthorRepository mockAuthorRepo = mock(AuthorRepository.class);
+        when(mockAuthorRepo.findAuthorCourseByCourseId(anyInt())).thenReturn(Optional.ofNullable(author));
+        return mockAuthorRepo;
     }
 
     private Course returnCourseWith(Integer id, String title, Set<BoughtCourse> ratings, Set<Integer> willingUsersIDs, Integer price, Integer promotion) {

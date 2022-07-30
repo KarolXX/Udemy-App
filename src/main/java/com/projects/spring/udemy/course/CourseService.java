@@ -95,23 +95,23 @@ public class CourseService {
                 .orElseThrow(() -> new IllegalArgumentException("No course with given id"));
 
         //check if user has enough money
-        int sum = 0;
+        int price = 0;
         if (course.getPromotion() != null)
-            sum = course.getPromotion();
+            price = course.getPromotion();
         else
-            sum = course.getPrice();
-        if(user.getBudget() < sum)
+            price = course.getPrice();
+        if(user.getBudget() < price)
             throw new NotEnoughMoneyAvailableException("You don't have enough money on the account to purchase this course");
 
         association.setCourse(course);
         association.setUser(user);
 
         // send money for author's budget
-        if (sum != 0) {
+        if (price != 0) {
             Optional<Author> author = authorRepository.findAuthorCourseByCourseId(course.getId());
             if(author.isPresent()) {
-                author.get().setBudget(author.get().getBudget() + sum);
-                user.setBudget(user.getBudget() - sum);
+                author.get().setBudget(author.get().getBudget() + price);
+                user.setBudget(user.getBudget() - price);
             }
         }
 
