@@ -6,6 +6,7 @@ import com.projects.spring.udemy.author.AuthorRepository;
 import com.projects.spring.udemy.course.event.CourseSequenceChangingEvent;
 import com.projects.spring.udemy.relationship.BoughtCourse;
 import com.projects.spring.udemy.relationship.BoughtCourseKey;
+import com.projects.spring.udemy.relationship.BoughtCourseRepository;
 import com.projects.spring.udemy.user.User;
 import com.projects.spring.udemy.user.UserRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -292,6 +293,25 @@ class CourseServiceTest {
         assertThat(bcRepo.getSize()).isEqualTo(1); // check if association was saved
         assertThat(author.getBudget()).isEqualTo(initialAuthorBudget + price);
         verify(eventPublisher).publishEvent(any(CourseSequenceChangingEvent.class)); // check if event was published
+    }
+
+    @Test
+    @DisplayName("should throw IllegalArgumentException when association doesn't exist")
+    void rateCourse_noAssociation_throwsIllegalArgumentException() {
+        // given
+        BoughtCourse association = new BoughtCourse();
+        var bcRepo = configuration.getInMemoryBoughtCourseRepository();
+
+        // system under test
+        var toTest = new CourseService(null, null, bcRepo, null, null, null, null);
+
+        // when
+        var exception = catchThrowable(() -> toTest.rateCourse(association));
+
+        // then
+        assertThat(exception)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Buy course before rating");
     }
 
     @Test
