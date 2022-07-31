@@ -427,23 +427,22 @@ class CourseServiceTest {
     }
 
     @Test
-    @DisplayName("should return List of CourseInMenu when target course with participants exists and those participants have other courses")
-    void getOtherParticipantsCourses_courseExists_and_OtherParticipantsCoursesExists_returnsOtherParticipantsCourses() {
+    @DisplayName("should return List of CourseInMenu when target course with participants exists and those participants have other courses and logged in user doesn't have other courses")
+    void getOtherParticipantsCourses_courseExists_and_loggedInUserHasNoOtherCourses_OtherParticipantsCoursesExists_returnsOtherParticipantsCourses() {
         // given
         Integer loggedUserID = 1;
         Integer targetCourseID = 1;
         BoughtCourse bc0 = new BoughtCourse(new BoughtCourseKey(loggedUserID, targetCourseID));
-        BoughtCourse bc1 = new BoughtCourse(new BoughtCourseKey(loggedUserID, 2));
-        BoughtCourse bc2 = new BoughtCourse(new BoughtCourseKey(2, targetCourseID));
-        BoughtCourse bc3 = new BoughtCourse(new BoughtCourseKey(3, targetCourseID));
-        BoughtCourse bc4 = new BoughtCourse(new BoughtCourseKey(2, 2));
-        BoughtCourse bc5 = new BoughtCourse(new BoughtCourseKey(3, 2));
-        BoughtCourse bc6 = new BoughtCourse(new BoughtCourseKey(3, 3));
-        var bcRepo = configuration.getInMemoryBoughtCourseRepositoryWith(List.of(bc0, bc1, bc2, bc3, bc4, bc5, bc6));
+        BoughtCourse bc1 = new BoughtCourse(new BoughtCourseKey(2, targetCourseID));
+        BoughtCourse bc2 = new BoughtCourse(new BoughtCourseKey(3, targetCourseID));
+        BoughtCourse bc3 = new BoughtCourse(new BoughtCourseKey(2, 2));
+        BoughtCourse bc4 = new BoughtCourse(new BoughtCourseKey(3, 2));
+        BoughtCourse bc5 = new BoughtCourse(new BoughtCourseKey(3, 3));
+        var bcRepo = configuration.getInMemoryBoughtCourseRepositoryWith(List.of(bc0, bc1, bc2, bc3, bc4, bc5));
         // and
-        Course targetCourse = returnCourseWith(1, "", Set.of(bc0, bc2, bc3), Set.of(), 0, 0);
-        Course anotherParticipantCourse1 = returnCourseWith(2, "", Set.of(bc1, bc4, bc5), Set.of(), 0, 0);
-        Course anotherParticipantCourse2 = returnCourseWith(3, "", Set.of(bc6), Set.of(), 0, 0);
+        Course targetCourse = returnCourseWith(1, "", Set.of(bc0, bc1, bc2), Set.of(), 0, 0);
+        Course anotherParticipantCourse1 = returnCourseWith(2, "", Set.of(bc3, bc4), Set.of(), 0, 0);
+        Course anotherParticipantCourse2 = returnCourseWith(3, "", Set.of(bc5), Set.of(), 0, 0);
         int otherCoursesNumber = 2;
         CourseRepository courseRepo = configuration.getInMemoryCourseRepositoryWith(List.of(targetCourse, anotherParticipantCourse1, anotherParticipantCourse2));
 
