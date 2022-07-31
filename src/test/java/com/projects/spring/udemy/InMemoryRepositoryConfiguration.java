@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Configuration
 public class InMemoryRepositoryConfiguration {
@@ -64,8 +65,10 @@ public class InMemoryRepositoryConfiguration {
         }
 
         @Override
-        public List<BoughtCourse> findBoughtCoursesById_UserIdIsIn(List<Integer> id) {
-            return null;
+        public List<BoughtCourse> findBoughtCoursesById_UserIdIsIn(List<Integer> userIDs) {
+            return boughtCourses.values().stream()
+                    .filter(bc -> userIDs.contains(bc.getId().getUserId()))
+                    .collect(Collectors.toList());
         }
 
         @Override
@@ -92,7 +95,6 @@ public class InMemoryRepositoryConfiguration {
         @Override
         public List<CourseInMenu> getCourseMenuByIdIsIn(List<Integer> courseIDs) {
             List<CourseInMenu> result = new ArrayList<>();
-            // Maybe for simplicity just use course.getCourseId() to create list of given IDs
             for (Map.Entry<Integer, Course> entry : courses.entrySet()) {
                 if (courseIDs.contains(entry.getKey())) {
                     Course c = entry.getValue();
@@ -106,7 +108,7 @@ public class InMemoryRepositoryConfiguration {
 
         @Override
         public Optional<Course> findById(Integer id) {
-            return Optional.empty();
+            return Optional.ofNullable(courses.get(id));
         }
 
         @Override

@@ -3,6 +3,7 @@ package com.projects.spring.udemy.course;
 import com.projects.spring.udemy.InMemoryRepositoryConfiguration;
 import com.projects.spring.udemy.author.Author;
 import com.projects.spring.udemy.author.AuthorRepository;
+import com.projects.spring.udemy.course.dto.CourseInMenu;
 import com.projects.spring.udemy.course.event.CourseSequenceChangingEvent;
 import com.projects.spring.udemy.relationship.BoughtCourse;
 import com.projects.spring.udemy.relationship.BoughtCourseKey;
@@ -19,6 +20,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
@@ -187,7 +190,7 @@ class CourseServiceTest {
         Integer price = 150;
         Integer promotion = null;
         // and
-        User user = returnUserWith(1, budget);
+        User user = returnUserWith(1, null, budget);
         UserRepository mockUserRepo = getUserRepoWithFindByIdReturning(user);
         // and
         Course course = returnCourseWith(1, "", null, Set.of(), price, promotion);
@@ -214,7 +217,7 @@ class CourseServiceTest {
         Integer price = 150;
         Integer promotion = 120;
         // and
-        User user = returnUserWith(1, budget);
+        User user = returnUserWith(1, null, budget);
         UserRepository mockUserRepo = getUserRepoWithFindByIdReturning(user);
         // and
         Course course = returnCourseWith(1, "", null, Set.of(), price, promotion);
@@ -240,7 +243,7 @@ class CourseServiceTest {
         Integer budget = 0;
         Integer price = 0;
         // and
-        User user = returnUserWith(1, budget);
+        User user = returnUserWith(1, null, budget);
         UserRepository mockUserRepo = getUserRepoWithFindByIdReturning(user);
         // and
         Course course = returnCourseWith(1, "", null, Set.of(), price, null);
@@ -268,7 +271,7 @@ class CourseServiceTest {
         Integer budget = 150;
         Integer price = 100;
         // and
-        User user = returnUserWith(1, budget);
+        User user = returnUserWith(1, null, budget);
         UserRepository mockUserRepo = getUserRepoWithFindByIdReturning(user);
         // and
         Author author = new Author();
@@ -396,6 +399,43 @@ class CourseServiceTest {
                 .hasMessage("No course with given id");
     }
 
+    @Test
+    @DisplayName("should return List of CourseInMenu when target course with participants exists and those participants have other courses")
+    void getOtherParticipantsCourses_courseExists_andOtherParticipantsCoursesExists_returnsOtherParticipantsCourses() {
+        // given
+        Integer loggedUserID = 1;
+        Integer targetCourseID = 1;
+        BoughtCourse bc0 = new BoughtCourse(new BoughtCourseKey(loggedUserID, targetCourseID));
+        BoughtCourse bc1 = new BoughtCourse(new BoughtCourseKey(loggedUserID, 2));
+        BoughtCourse bc2 = new BoughtCourse(new BoughtCourseKey(2, targetCourseID));
+        BoughtCourse bc3 = new BoughtCourse(new BoughtCourseKey(3, targetCourseID));
+        BoughtCourse bc4 = new BoughtCourse(new BoughtCourseKey(2, 2));
+        BoughtCourse bc5 = new BoughtCourse(new BoughtCourseKey(3, 2));
+        BoughtCourse bc6 = new BoughtCourse(new BoughtCourseKey(3, 3));
+        var bcRepo = configuration.getInMemoryBoughtCourseRepositoryWith(List.of(bc0, bc2, bc3, bc4, bc5, bc6));
+        // and
+        Course targetCourse = returnCourseWith(1, "", Set.of(bc0, bc2, bc3), Set.of(), 0, 0);
+        Course course2 = returnCourseWith(2, "", Set.of(bc1, bc4, bc5), Set.of(), 0, 0);
+        Course course3 = returnCourseWith(3, "", Set.of(bc6), Set.of(), 0, 0);
+        int otherCoursesNumber = 2;
+        CourseRepository courseRepo = configuration.getInMemoryCourseRepositoryWith(List.of(targetCourse, course2, course3));
+
+        // system under test
+        var toTest = new CourseService(courseRepo, null, bcRepo, null, null, null, null);
+
+        // when
+        var result = toTest.getOtherParticipantsCourses(targetCourseID, loggedUserID);
+
+        // then
+        assertThat(result.size()).isEqualTo(otherCoursesNumber);
+        List<Integer> otherCoursesIDs = result.stream()
+                .map(CourseInMenu::getId)
+                .collect(Collectors.toList());
+        assertTrue(otherCoursesIDs.contains(2));
+        assertTrue(otherCoursesIDs.contains(3));
+        assertFalse(otherCoursesIDs.contains(1)); // this is target course and this method looks for other
+    }
+
     private CourseRepository getCourseRepoWithFindByIdReturning(Course course) {
         CourseRepository mockCourseRepo = mock(CourseRepository.class);
         when(mockCourseRepo.findById(anyInt())).thenReturn(Optional.ofNullable(course));
@@ -421,7 +461,7 @@ class CourseServiceTest {
         course.setPromotion(promotion);
         course.setRatings(ratings);
         Set<User> willingUsers = willingUsersIDs.stream()
-                .map(userID -> returnUserWith(userID, 0))
+                .map(userID -> returnUserWith(userID, null, 0))
                 .collect(Collectors.toSet());
         course.setWillingUsers(willingUsers);
         // no public setter for Id so use reflection
@@ -435,8 +475,9 @@ class CourseServiceTest {
         return course;
     }
 
-    private User returnUserWith(Integer id, Integer budget) {
+    private User returnUserWith(Integer id, Set<BoughtCourse> courses, Integer budget) {
         User user = new User();
+        user.setCourses(courses);
         user.setBudget(budget);
         // no public setter for Id so use reflection
         try {
