@@ -88,7 +88,8 @@ public class InMemoryRepositoryConfiguration {
         // constructor that adds sample courses to db
         public InMemoryCourseRepository(List<Course> source) {
             source.forEach(course -> {
-                courses.put(++size, course);
+                size++;
+                courses.put(course.getId(), course);
             });
         }
 
