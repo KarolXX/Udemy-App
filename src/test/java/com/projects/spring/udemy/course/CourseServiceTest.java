@@ -400,8 +400,35 @@ class CourseServiceTest {
     }
 
     @Test
+    @DisplayName("should return List of CourseInMenu when target course with participants exists but those participants don't have other courses and logged in user has another course which should not be included in the result as this method finds courses from other participants")
+    void getOtherParticipantsCourses_courseExists_and_loggedInUserHasOtherCourses_and_noOtherParticipantsCourses_returnsEmptyList() {
+        // given
+        Integer loggedUserID = 1;
+        Integer targetCourseID = 1;
+        BoughtCourse bc0 = new BoughtCourse(new BoughtCourseKey(loggedUserID, targetCourseID));
+        BoughtCourse bc1 = new BoughtCourse(new BoughtCourseKey(loggedUserID, 2));
+        BoughtCourse bc2 = new BoughtCourse(new BoughtCourseKey(2, targetCourseID));
+        BoughtCourse bc3 = new BoughtCourse(new BoughtCourseKey(3, targetCourseID));
+        var bcRepo = configuration.getInMemoryBoughtCourseRepositoryWith(List.of(bc0, bc1, bc2, bc3));
+        // and
+        Course targetCourse = returnCourseWith(1, "", Set.of(bc0, bc2, bc3), Set.of(), 0, 0);
+        Course anotherLoggedInUserCourse = returnCourseWith(2, "", Set.of(bc1), Set.of(), 0, 0); // it is course of logged in user so it shouldn't be in result
+        int otherCoursesNumber = 0;
+        CourseRepository courseRepo = configuration.getInMemoryCourseRepositoryWith(List.of(targetCourse, anotherLoggedInUserCourse));
+
+        // system under test
+        var toTest = new CourseService(courseRepo, null, bcRepo, null, null, null, null);
+
+        // when
+        var result = toTest.getOtherParticipantsCourses(targetCourseID, loggedUserID);
+
+        // then
+        assertThat(result.size()).isEqualTo(otherCoursesNumber);
+    }
+
+    @Test
     @DisplayName("should return List of CourseInMenu when target course with participants exists and those participants have other courses")
-    void getOtherParticipantsCourses_courseExists_andOtherParticipantsCoursesExists_returnsOtherParticipantsCourses() {
+    void getOtherParticipantsCourses_courseExists_and_OtherParticipantsCoursesExists_returnsOtherParticipantsCourses() {
         // given
         Integer loggedUserID = 1;
         Integer targetCourseID = 1;
@@ -412,13 +439,13 @@ class CourseServiceTest {
         BoughtCourse bc4 = new BoughtCourse(new BoughtCourseKey(2, 2));
         BoughtCourse bc5 = new BoughtCourse(new BoughtCourseKey(3, 2));
         BoughtCourse bc6 = new BoughtCourse(new BoughtCourseKey(3, 3));
-        var bcRepo = configuration.getInMemoryBoughtCourseRepositoryWith(List.of(bc0, bc2, bc3, bc4, bc5, bc6));
+        var bcRepo = configuration.getInMemoryBoughtCourseRepositoryWith(List.of(bc0, bc1, bc2, bc3, bc4, bc5, bc6));
         // and
         Course targetCourse = returnCourseWith(1, "", Set.of(bc0, bc2, bc3), Set.of(), 0, 0);
-        Course course2 = returnCourseWith(2, "", Set.of(bc1, bc4, bc5), Set.of(), 0, 0);
-        Course course3 = returnCourseWith(3, "", Set.of(bc6), Set.of(), 0, 0);
+        Course anotherParticipantCourse1 = returnCourseWith(2, "", Set.of(bc1, bc4, bc5), Set.of(), 0, 0);
+        Course anotherParticipantCourse2 = returnCourseWith(3, "", Set.of(bc6), Set.of(), 0, 0);
         int otherCoursesNumber = 2;
-        CourseRepository courseRepo = configuration.getInMemoryCourseRepositoryWith(List.of(targetCourse, course2, course3));
+        CourseRepository courseRepo = configuration.getInMemoryCourseRepositoryWith(List.of(targetCourse, anotherParticipantCourse1, anotherParticipantCourse2));
 
         // system under test
         var toTest = new CourseService(courseRepo, null, bcRepo, null, null, null, null);
