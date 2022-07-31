@@ -97,23 +97,23 @@ public class CourseService {
                 .orElseThrow(() -> new IllegalArgumentException("No course with given id"));
 
         //check if user has enough money
-        int sum = 0;
+        int price = 0;
         if (course.getPromotion() != null)
-            sum = course.getPromotion();
+            price = course.getPromotion();
         else
-            sum = course.getPrice();
-        if(user.getBudget() < sum)
+            price = course.getPrice();
+        if(user.getBudget() < price)
             throw new NotEnoughMoneyAvailableException("You don't have enough money on the account to purchase this course");
 
         association.setCourse(course);
         association.setUser(user);
 
         // send money for author's budget
-        if (sum != 0) {
+        if (price != 0) {
             Optional<Author> author = authorRepository.findAuthorCourseByCourseId(course.getId());
             if(author.isPresent()) {
-                author.get().setBudget(author.get().getBudget() + sum);
-                user.setBudget(user.getBudget() - sum);
+                author.get().setBudget(author.get().getBudget() + price);
+                user.setBudget(user.getBudget() - price);
             }
         }
 
@@ -133,9 +133,8 @@ public class CourseService {
     @Transactional
     public Double rateCourse(BoughtCourse source) {
         BoughtCourse association = boughtCourseRepository.findById(source.getId())
-                .orElseThrow(() -> new IllegalArgumentException("Buy course before commenting"));
+                .orElseThrow(() -> new IllegalArgumentException("Buy course before rating"));
         association.setRating(source.getRating());
-        BoughtCourse updatedSource = boughtCourseRepository.save(association);
 
         // update course's average rating
         int targetCourseId = source.getId().getCourseId();
@@ -145,7 +144,7 @@ public class CourseService {
                 new CourseSequenceChangingEvent(source.getId().getCourseId())
         );
 
-        return updatedSource.getRating();
+        return association.getRating();
     }
 
     Course updateCourse(UpdatedCourse updatedCourse, Integer courseId) {
@@ -179,8 +178,8 @@ public class CourseService {
         Integer price = target.getPrice();
 
         // algorithm for setting course sequence
-        double promotionRatio = (promotion.map(integer -> (integer == 0 ? 5 : integer)).orElseGet(() -> (price == 0 ? 20 : price)));
-        double sequence = ( averageRating > 4.4 ? pow(averageRating + 1, 2) : pow(averageRating, 2)) * averageRating * usersNumber / promotionRatio;
+        double promotionRatio = (promotion.map(value -> (value == 0 ? 5 : value + 5)).orElseGet(() -> (price == 0 ? 10 : price + 10)));
+        double sequence = ( averageRating > 4.4 ? pow(averageRating + 1, 3) : pow(averageRating, 3)) * usersNumber / promotionRatio;
         target.setSequence(sequence);
     }
 

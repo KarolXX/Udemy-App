@@ -1,13 +1,13 @@
 package com.projects.spring.udemy.user;
 
-import com.projects.spring.udemy.InMemoryCourseRepository;
+import com.projects.spring.udemy.InMemoryRepositoryConfiguration;
 import com.projects.spring.udemy.course.Course;
 import com.projects.spring.udemy.course.dto.CourseInMenu;
 import com.projects.spring.udemy.user.dto.TransferMoney;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.*;
 
@@ -17,7 +17,11 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@SpringBootTest // to enable autowiring but it slows down unit tests, maybe there is another solution ?
 public class UserServiceTest {
+
+    @Autowired
+    private InMemoryRepositoryConfiguration configuration;
 
     @Test
     @DisplayName("should throw IllegalArgumentException when no user with given id")
@@ -73,7 +77,7 @@ public class UserServiceTest {
         // and
         var userRepoMock = userRepositoryReturning(mockUser);
         // and
-        var courseRepoMock = getMockedCourseRepoWithGivenCourses(sampleCourses);
+        var courseRepoMock = configuration.getInMemoryCourseRepositoryWith(sampleCourses);
 
         // system under test
         var toTest = new UserService(userRepoMock, courseRepoMock);
@@ -107,10 +111,6 @@ public class UserServiceTest {
 
         // then
         assertThat(user.getBudget()).isEqualTo(budgetBefore + amount);
-    }
-
-    private InMemoryCourseRepository getMockedCourseRepoWithGivenCourses(List<Course> courses) {
-        return new InMemoryCourseRepository(courses);
     }
 
     // mocked userRepository that serve findById method
