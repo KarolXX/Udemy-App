@@ -405,14 +405,15 @@ class CourseServiceTest {
         // given
         Integer loggedUserID = 1;
         Integer targetCourseID = 1;
+        Integer anotherLoggedUserCourseID = 2;
         BoughtCourse bc0 = new BoughtCourse(new BoughtCourseKey(loggedUserID, targetCourseID));
-        BoughtCourse bc1 = new BoughtCourse(new BoughtCourseKey(loggedUserID, 2));
+        BoughtCourse bc1 = new BoughtCourse(new BoughtCourseKey(loggedUserID, anotherLoggedUserCourseID));
         BoughtCourse bc2 = new BoughtCourse(new BoughtCourseKey(2, targetCourseID));
         BoughtCourse bc3 = new BoughtCourse(new BoughtCourseKey(3, targetCourseID));
         var bcRepo = configuration.getInMemoryBoughtCourseRepositoryWith(List.of(bc0, bc1, bc2, bc3));
         // and
         Course targetCourse = returnCourseWith(targetCourseID, "", Set.of(bc0, bc2, bc3), Set.of(), 0, 0);
-        Course anotherLoggedInUserCourse = returnCourseWith(2, "", Set.of(bc1), Set.of(), 0, 0); // it is course of logged in user so it shouldn't be in result
+        Course anotherLoggedInUserCourse = returnCourseWith(anotherLoggedUserCourseID, "", Set.of(bc1), Set.of(), 0, 0); // it is course of logged in user so it shouldn't be in result
         int otherCoursesNumber = 0;
         CourseRepository courseRepo = configuration.getInMemoryCourseRepositoryWith(List.of(targetCourse, anotherLoggedInUserCourse));
 
@@ -459,7 +460,7 @@ class CourseServiceTest {
                 .collect(Collectors.toList());
         assertTrue(otherCoursesIDs.contains(2));
         assertTrue(otherCoursesIDs.contains(3));
-        assertFalse(otherCoursesIDs.contains(1)); // this is target course and this method finds other
+        assertFalse(otherCoursesIDs.contains(targetCourseID)); // this is target course and this method finds other
     }
 
     @Test
@@ -468,9 +469,10 @@ class CourseServiceTest {
         // given
         Integer loggedUserID = 1;
         Integer targetCourseID = 1;
+        Integer anotherLoggedUserCourseID = 4;
         BoughtCourse bc0 = new BoughtCourse(new BoughtCourseKey(loggedUserID, targetCourseID));
         BoughtCourse bc1 = new BoughtCourse(new BoughtCourseKey(loggedUserID, 2));
-        BoughtCourse bc2 = new BoughtCourse(new BoughtCourseKey(loggedUserID, 4));
+        BoughtCourse bc2 = new BoughtCourse(new BoughtCourseKey(loggedUserID, anotherLoggedUserCourseID));
         BoughtCourse bc3 = new BoughtCourse(new BoughtCourseKey(2, targetCourseID));
         BoughtCourse bc4 = new BoughtCourse(new BoughtCourseKey(3, targetCourseID));
         BoughtCourse bc5 = new BoughtCourse(new BoughtCourseKey(2, 2));
@@ -479,11 +481,11 @@ class CourseServiceTest {
         var bcRepo = configuration.getInMemoryBoughtCourseRepositoryWith(List.of(bc0, bc1, bc2, bc3, bc4, bc5, bc6, bc7));
         // and
         Course targetCourse = returnCourseWith(targetCourseID, "", Set.of(bc0, bc3, bc4), Set.of(), 0, 0);
-        Course anotherLoggedInUserCourse = returnCourseWith(4, "", Set.of(bc2), Set.of(), 0, 0);
+        Course anotherLoggedUserCourse = returnCourseWith(anotherLoggedUserCourseID, "", Set.of(bc2), Set.of(), 0, 0);
         Course anotherParticipantCourse1 = returnCourseWith(2, "", Set.of(bc1, bc5, bc6), Set.of(), 0, 0);
         Course anotherParticipantCourse2 = returnCourseWith(3, "", Set.of(bc6, bc7), Set.of(), 0, 0);
         int otherCoursesNumber = 2;
-        CourseRepository courseRepo = configuration.getInMemoryCourseRepositoryWith(List.of(targetCourse, anotherLoggedInUserCourse, anotherParticipantCourse1, anotherParticipantCourse2));
+        CourseRepository courseRepo = configuration.getInMemoryCourseRepositoryWith(List.of(targetCourse, anotherLoggedUserCourse, anotherParticipantCourse1, anotherParticipantCourse2));
 
         // system under test
         var toTest = new CourseService(courseRepo, null, bcRepo, null, null, null, null);
@@ -498,8 +500,8 @@ class CourseServiceTest {
                 .collect(Collectors.toList());
         assertTrue(otherCoursesIDs.contains(2));
         assertTrue(otherCoursesIDs.contains(3));
-        assertFalse(otherCoursesIDs.contains(1)); // this is target course and this method finds other
-        assertFalse(otherCoursesIDs.contains(4)); // this is logged in user course and this method finds other
+        assertFalse(otherCoursesIDs.contains(targetCourseID)); // this is target course and this method finds other
+        assertFalse(otherCoursesIDs.contains(anotherLoggedUserCourseID)); // this is logged in user course and this method finds other
     }
 
     private CourseRepository getCourseRepoWithFindByIdReturning(Course course) {
