@@ -52,7 +52,7 @@ public class AppFileService {
         // FIXME: replace manually comparing extensions with mimeType
         //String mimeType = image.getFile().getContentType();
         ImageClass target = returnTarget(id, entityType);
-        if(target == null)
+        if (target == null)
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
         // get path to place for storing images on local machine
@@ -71,69 +71,61 @@ public class AppFileService {
 
         }
 
-        // additional checking that file is not null before saving path to it in db
-        if (file == null) {
+        String extension = FilenameUtils.getExtension(
+                image.getFile().getOriginalFilename()
+        );
+        AppFile appFile = new AppFile(file.getAbsolutePath());
+        appFile.setExtension(extension);
+        AppFile savedAppFile = repository.save(appFile);
 
-        } else {
-            String extension = FilenameUtils.getExtension(
-                    image.getFile().getOriginalFilename()
-            );
-            AppFile appFile = new AppFile(file.getAbsolutePath());
-            appFile.setExtension(extension);
-            AppFile savedAppFile = repository.save(appFile);
-
-            boolean isVideo = false;
-            // if entity is of type course then check if client want to save video for this course or just image
-            if(entityType == EntityType.COURSE) {
-                List<String> videoExtensions = configuration.getVideoExtensions();
-                // if the given extension is for video then it will be uploaded as video. Otherwise as file - isVideo flag contains information about it
-                isVideo = videoExtensions.stream()
-                        .anyMatch(videoExt -> videoExt.equals(extension));
-            }
-            if(isVideo)
-                ((Course) target).setVideo(savedAppFile);
-            else
-                target.setImage(savedAppFile);
-
-            return ResponseEntity.created(URI.create("/" + savedAppFile.getFileId())).build();
+        boolean isVideo = false;
+        // if entity is of type course then check if client want to save video for this course or just image
+        if (entityType == EntityType.COURSE) {
+            List<String> videoExtensions = configuration.getVideoExtensions();
+            // if the given extension is for video then it will be uploaded as video. Otherwise as file - isVideo flag contains information about it
+            isVideo = videoExtensions.stream()
+                    .anyMatch(videoExt -> videoExt.equals(extension));
         }
+        if (isVideo)
+            ((Course) target).setVideo(savedAppFile);
+        else
+            target.setImage(savedAppFile);
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        return ResponseEntity.created(URI.create("/" + savedAppFile.getFileId())).build();
+
     }
 
     // get course/comment/author image (distinguished by entityName) or course' video if playVideo == true
     public ResponseEntity<?> getFile(Integer id, EntityType entityType, boolean playVideo) {
         ImageClass target = returnTarget(id, entityType);
-        if(target == null)
+        if (target == null)
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
         AppFile targetFile;
         // check if user want to get course' video or course/comment/author image
-        // and based on that assign an appropriate value to targetFile, or throw an exception if the requested file does not exist
-        if(playVideo) {
+        if (playVideo) {
             targetFile = repository.findById(((Course) target).getVideo().getFileId())
                     .orElseThrow(() -> new IllegalArgumentException("No video"));
         } else {
             Optional<AppFile> image = Optional.ofNullable(target.getImage());
-            if(image.isEmpty())
+            if (image.isEmpty())
                 return null;
             targetFile = repository.findById(target.getImage().getFileId())
                     .orElseThrow(() -> new IllegalArgumentException("No image"));
         }
 
-        // get desired file
         File file = new File(targetFile.getFilePath());
-        if(!file.exists()) {
+        if (!file.exists()) {
             return ResponseEntity.notFound().build();
         }
 
         // set default extension if necessary
         Optional<String> extension = Optional.ofNullable(targetFile.getExtension());
-        if(extension.isEmpty())
+        if (extension.isEmpty())
             extension = Optional.of(".png");
 
         // send response
-        try{
+        try {
             InputStreamResource isr = new InputStreamResource(
                     new FileInputStream(file)
             );
@@ -151,7 +143,7 @@ public class AppFileService {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
-    // return target entity of given type - the repository type is used based on the entity name
+    // FIXME: open for extension closed for modification rule has been broken here
     private ImageClass returnTarget(Integer id, EntityType entityType) {
         switch (entityType) {
             case COURSE:
