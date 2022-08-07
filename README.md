@@ -37,7 +37,7 @@ The order of the courses is not random but depends on the course `sequence` prop
 
 To avoid flow of unnecessary data I use CourseInMenu DTO when fetching courses.
 Of course I use paging so as not to store all the data in main memory (easy and cheap memory allocation).
-![image](https://user-images.githubusercontent.com/71709330/183313405-ce13cf71-b7ec-492b-903e-70da2714a887.png)
+![image](https://user-images.githubusercontent.com/71709330/183313754-bd32d176-d088-4a22-a5df-9414fc5824bd.png)
 
 ## Course
 The user who purchased course can rate, comment and watch the video instead of just seeing a picture of the course as a user who did not buy the course.
