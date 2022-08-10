@@ -52,8 +52,8 @@ All the files like course image, comment image, course video, user or author pro
 
 
 # Lacks in app:
-* temporary inability to log in as an author in the application
-* no security by roles
+* no integration and E2E tests yet
+* no security by roles yet
 * A few unresolved FIXME statements
 * no lombock yet
 
