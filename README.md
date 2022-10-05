@@ -31,7 +31,7 @@ In addition to keeping users in LDAP built into Keycloak, they are also placed i
 After registration you get roles specific to your account - user or author
 
 ## Menu
-Menu is ... just menu - place where we can choose which course we want to see in detail.
+Menu is... just a menu - place where we can choose which course we want to see in detail.
 
 The order of the courses is not random but depends on the course `sequence` property which reflects the algorithm describing how good the course is - The more users, good ratings and promotions or just a low price a course has, the faster it will be displayed to the user
 
