@@ -33,7 +33,7 @@ After registration you get roles specific to your account - user or author
 ## Menu
 Menu is... just a menu - place where we can choose which course we want to see in detail.
 
-The order of the courses is not random but depends on the course `sequence` property which reflects the algorithm describing how good the course is - The more users, good ratings and promotions or just a low price a course has, the faster it will be displayed to the user
+The order of the courses is not random but depends on the course `sequence` property which reflects the algorithm describing how good the course is - The more users, good ratings and promotions or just a low price a course has, the faster it will be displayed to the user.
 
 To avoid flow of unnecessary data I use CourseInMenu DTO when fetching courses.
 Of course I use paging so as not to store all the data in main memory (easy and cheap memory allocation).
