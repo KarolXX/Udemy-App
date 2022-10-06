@@ -26,7 +26,7 @@ I wrote UI for this app using react: [Frontend for this app](https://github.com/
 ## Start page
 Login and registration requests are send to keycloak, from where we get access token wrapped into TokenData (project class).
 In addition to keeping users in LDAP built into Keycloak, they are also placed in the MySQL database with password hashed by one-way function
-![image](https://user-images.githubusercontent.com/71709330/163377719-39ec7303-57eb-497d-89a8-9883098efe5f.png)
+![New Project](https://user-images.githubusercontent.com/71709330/194328184-19f16902-171e-4cc0-9681-0622ad2fa57d.gif)
 
 After registration you get roles specific to your account - user or author
 
