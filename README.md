@@ -19,9 +19,14 @@ I wrote UI for this app using react: [Frontend for this app](https://github.com/
 * "Composition over inheritance"
 * work with the `org.keycloak.admin.client.Keycloak`
 
+## Exemplary functionalities:
+
 ![2022-10-06 15-29-40](https://user-images.githubusercontent.com/71709330/194332219-00e3d463-0f34-484d-86bb-e5d2f5c66fa7.gif)
 
 ![2022-10-07 14-17-40](https://user-images.githubusercontent.com/71709330/194552330-5c778cf2-2596-4a26-bed3-13c882a0ada5.gif)
+
+![2022-10-07 15-18-24](https://user-images.githubusercontent.com/71709330/194564732-488bac83-b93f-485e-897e-371cccf35f77.gif)
+
 
 # Brief app description
 ## Scheme operation:
@@ -30,7 +35,7 @@ I wrote UI for this app using react: [Frontend for this app](https://github.com/
 ## Start page
 Login and registration requests are send to keycloak, from where we get access token wrapped into TokenData (project class).
 In addition to keeping users in LDAP built into Keycloak, they are also placed in the MySQL database with password hashed by one-way function
-
+![image](https://user-images.githubusercontent.com/71709330/163377719-39ec7303-57eb-497d-89a8-9883098efe5f.png)
 After registration you get roles specific to your account - user or author
 
 ## Menu
