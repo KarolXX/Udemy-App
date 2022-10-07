@@ -1,6 +1,14 @@
 # Udemy
 Application with courses - something similar to Udemy.
 
+# Exemplary functionalities:
+
+![2022-10-06 15-29-40](https://user-images.githubusercontent.com/71709330/194332219-00e3d463-0f34-484d-86bb-e5d2f5c66fa7.gif)
+
+![2022-10-07 14-17-40](https://user-images.githubusercontent.com/71709330/194552330-5c778cf2-2596-4a26-bed3-13c882a0ada5.gif)
+
+![2022-10-07 15-18-24](https://user-images.githubusercontent.com/71709330/194564732-488bac83-b93f-485e-897e-371cccf35f77.gif)
+
 I wrote UI for this app using react: [Frontend for this app](https://github.com/KarolXX/Udemy-react)
 
 ## Techologies:
@@ -18,15 +26,6 @@ I wrote UI for this app using react: [Frontend for this app](https://github.com/
 * events
 * "Composition over inheritance"
 * work with the `org.keycloak.admin.client.Keycloak`
-
-## Exemplary functionalities:
-
-![2022-10-06 15-29-40](https://user-images.githubusercontent.com/71709330/194332219-00e3d463-0f34-484d-86bb-e5d2f5c66fa7.gif)
-
-![2022-10-07 14-17-40](https://user-images.githubusercontent.com/71709330/194552330-5c778cf2-2596-4a26-bed3-13c882a0ada5.gif)
-
-![2022-10-07 15-18-24](https://user-images.githubusercontent.com/71709330/194564732-488bac83-b93f-485e-897e-371cccf35f77.gif)
-
 
 # Brief app description
 ## Scheme operation:
