@@ -11,11 +11,16 @@ Application with courses - something similar to Udemy.
 
 I wrote UI for this app using react: [Frontend for this app](https://github.com/KarolXX/Udemy-react)
 
+### INFORMATION FOR RECRUITER ABOUT MY TESTING SKILLS (Integration and E2E tests)! 
+This app contains only unit tests but no integration and E2E tests. if you want to see this kind of test written by me, please see this repository:
+* [E2E and integration tests in to-do-app](https://github.com/KarolXX/Todo-app-Spring-Boot-/tree/main/src/test/java/io/github/mat3e/todoapp/controller)
+
 ## Techologies:
 * Java v. 11
 * Spring Boot v. 2.5.2
 * JPA - Hibernate
 * Maven
+* JUnit
 * Keycloak 15.0.2 (as an external authentication system but hashed sensitive user information are also stored in MySQL db in the event of opting out of the external system)
 * Flyway
 * MySQL as database for app, h2 for database in tests
