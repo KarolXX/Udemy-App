@@ -17,11 +17,9 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest // to enable autowiring but it slows down unit tests, maybe there is another solution ?
 public class UserServiceTest {
 
-    @Autowired
-    private InMemoryRepositoryConfiguration configuration;
+    private final InMemoryRepositoryConfiguration configuration = new InMemoryRepositoryConfiguration();
 
     @Test
     @DisplayName("should throw IllegalArgumentException when no user with given id")

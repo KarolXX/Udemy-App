@@ -25,11 +25,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest // to enable autowiring but it slows down unit tests, maybe there is another solution ?
 class CourseServiceTest {
 
-    @Autowired
-    private InMemoryRepositoryConfiguration configuration;
+    private final InMemoryRepositoryConfiguration configuration = new InMemoryRepositoryConfiguration();
 
     ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
 
