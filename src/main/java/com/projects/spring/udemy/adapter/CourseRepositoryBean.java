@@ -26,8 +26,7 @@ interface CourseRepositoryBean extends CourseRepository, JpaRepository<Course, I
 
     @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.courseId, c.title, c.averageRating, c.usersNumber, c.price, c.promotion, image.filePath, c.sequence) " +
             "FROM Course c " +
-            "LEFT JOIN c.image image " +
-            "GROUP BY c.title"
+            "LEFT JOIN c.image image"
     )
     List<CourseInMenu> getCourseMenu();
 
@@ -41,7 +40,7 @@ interface CourseRepositoryBean extends CourseRepository, JpaRepository<Course, I
     @Query("SELECT new com.projects.spring.udemy.course.dto.CourseInMenu(c.courseId, c.title, c.averageRating, c.usersNumber, c.price, c.promotion, image.filePath, c.sequence) " +
             "FROM Course c " +
             "LEFT JOIN c.image image " +
-            "WHERE c.courseId IN (:ids)" +
-            "GROUP BY c.title")
+            "WHERE c.courseId IN (:ids)"
+    )
     List<CourseInMenu> getCourseMenuByIdIsIn(@Param("ids") List<Integer> courseIDs);
 }
