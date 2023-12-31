@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: 'jdbc:mysql://localhost:3306/udemy2-db'
+    url: ${DATASOURCE_URL}
     username: root
     password:
     driver-class-name: org.mariadb.jdbc.Driver
@@ -9,8 +9,8 @@ spring:
     ddl-auto: none
 
 keycloak:
-  auth-server-url: 'http://localhost:8180/auth'
-  realm: 'UdemyManagement'
-  resource: 'udemy-spring-client'
+  auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL}
+  realm: ${KEYCLOAK_REALM}
+  resource: ${KEYCLOAK_CLIENT_ID}
   credentials:
-    secret: 'c80fea20-23e9-4c74-96c4-6a9bc17f990e'
+    secret: ${KEYCLOAK_SECRET}

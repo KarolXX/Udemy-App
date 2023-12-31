@@ -5,7 +5,7 @@ import javax.validation.constraints.NotBlank;
 public class UserForm {
     @NotBlank(message = "Please enter your name")
     private String name;
-    @NotBlank(message = "Please enter your name")
+    @NotBlank(message = "Please enter your password")
     private String password;
 
     public UserForm() {

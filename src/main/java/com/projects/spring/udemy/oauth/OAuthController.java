@@ -32,13 +32,19 @@ public class OAuthController {
     }
 
     @PostMapping("/login")
-    ResponseEntity<?> logIn(@RequestBody UserForm userForm) {
+    ResponseEntity<?> userLogIn(@RequestBody UserForm userForm) {
         logger.info("Signing in");
         LoginResponse result = service.login(userForm);
         return ResponseEntity.ok(result);
     }
 
-    // TODO: create one method that performs both of these two methods below
+    @PostMapping("/login/author")
+    ResponseEntity<?> authorLogIn(@RequestBody AuthorForm authorForm) {
+        logger.info("Signing in");
+        LoginResponse result = service.login(authorForm);
+        return ResponseEntity.ok(result);
+    }
+
     @PostMapping("/users")
     ResponseEntity<?> createUser(@RequestBody UserForm source) {
         logger.info("User registration");
