@@ -1,1 +1,0 @@
-ALTER TABLE app_files ADD COLUMN extension VARCHAR(50);

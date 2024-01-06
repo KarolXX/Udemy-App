@@ -1,2 +1,0 @@
-ALTER TABLE courses ADD COLUMN sequence DECIMAL(7,5) NULL;
-ALTER TABLE courses ADD COLUMN users_number INT NULL

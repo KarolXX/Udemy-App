@@ -1,45 +1,55 @@
 version: '3.3'
+
+#volumes:
+# db_data: {}
+
 services:
-  ### MySQL Container
-  udemy_db:
-    build:
-      context: ./src/main/resources/db.docker/
-      args:
-        - MYSQL_DATABASE=${MYSQL_DATABASE}
-        - MYSQL_USER=${MYSQL_USER}
-        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-        - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-    networks:
-      - mynet
-    ports:
-      - "3306:3306"
+ ### MySQL Container
+ udemy_db:
+  image: mysql:latest
+  environment:
+   - MYSQL_DATABASE=${MYSQL_DATABASE}
+   - MYSQL_USER=${MYSQL_USER}
+   - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+   - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+  volumes:
+   - ./src/main/resources/db.docker/data.sql:/docker-entrypoint-initdb.d/init.sql
+#   - db_data:/var/lib/mysql/data
+  networks:
+   - mynet
+  ports:
+   - "3306:3306"
 
-  keycloak:
-    image: quay.io/keycloak/keycloak:latest
-    ports:
-      - "8180:8180"
-    environment:
-      - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN}
-      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
-    volumes:
-      - /realm-export.json:/opt/keycloak/data/import
-    command: [ "start-dev", "--import-realm" ]
-    networks:
-      - mynet
 
-  ### backend container
-  udemy_api:
-    build:
-      context: ./
-      args:
-        - KEYCLOAK_REALM=${KEYCLOAK_REALM}
-        - KEYCLOAK_AUTH_SERVER_URL='http://keycloak:8180/auth'
-        - KEYCLOAK_SECRET=${KEYCLOAK_SECRET}
-        - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
-        - DATASOURCE_URL='jdbc:mysql://udemy_db:3306/udemy_db'
-    networks:
-      - mynet
+ keycloak:
+  image: quay.io/keycloak/keycloak:latest
+  ports:
+   - "8180:8180"
+  environment:
+   - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN}
+   - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
+  volumes:
+   - /realm-export.json:/opt/keycloak/data/import
+  command: [ "start-dev", "--import-realm" ]
+  networks:
+   - mynet
+
+ ### backend container
+ udemy_api:
+  build:
+   context: ./
+   args:
+    - KEYCLOAK_REALM=${KEYCLOAK_REALM}
+    - KEYCLOAK_AUTH_SERVER_URL='http://keycloak:8180/auth'
+    - KEYCLOAK_SECRET=${KEYCLOAK_SECRET}
+    - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
+    - DATASOURCE_URL=jdbc:mysql://udemy_db:3306/DB?permitMysqlScheme
+  depends_on:
+   - keycloak
+   - udemy_db
+  networks:
+   - mynet
 
 networks:
-  mynet:
-    driver: bridge
+ mynet:
+  driver: bridge

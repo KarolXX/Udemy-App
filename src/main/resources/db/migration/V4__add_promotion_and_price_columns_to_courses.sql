@@ -1,2 +1,0 @@
-ALTER TABLE courses ADD COLUMN price INT NOT NULL;
-ALTER TABLE courses ADD COLUMN promotion INT NULL;

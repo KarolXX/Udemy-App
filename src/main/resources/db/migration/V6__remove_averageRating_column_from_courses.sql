@@ -1,1 +1,0 @@
-ALTER TABLE courses DROP COLUMN average_rating
