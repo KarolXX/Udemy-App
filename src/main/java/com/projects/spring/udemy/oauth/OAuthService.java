@@ -79,6 +79,7 @@ public class OAuthService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED); // default media type for HTML forms
 
+        // TODO: use Authorization code grant type
         MultiValueMap<String, String> request = new LinkedMultiValueMap<>();
         request.add("grant_type", "password");
         request.add("username", source.getName());
