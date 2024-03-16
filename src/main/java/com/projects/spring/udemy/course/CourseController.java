@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -99,6 +100,7 @@ public class CourseController {
     }
 
     @DeleteMapping("/{courseId}")
+    @PreAuthorize("hasRole('ROLE_AUTHOR')")
     ResponseEntity<?> deleteCourse(@PathVariable Integer courseId) {
         logger.warn("Course has been deleted");
         repository.deleteById(courseId);
